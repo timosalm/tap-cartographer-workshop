@@ -16,6 +16,8 @@ import io.kubernetes.client.util.generic.KubernetesApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+
 public class GitHubSourceReconciler implements Reconciler {
 
     private static final Logger log = LoggerFactory.getLogger(GitHubSourceReconciler.class);
@@ -52,6 +54,6 @@ public class GitHubSourceReconciler implements Reconciler {
                 log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName());
             }
         }
-        return new Result(false);
+        return new Result(true, Duration.ofSeconds(30));
     }
 }
