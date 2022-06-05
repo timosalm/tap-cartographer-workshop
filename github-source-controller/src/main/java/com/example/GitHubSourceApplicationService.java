@@ -11,8 +11,7 @@ public class GitHubSourceApplicationService {
     private final HashMap<String, GitHubEvent> latestCommitMap = new HashMap<>();
 
     public void addGitHubEvent(GitHubEvent event) {
-        String[] splittedRef = event.getRef().split("/");
-        latestCommitMap.put(event.getRepository().getCloneUrl() + splittedRef[splittedRef.length - 1], event);
+        latestCommitMap.put(event.getRepository().getCloneUrl() + event.getBranch(), event);
     }
 
     public GitHubEvent getLatestGithubEvent(String cloneUrl, String branch) {

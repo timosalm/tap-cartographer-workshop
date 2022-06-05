@@ -28,6 +28,11 @@ public class GitHubEvent {
         return headCommit.getId();
     }
 
+    public String getBranch() {
+        String[] splittedRef = ref.split("/");
+        return splittedRef[splittedRef.length - 1];
+    }
+
     public String getRef() {
         return ref;
     }

@@ -221,7 +221,6 @@ public class V1GitHubRepository implements io.kubernetes.client.common.Kubernete
         }
         status.getArtifact().setUrl(url);
         status.getArtifact().setRevision(revision);
-        status.setObservedGeneration(status.getObservedGeneration() + 1);
     }
 }
 

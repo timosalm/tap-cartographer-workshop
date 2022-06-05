@@ -42,14 +42,16 @@ public class GitHubSourceReconciler implements Reconciler {
         }
 
         GitHubEvent latestGithubEvent = service.getLatestGithubEvent(resource.getSpec().getUrl(), resource.getSpec().getBranch());
-        resource.updateStatus(latestGithubEvent.getTarballUrl(), latestGithubEvent.getRevision());
-        log.info("Trying to update status for " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " with " + latestGithubEvent.getTarballUrl());
-
-        KubernetesApiResponse<V1GitHubRepository> update = api.updateStatus(resource, V1GitHubRepository::getStatus);
-        if (!update.isSuccess()) {
-            log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName());
+        if (latestGithubEvent == null) {
+            log.info("No GitHub Event for " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " found");
+        } else {
+            resource.updateStatus(latestGithubEvent.getTarballUrl(), latestGithubEvent.getRevision());
+            log.info("Trying to update status for " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " with " + latestGithubEvent.getTarballUrl());
+            KubernetesApiResponse<V1GitHubRepository> update = api.updateStatus(resource, V1GitHubRepository::getStatus);
+            if (!update.isSuccess()) {
+                log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName());
+            }
         }
-
         return new Result(false);
     }
 }
