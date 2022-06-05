@@ -1,0 +1,15 @@
+apiVersion: kpack.io/v1alpha2
+kind: Image
+metadata:
+  name: github-source-controller
+spec:
+  build:
+    env:
+    - name: BP_JVM_VERSION
+      value: "17"
+  source:
+    git:
+      revision: main
+      url: https://github.com/tsalm-pivotal/tap-cartographer-workshop.git
+    subPath: github-source-controller
+  tag: harbor.emea.end2end.link/tap-workshop/github-source-controller

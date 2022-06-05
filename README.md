@@ -25,4 +25,3 @@ Next, we’re developing a tekton task (or more than one) to do the job, but if 
 ## Controller
 https://github.com/kubernetes-client/java/blob/master/examples/examples-release-15/src/main/java/io/kubernetes/client/examples/SpringControllerExample.java
 https://github.com/kubernetes-client/java/blob/master/docs/java-controller-tutorial-rewrite-rs-controller.md
-
