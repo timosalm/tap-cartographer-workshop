@@ -4,4 +4,4 @@ metadata:
   name: spring-boot-hello-world-workshop-example
 spec:
   url: https://github.com/tsalm-pivotal/spring-boot-hello-world-workshop-example.git
-  ref: main
+  branch: main

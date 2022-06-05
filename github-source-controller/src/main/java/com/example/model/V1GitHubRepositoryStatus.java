@@ -32,27 +32,6 @@ public class V1GitHubRepositoryStatus {
   @SerializedName(SERIALIZED_NAME_ARTIFACT)
   private V1GitHubRepositoryStatusArtifact artifact;
 
-  public static final String SERIALIZED_NAME_CONDITIONS = "conditions";
-  @SerializedName(SERIALIZED_NAME_CONDITIONS)
-  private List<V1GitHubRepositoryStatusConditions> conditions = null;
-
-  public static final String SERIALIZED_NAME_INCLUDED_ARTIFACTS = "includedArtifacts";
-  @SerializedName(SERIALIZED_NAME_INCLUDED_ARTIFACTS)
-  private List<V1GitHubRepositoryStatusIncludedArtifacts> includedArtifacts = null;
-
-  public static final String SERIALIZED_NAME_LAST_HANDLED_RECONCILE_AT = "lastHandledReconcileAt";
-  @SerializedName(SERIALIZED_NAME_LAST_HANDLED_RECONCILE_AT)
-  private String lastHandledReconcileAt;
-
-  public static final String SERIALIZED_NAME_OBSERVED_GENERATION = "observedGeneration";
-  @SerializedName(SERIALIZED_NAME_OBSERVED_GENERATION)
-  private Long observedGeneration;
-
-  public static final String SERIALIZED_NAME_URL = "url";
-  @SerializedName(SERIALIZED_NAME_URL)
-  private String url;
-
-
   public V1GitHubRepositoryStatus artifact(V1GitHubRepositoryStatusArtifact artifact) {
     
     this.artifact = artifact;
@@ -75,138 +54,6 @@ public class V1GitHubRepositoryStatus {
     this.artifact = artifact;
   }
 
-
-  public V1GitHubRepositoryStatus conditions(List<V1GitHubRepositoryStatusConditions> conditions) {
-    
-    this.conditions = conditions;
-    return this;
-  }
-
-  public V1GitHubRepositoryStatus addConditionsItem(V1GitHubRepositoryStatusConditions conditionsItem) {
-    if (this.conditions == null) {
-      this.conditions = new ArrayList<>();
-    }
-    this.conditions.add(conditionsItem);
-    return this;
-  }
-
-   /**
-   * Conditions holds the conditions for the GitHubRepository.
-   * @return conditions
-  **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "Conditions holds the conditions for the GitHubRepository.")
-
-  public List<V1GitHubRepositoryStatusConditions> getConditions() {
-    return conditions;
-  }
-
-
-  public void setConditions(List<V1GitHubRepositoryStatusConditions> conditions) {
-    this.conditions = conditions;
-  }
-
-
-  public V1GitHubRepositoryStatus includedArtifacts(List<V1GitHubRepositoryStatusIncludedArtifacts> includedArtifacts) {
-    
-    this.includedArtifacts = includedArtifacts;
-    return this;
-  }
-
-  public V1GitHubRepositoryStatus addIncludedArtifactsItem(V1GitHubRepositoryStatusIncludedArtifacts includedArtifactsItem) {
-    if (this.includedArtifacts == null) {
-      this.includedArtifacts = new ArrayList<>();
-    }
-    this.includedArtifacts.add(includedArtifactsItem);
-    return this;
-  }
-
-   /**
-   * IncludedArtifacts represents the included artifacts from the last successful repository sync.
-   * @return includedArtifacts
-  **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "IncludedArtifacts represents the included artifacts from the last successful repository sync.")
-
-  public List<V1GitHubRepositoryStatusIncludedArtifacts> getIncludedArtifacts() {
-    return includedArtifacts;
-  }
-
-
-  public void setIncludedArtifacts(List<V1GitHubRepositoryStatusIncludedArtifacts> includedArtifacts) {
-    this.includedArtifacts = includedArtifacts;
-  }
-
-
-  public V1GitHubRepositoryStatus lastHandledReconcileAt(String lastHandledReconcileAt) {
-    
-    this.lastHandledReconcileAt = lastHandledReconcileAt;
-    return this;
-  }
-
-   /**
-   * LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change can be detected.
-   * @return lastHandledReconcileAt
-  **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change can be detected.")
-
-  public String getLastHandledReconcileAt() {
-    return lastHandledReconcileAt;
-  }
-
-
-  public void setLastHandledReconcileAt(String lastHandledReconcileAt) {
-    this.lastHandledReconcileAt = lastHandledReconcileAt;
-  }
-
-
-  public V1GitHubRepositoryStatus observedGeneration(Long observedGeneration) {
-    
-    this.observedGeneration = observedGeneration;
-    return this;
-  }
-
-   /**
-   * ObservedGeneration is the last observed generation.
-   * @return observedGeneration
-  **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "ObservedGeneration is the last observed generation.")
-
-  public Long getObservedGeneration() {
-    return observedGeneration;
-  }
-
-
-  public void setObservedGeneration(Long observedGeneration) {
-    this.observedGeneration = observedGeneration;
-  }
-
-
-  public V1GitHubRepositoryStatus url(String url) {
-    
-    this.url = url;
-    return this;
-  }
-
-   /**
-   * URL is the download link for the artifact output of the last repository sync.
-   * @return url
-  **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "URL is the download link for the artifact output of the last repository sync.")
-
-  public String getUrl() {
-    return url;
-  }
-
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -216,17 +63,12 @@ public class V1GitHubRepositoryStatus {
       return false;
     }
     V1GitHubRepositoryStatus v1GitHubRepositoryStatus = (V1GitHubRepositoryStatus) o;
-    return Objects.equals(this.artifact, v1GitHubRepositoryStatus.artifact) &&
-        Objects.equals(this.conditions, v1GitHubRepositoryStatus.conditions) &&
-        Objects.equals(this.includedArtifacts, v1GitHubRepositoryStatus.includedArtifacts) &&
-        Objects.equals(this.lastHandledReconcileAt, v1GitHubRepositoryStatus.lastHandledReconcileAt) &&
-        Objects.equals(this.observedGeneration, v1GitHubRepositoryStatus.observedGeneration) &&
-        Objects.equals(this.url, v1GitHubRepositoryStatus.url);
+    return Objects.equals(this.artifact, v1GitHubRepositoryStatus.artifact);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(artifact, conditions, includedArtifacts, lastHandledReconcileAt, observedGeneration, url);
+    return Objects.hash(artifact);
   }
 
 
@@ -235,11 +77,6 @@ public class V1GitHubRepositoryStatus {
     StringBuilder sb = new StringBuilder();
     sb.append("class V1GitHubRepositoryStatus {\n");
     sb.append("    artifact: ").append(toIndentedString(artifact)).append("\n");
-    sb.append("    conditions: ").append(toIndentedString(conditions)).append("\n");
-    sb.append("    includedArtifacts: ").append(toIndentedString(includedArtifacts)).append("\n");
-    sb.append("    lastHandledReconcileAt: ").append(toIndentedString(lastHandledReconcileAt)).append("\n");
-    sb.append("    observedGeneration: ").append(toIndentedString(observedGeneration)).append("\n");
-    sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("}");
     return sb.toString();
   }
