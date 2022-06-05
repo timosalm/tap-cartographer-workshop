@@ -23,7 +23,7 @@ public class ControllerConfiguration {
 
     @Bean
     GenericKubernetesApi<V1GitHubRepository, V1GitHubRepositoryList> gitHubRepositoryApi(ApiClient apiClient) {
-        return new GenericKubernetesApi<>(V1GitHubRepository.class, V1GitHubRepositoryList.class, "timosalm.de", "v1beta1", "githubrepositories", apiClient);
+        return new GenericKubernetesApi<>(V1GitHubRepository.class, V1GitHubRepositoryList.class, "timosalm.de", "v1", "githubrepositories", apiClient);
     }
 
     @Bean
@@ -33,8 +33,8 @@ public class ControllerConfiguration {
 
     @Bean
     public GitHubSourceReconciler reconciler(
-            SharedIndexInformer<V1GitHubRepository> parentInformer, ApiClient apiClient, GitHubSourceApplicationService service) {
-        return new GitHubSourceReconciler(parentInformer, apiClient, service);
+            SharedIndexInformer<V1GitHubRepository> parentInformer, GenericKubernetesApi<V1GitHubRepository, V1GitHubRepositoryList> api, GitHubSourceApplicationService service) {
+        return new GitHubSourceReconciler(parentInformer, api, service);
     }
 
     @Bean

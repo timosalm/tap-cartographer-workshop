@@ -8,7 +8,7 @@ import java.util.HashMap;
 @Service
 public class GitHubSourceApplicationService {
 
-    private HashMap<String, GitHubEvent> latestCommitMap = new HashMap<>();
+    private final HashMap<String, GitHubEvent> latestCommitMap = new HashMap<>();
 
     public void addGitHubEvent(GitHubEvent event) {
         String[] splittedRef = event.getRef().split("/");

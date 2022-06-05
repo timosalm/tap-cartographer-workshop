@@ -21,12 +21,12 @@ public class GitHubSourceReconciler implements Reconciler {
     private static final Logger log = LoggerFactory.getLogger(GitHubSourceReconciler.class);
 
     private final SharedIndexInformer<V1GitHubRepository> informer;
-    private final ApiClient apiClient;
+    private final  GenericKubernetesApi<V1GitHubRepository, V1GitHubRepositoryList> api;
     private final GitHubSourceApplicationService service;
 
-    public GitHubSourceReconciler(SharedIndexInformer<V1GitHubRepository> informer, ApiClient apiClient, GitHubSourceApplicationService service) {
+    public GitHubSourceReconciler(SharedIndexInformer<V1GitHubRepository> informer, GenericKubernetesApi<V1GitHubRepository, V1GitHubRepositoryList> api, GitHubSourceApplicationService service) {
         this.informer = informer;
-        this.apiClient = apiClient;
+        this.api = api;
         this.service = service;
     }
 
@@ -45,11 +45,7 @@ public class GitHubSourceReconciler implements Reconciler {
         resource.updateStatus(latestGithubEvent.getTarballUrl(), latestGithubEvent.getRevision());
         log.info("Trying to update status for " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " with " + latestGithubEvent.getTarballUrl());
 
-        GroupVersion gv = GroupVersion.parse(resource);
-        GenericKubernetesApi<V1GitHubRepository, ?> status = new GenericKubernetesApi<>(V1GitHubRepository.class, KubernetesListObject.class,
-                gv.getGroup(), gv.getVersion(), "githubrepositories", this.apiClient);
-
-        KubernetesApiResponse<V1GitHubRepository> update = status.updateStatus(resource, V1GitHubRepository::getStatus);
+        KubernetesApiResponse<V1GitHubRepository> update = api.updateStatus(resource, V1GitHubRepository::getStatus);
         if (!update.isSuccess()) {
             log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName());
         }
