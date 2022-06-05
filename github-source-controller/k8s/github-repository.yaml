@@ -1,0 +1,7 @@
+apiVersion: timosalm.de/v1
+kind: GitHubRepository
+metadata:
+  name: spring-boot-hello-world-workshop-example
+spec:
+  url: https://github.com/tsalm-pivotal/spring-boot-hello-world-workshop-example.git
+  ref: main

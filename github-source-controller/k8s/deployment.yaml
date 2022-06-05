@@ -7,7 +7,37 @@ spec:
     metadata:
       annotations:
         autoscaling.knative.dev/min-scale: "1"
+        autoscaling.knative.dev/minScale: "1"
+        minScale
     spec:
       containers:
       - image: harbor.emea.end2end.link/tap-workshop/github-source-controller
         name: user-container
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: github-source-controller-clusterrole
+rules:
+- apiGroups:
+  - timosalm.de
+  resources:
+  - githubrepositories
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: github-source-controller-clusterbinding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: dev-space
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: github-source-controller-clusterrole
+
+
+   "githubrepositories" in API group "timosalm.de"
