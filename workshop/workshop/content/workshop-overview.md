@@ -1,42 +1,33 @@
-![](images/tap-intro-1.png)
-You already may have heard that **Kubernetes is the new infrastructure abstraction standard**.
-It's already commodity in the public cloud and the same will happen on-premises.
+The goal of this workshop is to get familiar with all the capabilities Cartographer provides.
 
-More than 65% of organizations are already using Kubernetes in production and others will start their infrastructure modernization journey soon to get **benefits** like:
-- Improved resource utilization
-- Shortened software development cycles
-- and Kubernetes also enables a hybrid cloud model
+TAP uses **Supply Chain Choreographer** which is based on the open source **Cartographer** to **allow App Operators create pre-approved paths to production** by integrating Kubernetes resources with the elements of our existing toolchains.
 
-![](images/tap-intro-2.png)
-However, due to the complexity of Kubernetes and its ecosystem the **move to Kubernetes is challenging** for operators and developers. 
-The most common challenges are the **lack of internal experience and expertise** and **to meet the security and compliance requirements**.
+```dashboard:open-url
+url: https://cartographer.sh
+```
 
-![](images/tap-intro-3.png)
-To **maximize the value of a platform** with minimal delivery time and risk we should treat our platforms as a product with a **user-centric approach**.
+Each pre-approved supply chain creates a paved road to production. Orchestrating supply chain resources - test, build, scan, and deploy - allows developers to focus on delivering value to their users and provides App Operators the assurance that all code in production has passed through all the steps of an approved workflow.
 
-The **users of the platform are the developers**.
+##### Design and Philosophy
 
-Due to the **lack of user focus** lots of DIY platforms at our customers have a **big developer experience GAP**.
+Cartographer allows operators via the **Supply Chain** abstraction to define all of the steps that an application must go through to create an image and Kubernetes configuration. 
 
-That's not only because building of Kubernetes platform is complex, also deploying applications on Kubernetes requires expertise in many Container and Kubernetes concepts. 
-And once developers learned them, they still must spend a lot of time maintaining containers, writing YAML templates, and orchestrating many moving Kubernetes parts.
+The supply chain consists of resources that are specified via **Templates**. Each template acts as a wrapper for existing Kubernetes resources and allows them to be used with Cartographer. 
 
-![](images/tap-intro-4.png)
-Organizations with a **higher developer velocity index grow faster and are more innovative** than those with lower developer velocity index.
-This is why we should you care about the Developer Experience! 
+**Contrary to many other Kubernetes native workflow tools** that already exist in the market, **Cartographer does not “run” any of the objects themselves**. Instead, it monitors the execution of each resource and templates the following resource in the supply chain after a given resource has completed execution and updated its status.
 
-![](images/tap-intro-5.png)
-Like in the days when the Waterfall model was the standard for software development, **developers today shouldn’t have to care where and how their applications are running** and focus on adding business value by implementing new features.
+In the **orchestration** model, which is used by most of the current CI/CD tools like Jenkins or Tekton, an **orchestrator** executes, monitor, and manage each of the steps of the path to production. The CI stage, or any others, could not function independently from the orchestrator. In the case of a path to production with a vulnerability scanning step, if a new CVE should arise, the only way to scan the code for it would be to trigger the orchestrator to initiate the scanning step or a new run through the supply chain.
+![](../images/orchestrator.png)
 
-The idea of an **application-aware platform** is to **abstract away all those platform and infrastructure specifics** and give the developers an interface where they only have to define the requirements of the applications they want to deploy on the platform. 
+In the **choreography** model, each step of the path to production and the tool required for that step knows nothing about the next step. It is responsible for receiving a signal that it must perform some work, completing it, and signaling that it has finished. In the same case as above, with a pipeline that has a vulnerability scanner, if there was a new CVE, the vulnerability scanner would know about it and trigger a new scan. When the scan is complete, the vulnerability scanner would send a message indicating that scanning is complete.
+![](../images/choreographer.png)
+Because steps of the path to production are rarely synchronous, for example, if a new CVE comes up, someone clicks the button on a build, and so on, choreography is a natural choice as a workflow engine. Flexibility and the ability to swap steps of the path to production is also of extreme importance.
 
-![](images/tap-intro-6.png)
-The **VMware Tanzu Application Platform** (TAP) is a modular, **application-aware platform** that runs on any compliant public cloud or on-premises Kubernetes cluster. It delivers a superior **developer experience** with a prepaved path to production, including all the needed components preconfigured for developer teams to build and deploy software quickly and securely. 
+The supply chain may also be **extended to include integrations to existing CI/CD pipelines** like for our test automation Tekton Pipeline.
 
-![](images/tap-intro-7.png)
-The VMware Tanzu Application Platform provides capabilities and **tools to optimize the path to production** – the so-called **”outer loop”**.
-In addition, it also provides capabilities and **tools for the “inner loop”** to help development teams working in a shared environment to build applications. 
+VMware Tanzu Application provides a **full integration of all of its components via out of the box Supply Chains** that can be customized for our processes and tools.
 
-![](images/tap-conceptual.png)
-Here is an overview of some of the capabilities of the VMware Tanzu Application Platform that provide a streamlined and secure end-to-end DevSecOps experience on any Kubernetes.
-
+Let's now have a closer look at the path to production for our use-case for which we added one custom step to the ones that are out-of-the-box available with TAP.
+```dashboard:open-url
+url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/product-catalog-management-api-java
+```

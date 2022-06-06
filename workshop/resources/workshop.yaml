@@ -108,7 +108,6 @@ spec:
         - apiGroups: [scanning.apps.tanzu.vmware.com]
           resources: ['imagescans', 'sourcescans']
           verbs: ['*']
-        rules:
         - apiGroups:
           - timosalm.de
           resources:
