@@ -7,19 +7,7 @@ modules:
         exit_sign: OOTB SCs
     exercises/sc-ootb:
         name: Out of the Box Supply Chains
-        exit_sign: Path To Prod (Ops)
-    exercises/sc-testing:
-        name: Execute tests
-        exit_sign: Path To Prod - Use-Case
-    exercises/sc-security:
-        name: Secure the path to production
-        exit_sign: Path To Prod - Container
-    exercises/sc-container-building:
-        name: Build container image
-        exit_sign: Path To Prod - Deployment
-    exercises/sc-deploy:
-        name: Deployment of the application
-        exit_sign: Services Integration
+        exit_sign: Summary
     workshop-summary:
         name: Workshop Summary
         exit_sign: Finish Workshop  

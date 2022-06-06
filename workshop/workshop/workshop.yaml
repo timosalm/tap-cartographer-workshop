@@ -4,9 +4,5 @@ modules:
     - workshop-overview
     - exercises/sc-concept
     - exercises/sc-templates
-    - exercises/workload
-    - exercises/sc-testing
-    - exercises/sc-security
-    - exercises/sc-container-building
-    - exercises/sc-deploy
+    - exercises/sc-ootb
     - workshop-summary

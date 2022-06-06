@@ -250,3 +250,53 @@ spec:
               ref:
                 branch: main
               url: https://github.com/tsalm-pivotal/spring-boot-hello-world.git
+      # supply chain
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $(session_namespace)-cluster-supplychain
+        rules:
+        - apiGroups: [carto.run]
+          resources: ["clusterconfigtemplates", "clusterdeliveries", "clusterdeploymenttemplates","clusterimagetemplates", "clusterruntemplates", "clustersourcetemplates", "clustersupplychains", "clustertemplates"]
+          verbs: ["*"]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: $(session_namespace)-cluster-supplychain
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: $(session_namespace)-cluster-supplychain-reader
+        subjects:
+          - kind: Group
+            name: system:serviceaccounts:$(workshop_namespace)
+            apiGroup: rbac.authorization.k8s.io
+      # Tekton
+      - apiVersion: tekton.dev/v1beta1
+        kind: Pipeline
+        metadata:
+          name: developer-defined-tekton-pipeline
+          labels:
+            apps.tanzu.vmware.com/pipeline: test     # (!) required
+        spec:
+          params:
+            - name: source-url                       # (!) required
+            - name: source-revision                  # (!) required
+          tasks:
+            - name: test
+              params:
+                - name: source-url
+                  value: \$(params.source-url)
+                - name: source-revision
+                  value: \$(params.source-revision)
+              taskSpec:
+                params:
+                  - name: source-url
+                  - name: source-revision
+                steps:
+                  - name: test
+                    image: maven:3-openjdk-11
+                    script: |-
+                      cd `mktemp -d`
+                      wget -qO- \$(params.source-url) | tar xvz -m
+                      mvn test
