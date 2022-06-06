@@ -1,9 +1,12 @@
 modules:
     workshop-overview:
         name: Easily build Cloud Native Supply Chains
-        exit_sign: Workload
-    exercises/workload:
-        name: Configure a continous path to production
+        exit_sign: Templates/CRDs
+    exercises/sc-templates:
+        name: Templates and other CRDs that make up Cartographer
+        exit_sign: OOTB SCs
+    exercises/sc-ootb:
+        name: Out of the Box Supply Chains
         exit_sign: Path To Prod (Ops)
     exercises/sc-testing:
         name: Execute tests

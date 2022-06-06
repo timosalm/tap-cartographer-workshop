@@ -3,6 +3,7 @@ modules:
   activate:
     - workshop-overview
     - exercises/sc-concept
+    - exercises/sc-templates
     - exercises/workload
     - exercises/sc-testing
     - exercises/sc-security

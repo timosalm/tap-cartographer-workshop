@@ -38,6 +38,6 @@ While the **supply chain is operator** facing, Cartographer also provides an **a
 ###### Kubernetes Resource Interoperability
 With Cartographer it's possible to choreograph both Kubernetes and non-Kubernetes resources within the same supply chain via **integrations to existing CI/CD pipelines** like Tekton by using the **Runnable CRD**.
 
-###### The core of VMware Tanzu Application Platform
+###### The Core of VMware Tanzu Application Platform
 
 TAP provides a **full integration of all of its components via out of the box Supply Chains** that can be customized for customers' processes and tools.

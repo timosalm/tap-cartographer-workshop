@@ -1,4 +1,7 @@
 Cartographer uses the **ClusterSupplyChain** object to link the different Cartographer objects. App operators describe which "shape of applications" they deal with (via **spec.selector**) and what series of resources are responsible for creating an artifact that delivers it (via **spec.resources**).
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/workload/#clustersupplychain
+```
 
 Those resources are specified via **Templates**. Each template acts as a wrapper for existing Kubernetes resources and allows them to be used with Cartographer. This way, **Cartographer doesn’t care what tools are used under the hood**.
 
@@ -15,3 +18,14 @@ url: https://cartographer.sh/docs/v0.3.0/reference/template/
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 ```
+
+A **Deliverable** allows the operator to pass information about the configuration to be applied to the environment to the **Delivery**, which continuously deploys and validates Kubernetes configuration to a cluster.
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/deliverable/
+```
+
+To set configurations like the location of the source code repository, environment variables and service claims for an application, there is an abstraction for developers called **Workload**. 
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/workload/#workload
+```
+By using a branch of a GIT repository as source developers can configure a **continous path to production** where every git commit to the codebase will trigger another execution of the supply chain and they have to apply a Workload only once if they start with a new application or microservice. It's also supported via the tanzu CLI to use source code from the filesystem instead of a Git repository and deploy a container image from e.g. an ISV. 
