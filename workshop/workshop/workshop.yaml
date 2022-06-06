@@ -5,4 +5,5 @@ modules:
     - exercises/sc-concept
     - exercises/sc-templates
     - exercises/sc-ootb
+    - exercises/sc-exercise
     - workshop-summary
