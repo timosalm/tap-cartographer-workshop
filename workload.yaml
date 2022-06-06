@@ -1,7 +1,7 @@
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
-  name: python-app
+  name: custom-supply-chain-workshop
   labels:
     app.kubernetes.io/part-of: python-app
     apps.tanzu.vmware.com/workload-type: web
@@ -9,9 +9,9 @@ metadata:
 spec:
   params:
   - name: dockerfile
-    value: ./Dockerfile
+    value: Dockerfile
   source:
     git:
-      url: https://github.com/tsalm-pivotal/spring-boot-hello-world.git
+      url: https://github.com/tsalm-pivotal/python-hello-world-workshop-example.git
       ref:
         branch: main

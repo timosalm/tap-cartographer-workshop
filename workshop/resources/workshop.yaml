@@ -1,0 +1,238 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:json", "json")
+---
+apiVersion: learningcenter.tanzu.vmware.com/v1beta1
+kind: Workshop
+metadata:
+  name: cartographer-workshop
+spec:
+  title: Cartographer
+  description: A workshop that demonstrates all the capabilities Cartographer provides.
+  vendor: tanzu.vmware.com
+  difficulty: beginner
+  duration: 200m
+  url: https://github.com/tsalm-pivotal/tap-cartographer-workshop
+  content:
+    image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
+    files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.username,data.values.workshop_git.branch)
+  session:
+    namespaces:
+      budget: custom
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      console:
+        enabled: true
+        vendor: octant
+      editor:
+        enabled: true
+    env: 
+    - name: TAP_INGRESS
+      value: #@ data.values.tap.ingress_domain
+    - name: TAP_CNRS_SUBDOMAIN
+      value: #@ data.values.tap.cnrs_subdomain
+    - name: CONTAINER_REGISTRY_HOSTNAME
+      value: #@ data.values.container_registry.hostname
+    - name: CONTAINER_REGISTRY_USERNAME
+      value: #@ data.values.container_registry.username
+    - name: CONTAINER_REGISTRY_PASSWORD
+      value: #@ data.values.container_registry.password
+    - name: CONTAINER_REGISTRY_REPOSITORY
+      value: #@ data.values.container_registry.repository
+    objects:
+      - apiVersion: v1
+        kind: LimitRange
+        metadata:
+          name: resource-limits
+        spec:
+          limits:
+            - type: PersistentVolumeClaim
+              max:
+                storage: 10Gi
+      # Permissions for tap-sa (Supply Chain)
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: tanzu-net-credentials
+        type: kubernetes.io/dockerconfigjson
+        data:
+          #@ docker_auth = base64.encode("{}:{}".format(data.values.tanzunet.username, data.values.tanzunet.password))
+          #@ docker_creds = {"username": data.values.tanzunet.username, "password": data.values.tanzunet.password, "auth": docker_auth}
+          .dockerconfigjson: #@ base64.encode(json.encode({"auths": {"registry.tanzu.vmware.com": docker_creds}}))
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: $(session_namespace)-default
+        rules:
+        - apiGroups: [source.toolkit.fluxcd.io]
+          resources: [gitrepositories]
+          verbs: ['*']
+        - apiGroups: [source.apps.tanzu.vmware.com]
+          resources: [imagerepositories]
+          verbs: ['*']
+        - apiGroups: [carto.run]
+          resources: [deliverables, runnables]
+          verbs: ['*']
+        - apiGroups: [kpack.io]
+          resources: [images]
+          verbs: ['*']
+        - apiGroups: [conventions.apps.tanzu.vmware.com]
+          resources: [podintents]
+          verbs: ['*']
+        - apiGroups: [""]
+          resources: ['configmaps']
+          verbs: ['*']
+        - apiGroups: [""]
+          resources: ['pods']
+          verbs: ['list']
+        - apiGroups: [tekton.dev]
+          resources: [taskruns, pipelineruns]
+          verbs: ['*']
+        - apiGroups: [tekton.dev]
+          resources: [pipelines]
+          verbs: ['list']
+        - apiGroups: [kappctrl.k14s.io]
+          resources: [apps]
+          verbs: ['*']
+        - apiGroups: [serving.knative.dev]
+          resources: ['services']
+          verbs: ['*']
+        - apiGroups: [servicebinding.io]
+          resources: ['servicebindings']
+          verbs: ['*']
+        - apiGroups: [services.apps.tanzu.vmware.com]
+          resources: ['resourceclaims']
+          verbs: ['*']
+        - apiGroups: [scanning.apps.tanzu.vmware.com]
+          resources: ['imagescans', 'sourcescans']
+          verbs: ['*']
+        rules:
+        - apiGroups:
+          - timosalm.de
+          resources:
+          - githubrepositories
+          verbs:
+          - '*'
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-default
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: Role
+          name: $(session_namespace)-default
+        subjects:
+          - kind: ServiceAccount
+            name: default
+            namespace: $(session_namespace)
+      # Permissions for workshop session
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-session-crb
+          namespace: $(session_namespace)
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            namespace: $(workshop_namespace)
+            name: $(service_account)
+
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-default-crb
+          namespace: $(session_namespace)
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            namespace: $(session_namespace)
+            name: default
+
+      # Install grype
+      - apiVersion: packaging.carvel.dev/v1alpha1
+        kind: PackageInstall
+        metadata:
+          name: $(session_namespace)-grype
+          namespace: tap-install
+        spec:
+          serviceAccountName: tap-install-sa
+          packageRef:
+            refName: grype.scanning.apps.tanzu.vmware.com
+            versionSelection:
+              constraints: ">=0.0.0"
+              prereleases:
+                identifiers: [beta, build]
+          values:
+          - secretRef:
+              name: $(session_namespace)-grype-values
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: $(session_namespace)-grype-values
+          namespace: tap-install
+        stringData:
+          values.yaml: |
+            ---
+            namespace: $(session_namespace)
+            scanner:
+              pullSecret: ""
+            targetImagePullSecret: registry-credentials
+      # Scan policy
+      - apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+        kind: ScanPolicy
+        metadata:
+          name: scan-policy
+        spec:
+          regoFile: |
+            package policies
+
+            default isCompliant = false
+
+            # Accepted Values: "Critical", "High", "Medium", "Low", "Negligible", "UnknownSeverity"
+            violatingSeverities := ["Critical","High","UnknownSeverity"]
+            ignoreCVEs := []
+
+            contains(array, elem) = true {
+              array[_] = elem
+            } else = false { true }
+
+            isSafe(match) {
+              fails := contains(violatingSeverities, match.Ratings.Rating[_].Severity)
+              not fails
+            }
+
+            isSafe(match) {
+              ignore := contains(ignoreCVEs, match.Id)
+              ignore
+            }
+
+            isCompliant = isSafe(input.currentVulnerability)
+      # Conventions Service
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $(session_namespace)-cluster-resources-reader
+        rules:
+        - apiGroups: [conventions.apps.tanzu.vmware.com]
+          resources: ["clusterpodconventions"]
+          verbs: ["get", "watch", "list"]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: $(session_namespace)-cluster-resources
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: $(session_namespace)-cluster-resources-reader
+        subjects:
+        - kind: Group
+          name: system:serviceaccounts:$(workshop_namespace)
+          apiGroup: rbac.authorization.k8s.io

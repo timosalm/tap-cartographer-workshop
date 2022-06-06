@@ -1,0 +1,26 @@
+modules:
+    workshop-overview:
+        name: A superior developer experience on Kubernetes
+        exit_sign: Use-Case
+    exercises/sc-concept:
+        name: Easily build Cloud Native Supply Chains
+        exit_sign: Path To Prod - Tests
+    exercises/workload:
+        name: Configure a continous path to production
+        exit_sign: Path To Prod (Ops)
+    exercises/sc-testing:
+        name: Execute tests
+        exit_sign: Path To Prod - Use-Case
+    exercises/sc-security:
+        name: Secure the path to production
+        exit_sign: Path To Prod - Container
+    exercises/sc-container-building:
+        name: Build container image
+        exit_sign: Path To Prod - Deployment
+    exercises/sc-deploy:
+        name: Deployment of the application
+        exit_sign: Services Integration
+    workshop-summary:
+        name: Workshop Summary
+        exit_sign: Finish Workshop  
+        

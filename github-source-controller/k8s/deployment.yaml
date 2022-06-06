@@ -6,9 +6,7 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/minScale: "1"
-        minScale
     spec:
       containers:
         - image: harbor.emea.end2end.link/tap-workshop/github-source-controller
@@ -25,18 +23,6 @@ rules:
       - githubrepositories
     verbs:
       - '*'
-  - apiGroups:
-    - authentication.k8s.io
-    resources:
-      - tokenreviews
-    verbs:
-      - create
-  - apiGroups:
-    - authorization.k8s.io
-    resources:
-      - subjectaccessreviews
-    verbs:
-      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

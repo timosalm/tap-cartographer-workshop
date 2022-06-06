@@ -1,0 +1,11 @@
+name: Markdown Sample
+modules:
+  activate:
+    - workshop-overview
+    - exercises/sc-concept
+    - exercises/workload
+    - exercises/sc-testing
+    - exercises/sc-security
+    - exercises/sc-container-building
+    - exercises/sc-deploy
+    - workshop-summary

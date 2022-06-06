@@ -1,0 +1,20 @@
+apiVersion: learningcenter.tanzu.vmware.com/v1beta1
+kind: TrainingPortal
+metadata:
+  name: cartographer-workshops
+spec:
+  portal:
+    title: Workshops for Cartographer
+    ingress:
+        hostname: cartographer-workshops
+    registration:
+        type: anonymous
+    updates:
+      workshop: true
+    sessions:
+      maximum: 40
+    reserved: 1
+  workshops:
+    - name: cartographer-workshop
+      expires: 200m
+      orphaned: 200m

@@ -1,0 +1,25 @@
+#@data/values
+---
+tap:
+  ingress_domain: tap.example.com
+  cnrs_subdomain: cnr.tap.example.com
+container_registry:
+  hostname: harbor.example.com
+  username: admin
+  password:
+  repository: tap-wkld
+workshop_git:
+  username: user
+  branch: main
+tanzunet:
+  username: user@example.com
+  password:
+app_git:
+  url: https://github.com/tsalm-pivotal/tm-forum-poc-ws-repo.git
+  ssh_url: git@github.com:tsalm-pivotal/tm-forum-poc-ws-repo.git
+  ssh_private_key: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    -----END OPENSSH PRIVATE KEY-----
+mongodb:
+  uri: mongodb+srv://user:pw@....mongodb.net/db-name?retryWrites=true&w=majority
+
