@@ -235,6 +235,35 @@ spec:
         - kind: Group
           name: system:serviceaccounts:$(workshop_namespace)
           apiGroup: rbac.authorization.k8s.io
+      # Tekton
+      - apiVersion: tekton.dev/v1beta1
+        kind: Pipeline
+        metadata:
+          name: developer-defined-tekton-pipeline
+          labels:
+            apps.tanzu.vmware.com/pipeline: test     # (!) required
+        spec:
+          params:
+            - name: source-url                       # (!) required
+            - name: source-revision                  # (!) required
+          tasks:
+            - name: test
+              params:
+                - name: source-url
+                  value: \$(params.source-url)
+                - name: source-revision
+                  value: \$(params.source-revision)
+              taskSpec:
+                params:
+                  - name: source-url
+                  - name: source-revision
+                steps:
+                  - name: test
+                    image: maven:3-openjdk-11
+                    script: |-
+                      cd `mktemp -d`
+                      wget -qO- \$(params.source-url) | tar xvz -m
+                      mvn test
       # Example app
       - apiVersion: carto.run/v1alpha1
         kind: Workload
@@ -266,37 +295,8 @@ spec:
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: $(session_namespace)-cluster-supplychain-reader
+          name: $(session_namespace)-cluster-supplychain
         subjects:
           - kind: Group
             name: system:serviceaccounts:$(workshop_namespace)
             apiGroup: rbac.authorization.k8s.io
-      # Tekton
-      - apiVersion: tekton.dev/v1beta1
-        kind: Pipeline
-        metadata:
-          name: developer-defined-tekton-pipeline
-          labels:
-            apps.tanzu.vmware.com/pipeline: test     # (!) required
-        spec:
-          params:
-            - name: source-url                       # (!) required
-            - name: source-revision                  # (!) required
-          tasks:
-            - name: test
-              params:
-                - name: source-url
-                  value: \$(params.source-url)
-                - name: source-revision
-                  value: \$(params.source-revision)
-              taskSpec:
-                params:
-                  - name: source-url
-                  - name: source-revision
-                steps:
-                  - name: test
-                    image: maven:3-openjdk-11
-                    script: |-
-                      cd `mktemp -d`
-                      wget -qO- \$(params.source-url) | tar xvz -m
-                      mvn test

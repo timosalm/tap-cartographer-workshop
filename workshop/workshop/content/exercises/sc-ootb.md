@@ -34,3 +34,16 @@ For workloads that use source code or prebuilt images, it performs the following
 1. Scanning the image for known vulnerabilities
 2. Applying operator-defined conventions to the container definition
 3. Creating a deliverable object for deploying the application to a cluster
+
+With the following command, we are able to extract it from the cluster and can have a closer look via VSCode.
+```terminal:execute
+command: |
+ mkdir supply-chain-testing-scanning
+ kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate" | kubectl slice -o supply-chain-testing-scanning/ -f-
+clear: true
+```
+
+```editor:open-file
+file: supply-chain-testing-scanning/clustersourcetemplate-testing-pipeline.yaml
+line: 1
+```
