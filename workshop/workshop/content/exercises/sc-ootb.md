@@ -40,7 +40,7 @@ With the following command, we are able to extract it from the cluster and can h
 command: |
  mkdir supply-chain-testing-scanning
  kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate" | kubectl slice -o supply-chain-testing-scanning/ -f-
- find -type f -name '*custom*' -delete
+ find supply-chain-testing-scanning/  -type f -name '*custom*' -delete
 clear: true
 ```
 

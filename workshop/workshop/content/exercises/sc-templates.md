@@ -1,9 +1,185 @@
-Cartographer uses the **ClusterSupplyChain** object to link the different Cartographer objects. App operators describe which "shape of applications" they deal with (via **spec.selector**) and what series of resources are responsible for creating an artifact that delivers it (via **spec.resources**).
+Let's now explore the two fundamental resources that an operator deploys, **Supply Chains** and **Templates**, and how these interact with the resource a developer deploys, the **Workload**. 
+We’ll do this hands-on with an example for a simple supply chain that watches a GIT repository for changes, builds a container image and deploys it to the cluster.
+```terminal:execute
+command: mkdir simple-supply-chain
+```
+
+###### ClusterSupplyChain
+Cartographer uses the **ClusterSupplyChain** custom resource to link the different Cartographer objects. 
+
+App operators can describe which "shape of applications" they deal with (via e.g. `spec.selector`) and what series of resources are responsible for creating an artifact that delivers it (via `spec.resources`).
+
+```editor:append-lines-to-file
+file: simple-supply-chain/supply-chain.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterSupplyChain
+  metadata:
+    name: simple-supplychain-{{ session_namespace }}
+  spec:
+    selector:
+      end2end.link/workshop-session: {{ session_namespace }}
+    resources: []
+```
+
+Those **Workloads** that match `spec.selector`, `spec.selectorMatchExpressions`, and/or `spec.selectorMatchFields` then go through the specified resources specified in `spec.resources`.
+
+The **matching of Workloads to a Supply Chain** follows the rule that if the seclectors of several Supply Chains match a Workload, **the more concise match (e.g. more matching labels) is selected**. If **more than one match** is returned, the **Workload will not be assigned to a Supply Chain**. 
+In our case we use just a label selector that is unique to this workshop session to ensure that there is no additional match.
+
+A `.spec.serviceAccountRef` configuration refers to the Service account with permissions to create resources submitted by the supply chain. If it's like in our example not set, Cartographer will use the default service account in the Workload's namespace.
+
+Additional parameters can be configured with `.spec.params`. They follow a hierarchy and default values (`.spec.params[*].default`) can be overriden by the Workload in constrast to those set with `.spec.params[*].value`.  
+
+The detailed specification can be found here: 
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/workload/#clustersupplychain
 ```
 
+###### Workload
+Before we define our resources, let's have a look at the **Workload** which is an **abstraction for developers** to configure things like the location of the source code repository, environment variables and service claims for an application to be delivered through the supply chain.
+```editor:append-lines-to-file
+file: simple-supply-chain/workload.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: Workload
+  metadata:
+    labels:
+      app.kubernetes.io/part-of: simple-app
+      end2end.link/workshop-session: {{ session_namespace }}
+    name: simple-app
+  spec:
+    source:
+      git:
+        ref:
+          branch: main
+        url: https://github.com/tsalm-pivotal/python-hello-world-workshop-example.git
+```
+For the matching of our Workload and Supply Chain we have to set the **label of our ClusterSupplyChain's label selector**. We also defined `app.kubernetes.io/part-of: simple-app` as a label which is required for the commercial Supply Chain Choreographer UI plugin. 
+The location of an application's source code can be configured via the `spec.source` field. Here, we are using a branch of a GIT repository as source to be able to implement a **continous path to production** where every git commit to the codebase will trigger another execution of the Supply Chain and developers only have to apply a Workload only once if they start with a new application or microservice. 
+For the to be deployed application, the Workload custom resource also provides configuration options for a **pre-built image in a registry** from e.g. an ISV via `spec.image` and, for a special functionality of the **tanzu CLI**, a **source code container image**, which will be created from source code in a local filesystem and pushed to a registry by the tanzu CLI via `spec.source.image`.
+
+Other configuration options are available for resource constraints (`spec.limits`, `spec.requests`) and environment variables for the build resources in the supply chain (`spec.build.env`) and to be passed to the running application (`spec.env`).
+
+Last but not least via (`.spec.params`), it's possible to overide default values of the additional parameters that are used in the Supply Chain but not part of the official Workload specification.
+
+The detailed specification can be found here: 
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/workload/#workload
+```
+
+###### Templates
+
+We will now start to implement the first of our series of resources that are responsible for bringing the application to a deliverable state.
 Those resources are specified via **Templates**. Each template acts as a wrapper for existing Kubernetes resources and allows them to be used with Cartographer. This way, **Cartographer doesn’t care what tools are used under the hood**.
+There are currently four different types of templates that can be use in a Cartographer supply chain: **ClusterSourceTemplate**, **ClusterImageTemplate**, **ClusterConfigTemplate**, and the generic **ClusterTemplate**.
+
+The detailed specifications can be found here: 
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/template/
+```
+
+####### ClusterSourceTemplate
+ 
+A **ClusterSourceTemplate** indicates how the supply chain could instantiate an object responsible for providing source code. 
+```editor:append-lines-to-file
+file: simple-supply-chain/source-template.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterSourceTemplate
+  metadata:
+    name: simple-source-template-{{ session_namespace }}
+  spec:
+    urlPath: ""
+    revisionPath: ""
+    template: {}
+```
+All ClusterSourceTemplate cares about is whether the **urlPath** and **revisionPath** are passed in correctly from the templated object that implements the actual functionality we want to use as part for our path to production.
+
+For our continous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code GIT repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for the following steps/resources.
+
+**In best case** there is already a Kubernetes native solution with a **custom resource available for the functionality** we are looking for. **Otherwise, we can leverage a Kubernetes native CI/CD solution** like Tekton to do the job, which is part of TAP. For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
+
+In this case, the [Flux](https://fluxcd.io) Source Controller is part of TAP for this functionality, which is a Kubernetes operator that helps to acquire artifacts from external sources such as Git, Helm repositories, and S3 buckets. 
+We can have a closer look at the custom resource the solution provides via the following command and then only have to configure it as a template in the ClusterSourceTemplate.
+```terminal:execute
+command: kubectl describe crds gitrepositories -o yaml
+```
+
+There are **two options for templating**:
+- **Simple templates** can be defined in `spec.template` and provide string interpolation in a `\$(...)\$` tag with jsonpath syntax.
+- **ytt** for complex logic, such as conditionals or looping over collections (defined via `spec.ytt` in Templates).
+
+Both options for templating **provide a data structure** that contains:
+- Owner resource (Workload, Deliverable)
+- Inputs, that are specified in the ClusterSupplyChain (or ClusterDelivery) for the template (sources, images, configs, deployments)
+- Parameters
+
+More information can be found here: 
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/templating/
+```
+
+For our first functionailty, we will use a simple template and use the configuration provided by the Workload.
+```editor:select-matching-text
+file: simple-supply-chain/source-template.yaml
+text:   template: {}
+```
+{% raw %}
+```editor:replace-text-selection
+file: simple-supply-chain/source-template.yaml
+text: |2
+    template:
+      apiVersion: source.toolkit.fluxcd.io/v1beta1
+      kind: GitRepository
+      metadata:
+        name: $(workload.metadata.name)$
+      spec:
+        interval: 1m0s
+        url: $(workload.spec.source.git.url)$
+        ref: $(workload.spec.source.git.ref)$
+```
+{% endraw %}
+
+On every successful repository sync the status of the custom GitRepository resource will be updated with an url to download an archive that contains the source code and the revision. We can use this information as the output of our Template specified in jsonpath.
+  # format, eg: .status.artifact.url
+```editor:select-matching-text
+file: simple-supply-chain/source-template.yaml
+text:   urlPath: ""
+after: 1
+```
+```editor:replace-text-selection
+file: simple-supply-chain/source-template.yaml
+text: |2
+    urlPath: .status.artifact.url
+    revisionPath: .status.artifact.revision
+```
+
+The last thing we have to do is to reference our template in the `spec.resources` of our Supply Chain.
+```editor:select-matching-text
+file: simple-supply-chain/supply-chain.yaml
+text:   resources: []
+```
+```editor:replace-text-selection
+file: simple-supply-chain/supply-chain.yaml
+text: |2
+    resources:
+    - name: source-provider
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: simple-source-template-{{ session_namespace }}
+```
+
+With the `spec.resources[*].templateRef.options` field it's also possible to define multiple templates of the same kind for one resource to change the implementation of a step based on a selector.
+
+####### ClusterImageTemplate
+A **ClusterImageTemplate** instructs how the supply chain should instantiate an object responsible for supplying container images. The outputof the underlying tool has to be passed into the cartographer's Object **imagePath**.
+
+Sound like a perfect match for our second step in the path to production - bulding of a container out of the provided source-code by the first step.
+
+
+
+
 
 Let’s take a closer look at each Cartographer object and see how they wrap the individual components inside of it.
 ```dashboard:open-url
@@ -19,13 +195,27 @@ url: https://cartographer.sh/docs/v0.3.0/reference/template/
 url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 ```
 
+
+Parameter Hierarchy
+
+Templates can specify default values for parameters in spec.params.
+
+These parameters may be overridden by the blueprint, which allows operators to specify:
+
+a default value which can be overridden by the owner’s spec.params
+a value which cannot be overridden by the owner
+Blueprint parameters can be specified globally in spec.params or per resource spec.resource[].params If the per resource param is specified, the global blueprint param is ignored.
+
 A **Deliverable** allows the operator to pass information about the configuration to be applied to the environment to the **Delivery**, which continuously deploys and validates Kubernetes configuration to a cluster.
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/deliverable/
 ```
 
-To set configurations like the location of the source code repository, environment variables and service claims for an application, there is an abstraction for developers called **Workload**. 
+
+
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/workload/#clustersupplychain
+```
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/workload/#workload
 ```
-By using a branch of a GIT repository as source developers can configure a **continous path to production** where every git commit to the codebase will trigger another execution of the supply chain and they have to apply a Workload only once if they start with a new application or microservice. It's also supported via the tanzu CLI to use source code from the filesystem instead of a Git repository and deploy a container image from e.g. an ISV. 

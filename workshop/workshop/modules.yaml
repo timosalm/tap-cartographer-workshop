@@ -1,7 +1,7 @@
 modules:
     workshop-overview:
         name: Easily build Cloud Native Supply Chains
-        exit_sign: Templates/CRDs
+        exit_sign: Building blocks
     exercises/sc-templates:
         name: Templates and other CRDs that make up Cartographer
         exit_sign: OOTB SCs
