@@ -1,8 +1,9 @@
 # tap-cartographer-workshop
 
 ## Prerequisites
-kapp deploy -a tekton-triggers -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml -f https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.6/git-clone.yaml
+
+- kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.3/git-cli.yaml
+
 
 ## Content
 - Design and Philosophy
