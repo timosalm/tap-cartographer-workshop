@@ -90,11 +90,22 @@ The detailed specifications of the Runnable and ClusterRunTemplate can be found 
 url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 ```
 
-Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin whether everything works as expected.
+Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 ```terminal:execute
 command: kapp deploy -a simple-supply-chain -f simple-supply-chain
 clear: true
 ```
+
 ```dashboard:open-url
 url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-app
+```
+
+```terminal:execute
+command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
+clear: true
+```
+
+```terminal:execute
+command: kubectl tree workload simple-app
+clear: true
 ```

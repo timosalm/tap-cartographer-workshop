@@ -78,6 +78,10 @@ text: |2
         source:
           blob:
             url: #@ data.values.source.url
+        builder:
+          kind: ClusterBuilder
+          name: default
+
 ```
 We are using a ytt function to construct the tag of the container image and are using the data values defined in our Workload, the parameters and the source input.
 
