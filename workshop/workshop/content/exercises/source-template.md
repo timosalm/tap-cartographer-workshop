@@ -11,7 +11,7 @@ text: |2
     revisionPath: ""
     template: {}
 ```
-All ClusterSourceTemplate cares about is whether the **urlPath** and **revisionPath** are passed in correctly from the templated object that implements the actual functionality we want to use as part for our path to production.
+All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part for our path to production.
 
 For our continous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code GIT repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for the following steps/resources.
 

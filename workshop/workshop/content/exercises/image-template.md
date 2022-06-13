@@ -47,7 +47,7 @@ url: https://github.com/pivotal/kpack/blob/main/docs/image.md
 Let's add it to our ClusterImageTemplate resource.
 ```editor:select-matching-text
 file: simple-supply-chain/image-template.yaml
-text:   imagePath: ""
+text: "  imagePath: \"\""
 after: 1
 ```
 ```editor:replace-text-selection
