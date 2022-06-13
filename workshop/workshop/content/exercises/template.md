@@ -11,7 +11,7 @@ text: |2
       templateRef:
         kind: ClusterTemplate
         name: simple-config-writer-template-{{ session_namespace }}
-      config:
+      configs:
       - resource: app-config
         name: config
       params:

@@ -60,6 +60,8 @@ text: |2
         - name: ssh-directory
           secret:
             secretName: git-ssh-credentials
+        - name: source
+          emptyDir: {}
         params:
           - name: GIT_USER_NAME
             value: {{ session_namespace }}
@@ -92,7 +94,7 @@ url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 
 Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 ```terminal:execute
-command: kapp deploy -a simple-supply-chain -f simple-supply-chain
+command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
 clear: true
 ```
 
@@ -107,5 +109,10 @@ clear: true
 
 ```terminal:execute
 command: kubectl tree workload simple-app
+clear: true
+```
+
+```terminal:execute
+command: kubectl describe workload simple-app 
 clear: true
 ```

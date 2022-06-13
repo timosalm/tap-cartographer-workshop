@@ -19,8 +19,6 @@ text: |2
       params:
       - name: gitops_repository
         value: {{ ENV_GITOPS_REPOSITORY}}
-      - name: gitops_ssh_secret
-        value: {{ ENV_GITOPS_SSH_PRIVATE_KEY }}
 ```
 
 ```editor:append-lines-to-file
@@ -35,8 +33,6 @@ metadata:
 spec:
   params:
     - name: gitops_repository
-      default: ""
-    - name: gitops_ssh_secret
       default: ""
     
   template:
@@ -74,9 +70,6 @@ text: |2
       templateRef:
         kind: ClusterSourceTemplate
         name: delivery-source-template-{{ session_namespace }}
-      params:
-      - name: "gitops_ssh_secret"
-        value: $(params.gitops_ssh_secret)
     - name: deployer
       templateRef:
         kind: ClusterDeploymentTemplate
@@ -97,9 +90,6 @@ text: |2
   metadata:
     name: delivery-source-template-{{ session_namespace }}
   spec:
-    params:
-    - name: "gitops_ssh_secret"
-      default: ""
     urlPath: .status.artifact.url
     revisionPath: .status.artifact.revision
     template:
@@ -112,7 +102,7 @@ text: |2
         url: #@ data.values.deliverable.spec.source.git.url
         ref: main
         secretRef:
-          name: #@ data.values.params.gitops_ssh_secret
+          name: flux-basic-access-auth
 ```
 
 Let's now continue with the creation of the **ClusterDeploymentTemplate**.
@@ -157,7 +147,7 @@ The App CR comprises of three main sections:
 
 We are now able to apply our updated and new resources to the cluster.
 ```terminal:execute
-command: kapp deploy -a simple-supply-chain -f simple-supply-chain
+command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
 clear: true
 ```
 

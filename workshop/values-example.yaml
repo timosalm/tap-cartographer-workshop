@@ -15,7 +15,6 @@ tanzunet:
   username: user@example.com
   password:
 gitops:
-  ssh_repository_prefix: git@github.com:tsalm-pivotal/
-  ssh_private_key:_ssh_private_key: |
-    -----BEGIN OPENSSH PRIVATE KEY-----
-    -----END OPENSSH PRIVATE KEY-----
+  https_repository_prefix: https://github.com/tsalm-pivotal
+  basic_auth_username:
+  basic_auth_password: 
