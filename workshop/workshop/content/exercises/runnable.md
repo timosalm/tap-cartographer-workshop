@@ -25,7 +25,7 @@ text: |2
 
         inputs:
           git_repository: #@ data.values.params.git_repository
-          git_files: #@ base64.encode(json.encode(data.values.config))
+          git_files: #@ data.values.config
 ```
 
 ```editor:append-lines-to-file

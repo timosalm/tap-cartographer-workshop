@@ -25,26 +25,26 @@ text: |2
 file: simple-supply-chain/deliverable-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
-kind: ClusterTemplate
-metadata:
-  name: simple-deliverable-template-{{ session_namespace }}
-  labels:
-    app.tanzu.vmware.com/deliverable-type: web
-spec:
-  template:
-    apiVersion: carto.run/v1alpha1
-    kind: Deliverable
-    metadata:
-      name: $(workload.metadata.name)$
-      labels:
-        end2end.link/workshop-session: {{ session_namespace }}
-    spec:
-      params:
-      source:
-        git:
-          url: $(params.gitops_repository)
-          ref:
-            branch: main
+  kind: ClusterTemplate
+  metadata:
+    name: simple-deliverable-template-{{ session_namespace }}
+    labels:
+      app.tanzu.vmware.com/deliverable-type: web
+  spec:
+    template:
+      apiVersion: carto.run/v1alpha1
+      kind: Deliverable
+      metadata:
+        name: $(workload.metadata.name)$
+        labels:
+          end2end.link/workshop-session: {{ session_namespace }}
+      spec:
+        params:
+        source:
+          git:
+            url: $(params.gitops_repository)
+            ref:
+              branch: main
 ```
 
 We will now create our full ClusterDelivery and after that implement all the required Templates.
