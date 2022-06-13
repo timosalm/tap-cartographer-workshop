@@ -38,3 +38,22 @@ More information can be found here:
 url: https://cartographer.sh/docs/v0.3.0/templating/
 ```
 
+For our first functionailty, we will use a simple template and use the configuration provided by the Workload.
+```editor:select-matching-text
+file: simple-supply-chain/source-template.yaml
+text:   template: {}
+```
+```editor:replace-text-selection
+file: simple-supply-chain/source-template.yaml
+text: |2
+    template:
+      apiVersion: source.toolkit.fluxcd.io/v1beta1
+      kind: GitRepository
+      metadata:
+        name: $(workload.metadata.name)$
+      spec:
+        interval: 1m0s
+        url: $(workload.spec.source.git.url)$
+        ref: $(workload.spec.source.git.ref)$
+```
+
