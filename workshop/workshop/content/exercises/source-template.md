@@ -33,6 +33,8 @@ Both options for templating **provide a data structure** that contains:
 - Inputs, that are specified in the ClusterSupplyChain (or ClusterDelivery) for the template (sources, images, configs, deployments)
 - Parameters
 
+**Hint:** It's only supported to define a resource template for **one** Kubernetes (Custom) Resource. Additional resources will not be stamped out!
+
 More information can be found here: 
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/templating/

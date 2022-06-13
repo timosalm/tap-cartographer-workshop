@@ -59,7 +59,7 @@ text: |2
         taskRef:
           name: git-cli
         workspaces:
-        - name: ssh-directory
+        - name: basic-auth
           secret:
             secretName: tekton-basic-access-auth
         - name: source
@@ -84,8 +84,10 @@ text: |2
               cd config
 
               echo "$(runnable.spec.inputs.git_files)$"  | base64 -d > files.json
-              eval "$(cat files.json | jq -r 'to_entries | .[] | @sh "mkdir -p $(dirname \(.key)) && echo \(.value) > \(.key) && git add \(.key)"')"
 
+              cat tmp.yaml | jq -r 'to_entries | .[].value' > delivery.yml
+              
+              git add delivery.yml
               git commit -m "Update deployment configuration"
               git push origin main
 ```
