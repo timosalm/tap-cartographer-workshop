@@ -4,6 +4,9 @@ modules:
         exit_sign: Supply Chain
     exercises/supply-chain:
         name: ClusterSupplyChain
+        exit_sign: Workload
+    exercises/workload:
+        name: Workload
         exit_sign: Source Template
     exercises/source-template:
         name: ClusterSourceTemplate

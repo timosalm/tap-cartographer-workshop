@@ -4,6 +4,7 @@ modules:
     - workshop-overview
     - exercises/sc-concept
     - exercises/supply-chain
+    - exercises/workload
     - exercises/source-template
     - exercises/image-template
     - exercises/config-template

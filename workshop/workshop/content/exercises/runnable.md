@@ -10,7 +10,6 @@ text: "  ytt: \"\""
 ```editor:replace-text-selection
 file: simple-supply-chain/config-writer-template.yaml
 text: |2
-    imagePath: .status.latestImage
     ytt: |
       #@ load("@ytt:data", "data")
       ---
