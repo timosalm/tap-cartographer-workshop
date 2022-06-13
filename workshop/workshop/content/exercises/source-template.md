@@ -41,7 +41,7 @@ url: https://cartographer.sh/docs/v0.3.0/templating/
 For our first functionailty, we will use a simple template and use the configuration provided by the Workload.
 ```editor:select-matching-text
 file: simple-supply-chain/source-template.yaml
-text:   template: {}
+text: "  template: {}"
 ```
 ```editor:replace-text-selection
 file: simple-supply-chain/source-template.yaml
@@ -57,3 +57,38 @@ text: |2
         ref: $(workload.spec.source.git.ref)$
 ```
 
+On every successful repository sync the status of the custom GitRepository resource will be updated with an url to download an archive that contains the source code and the revision. We can use this information as the output of our Template specified in jsonpath.
+```editor:select-matching-text
+file: simple-supply-chain/source-template.yaml
+text: "  urlPath: \"\""
+after: 1
+```
+```editor:replace-text-selection
+file: simple-supply-chain/source-template.yaml
+text: |2
+    urlPath: .status.artifact.url
+    revisionPath: .status.artifact.revision
+```
+
+The last thing we have to do is to reference our template in the `spec.resources` of our Supply Chain.
+```editor:select-matching-text
+file: simple-supply-chain/supply-chain.yaml
+text: "  resources: []"
+```
+
+```editor:replace-text-selection
+file: simple-supply-chain/supply-chain.yaml
+text: |2
+    resources:
+    - name: source-provider
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: simple-source-template-{{ session_namespace }}
+```
+
+With the `spec.resources[*].templateRef.options` field it's also possible to define multiple templates of the same kind for one resource to change the implementation of a step based on a selector.
+
+The detailed specifications of the ClusterSourceTemplate can be found here: 
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.3.0/reference/template/#clustersourcetemplate
+```
