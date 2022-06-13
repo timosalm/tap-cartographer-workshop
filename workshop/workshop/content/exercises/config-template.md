@@ -21,7 +21,7 @@ text: |2
   metadata:
     name: simple-config-template-{{ session_namespace }}
   spec:
-    configPath: .data
+    configPath: .data.delivery
     ytt: |
       #@ load("@ytt:data", "data")
       #@ load("@ytt:yaml", "yaml")
@@ -45,7 +45,7 @@ text: |2
       metadata:
         name: #@ data.values.workload.metadata.name
       data:
-        delivery.yml: #@ yaml.encode(delivery())
+        delivery: #@ yaml.encode(delivery())
 ```
 The ClusterConfigTemplate requires definition of a `spec.configPath` and it will update its status to emit a config value, which is a reflection of the value at the path on the created object. 
 
