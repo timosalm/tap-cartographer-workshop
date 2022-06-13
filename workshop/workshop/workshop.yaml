@@ -3,7 +3,12 @@ modules:
   activate:
     - workshop-overview
     - exercises/sc-concept
-    - exercises/sc-templates
+    - exercises/supply-chain
+    - exercises/source-template
+    - exercises/image-template
+    - exercises/config-template
+    - exercises/template
+    - exercises/runnable
+    - exercises/delivery
     - exercises/sc-ootb
-    - exercises/sc-exercise
     - workshop-summary

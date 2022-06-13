@@ -1,15 +1,30 @@
 modules:
     workshop-overview:
         name: Easily build Cloud Native Supply Chains
-        exit_sign: Building blocks
-    exercises/sc-templates:
-        name: Templates and other CRDs that make up Cartographer
+        exit_sign: Supply Chain
+    supply-chain:
+        name: ClusterSupplyChain
+        exit_sign: Source Template
+    source-template:
+        name: ClusterSourceTemplate
+        exit_sign: Image Template
+    image-template:
+        name: ClusterImageTemplate
+        exit_sign: Config Template
+    config-template:
+        name: ClusterConfigTemplate
+        exit_sign: Template
+    template: 
+        name:  ClusterTemplate
+        exit_sign: Runnable
+    runnable:
+        name: Runnable and ClusterRunTemplate
+        exit_sign: Delivery
+    delivery:
+        name: Deliverable, ClusterDelivery, ClusterDeploymentTemplate
         exit_sign: OOTB SCs
     exercises/sc-ootb:
         name: Out of the Box Supply Chains
-        exit_sign: exercise
-    exercises/sc-exercise:
-        name: Building a custom Supply Chain
         exit_sign: Summary
     workshop-summary:
         name: Workshop Summary
