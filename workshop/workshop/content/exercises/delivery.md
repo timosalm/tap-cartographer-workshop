@@ -42,7 +42,7 @@ text: |2
         params:
         source:
           git:
-            url: $(params.gitops_repository)
+            url: $(params.gitops_repository)$
             ref:
               branch: main
 ```
@@ -90,11 +90,12 @@ text: |2
       apiVersion: source.toolkit.fluxcd.io/v1beta1
       kind: GitRepository
       metadata:
-        name: #@ data.values.deliverable.metadata.name + "-delivery"
+        name: $(deliverable.metadata.name)$-delivery
       spec:
         interval: 1m0s
-        url: #@ data.values.deliverable.spec.source.git.url
-        ref: main
+        url: $(deliverable.spec.source.git.url)$
+        ref:
+          branch: main
         secretRef:
           name: flux-basic-access-auth
 ```
@@ -120,11 +121,29 @@ text: |2
       apiVersion: kappctrl.k14s.io/v1alpha1
       kind: App
       metadata:
-        name: #@ data.values.deliverable.metadata.name
+        name: $(deliverable.metadata.name)$
       spec:
+        serviceAccountName: default
         fetch:
           - http:
-              url: #@ data.values.deployment.url
+              url: $(deployment.url)$
+          - inline:
+             paths:
+              config.yml: |
+                ---
+                apiVersion: kapp.k14s.io/v1alpha1
+                kind: Config
+                rebaseRules:
+                  - path: [metadata, annotations, serving.knative.dev/creator]
+                    type: copy
+                    sources: [new, existing]
+                    resourceMatchers: &matchers
+                      - apiVersionKindMatcher: {apiVersion: serving.knative.dev/v1, kind: Service}
+                  - path: [metadata, annotations, serving.knative.dev/lastModifier]
+                    type: copy
+                    sources: [new, existing]
+                    resourceMatchers: *matchers
+
         template:
           - ytt: {}
         deploy:
@@ -142,6 +161,31 @@ The App CR comprises of three main sections:
 We are now able to apply our updated and new resources to the cluster.
 ```terminal:execute
 command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
+clear: true
+```
+
+```terminal:execute
+command: kubectl describe ClusterDelivery simple-delivery-{{ session_namespace }}
+clear: true
+```
+
+```terminal:execute
+command: kubectl tree deliverable simple-app
+clear: true
+```
+
+```terminal:execute
+command: kubectl describe deliverable simple-app
+clear: true
+```
+
+```terminal:execute
+command: kubectl describe app simple-app
+clear: true
+```
+
+```terminal:execute
+command: kubectl describe kservice simple-app
 clear: true
 ```
 

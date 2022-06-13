@@ -35,8 +35,10 @@ text: |2
         template: 
           spec:
             containers:
-              image: #@ data.values.image
+            - image: #@ data.values.image
               name: workload
+              ports:
+              - containerPort: 5000
       #@ end
 
       ---
