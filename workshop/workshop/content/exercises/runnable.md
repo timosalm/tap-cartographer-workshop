@@ -83,10 +83,8 @@ text: |2
               mkdir -p config && rm -rf config/*
               cd config
 
-              echo "$(runnable.spec.inputs.git_files)$"  | base64 -d > files.json
+              echo "$(runnable.spec.inputs.git_files)$" | jq -r 'to_entries | .[].value' > delivery.yml
 
-              cat tmp.yaml | jq -r 'to_entries | .[].value' > delivery.yml
-              
               git add delivery.yml
               git commit -m "Update deployment configuration"
               git push origin main
