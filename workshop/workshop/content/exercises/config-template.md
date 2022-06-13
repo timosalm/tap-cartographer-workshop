@@ -38,7 +38,7 @@ text: |2
             - image: #@ data.values.image
               name: workload
               ports:
-              - containerPort: 5000
+              - containerPort: 8080
       #@ end
 
       ---

@@ -102,21 +102,17 @@ command: |
   kubectl apply -f workload.yaml
 clear: true
 ```
-
 ```dashboard:open-url
 url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-app
 ```
-
 ```terminal:execute
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl tree workload simple-app
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl describe workload simple-app 
 clear: true

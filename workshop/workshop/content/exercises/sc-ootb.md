@@ -34,17 +34,17 @@ For workloads that use source code or prebuilt images, it performs the following
 2. Applying operator-defined conventions to the container definition
 3. Creating a deliverable object for deploying the application to a cluster
 
-With the following command, we are able to extract it from the cluster and can have a closer look via VSCode.
+With the following command, we are able to extract it from the cluster and can have a closer look via VSCode, how they are implemented.
 ```terminal:execute
 command: |
- mkdir supply-chain-testing-scanning
- kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate,deliverable" | kubectl slice -o supply-chain-testing-scanning/ -f-
- find supply-chain-testing-scanning/ -type f -name '*custom*' -delete
- find supply-chain-testing-scanning/ -type f -name '*simple*' -delete
+ mkdir ootb-sc-testing-scanning
+ kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate,deliverable" | kubectl slice -o ootb-sc-testing-scanning/ -f-
+ find ootb-sc-testing-scanning/ -type f -name '*custom*' -delete
+ find ootb-sc-testing-scanning/ -type f -name '*simple*' -delete
 clear: true
 ```
 
 ```editor:open-file
-file: supply-chain-testing-scanning/clustersourcetemplate-testing-pipeline.yaml
+file: ootb-sc-testing-scanning/clustersupplychain-source-test-scan-to-url.yaml
 line: 1
 ```

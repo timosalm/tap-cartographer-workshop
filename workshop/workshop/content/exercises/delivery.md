@@ -158,35 +158,34 @@ The App CR comprises of three main sections:
 - `spec.template` declares templating tool and values
 - `spec.deploy` declares deployment tool and any deploy specific configuration. Currently only Carvel’s kapp CLI is supported.
 
-We are now able to apply our updated and new resources to the cluster.
+We are now able to apply our updated and new resources to the cluster ...
 ```terminal:execute
 command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
 clear: true
 ```
-
+... and can check whether everything is working as expected and the deplyed application is accessible.
 ```terminal:execute
 command: kubectl describe ClusterDelivery simple-delivery-{{ session_namespace }}
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl tree deliverable simple-app
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl describe deliverable simple-app
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl describe app simple-app
 clear: true
 ```
-
 ```terminal:execute
 command: kubectl describe kservice simple-app
 clear: true
+```
+```dashboard:open-url
+url: https://simple-app-{{ session_namespace }}.cnr.{{ ENV_TAP_INGRESS }}
 ```
 
 The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here: 
@@ -195,4 +194,14 @@ url: https://cartographer.sh/docs/v0.3.0/reference/deliverable/
 ```
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/template/#clusterdeploymenttemplate
+```
+
+Now that you have a better understanding of how all the building blocks of Cartographer work, let's have a look what's out of the box with VMware Application Platform.
+
+But before, let's delete the resources that we applied to the cluster.
+```terminal:execute
+command: |
+  kubectl delete -f workload.yaml
+  kapp delete -a simple-supply-chain
+clear: true
 ```
