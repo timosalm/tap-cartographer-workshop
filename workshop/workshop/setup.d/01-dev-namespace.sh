@@ -63,3 +63,19 @@ spec:
               wget -qO- $(params.source-url) | tar xvz -m
               mvn test
 EOF
+cat << EOF | kubectl apply -f -
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  labels:
+    app.kubernetes.io/part-of: ootb-sc-demo
+    apps.tanzu.vmware.com/has-tests: "true"
+    apps.tanzu.vmware.com/workload-type: web
+  name: ootb-sc-demo
+spec:
+  source:
+    git:
+      ref:
+        branch: main
+      url: https://github.com/tsalm-pivotal/spring-boot-hello-world.git
+EOF
