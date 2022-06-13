@@ -1,12 +1,12 @@
 apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: TrainingPortal
 metadata:
-  name: cartographer-workshops
+  name: supply-chain-choreographer-workshops
 spec:
   portal:
-    title: Workshops for Cartographer
+    title: Workshops for Supply Chain Choreographer
     ingress:
-        hostname: cartographer-workshops
+        hostname: supply-chain-choreographer-workshops
     registration:
         type: anonymous
     updates:
@@ -15,6 +15,6 @@ spec:
       maximum: 40
     reserved: 1
   workshops:
-    - name: cartographer-workshop
+    - name: supply-chain-choreographer-workshop
       expires: 200m
       orphaned: 200m

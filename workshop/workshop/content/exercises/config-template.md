@@ -22,7 +22,7 @@ text: |2
     name: simple-config-template-{{ session_namespace }}
   spec:
     configPath: .data
-    template: |
+    ytt: |
       #@ load("@ytt:data", "data")
       #@ load("@ytt:yaml", "yaml")
 

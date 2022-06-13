@@ -5,7 +5,7 @@
 apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: Workshop
 metadata:
-  name: cartographer-workshop
+  name: supply-chain-choreographer-workshop
 spec:
   title: Supply Chain Choreographer
   description: A workshop that demonstrates all the capabilities Supply Chain Choreographer provides.
@@ -42,7 +42,7 @@ spec:
     - name: CONTAINER_REGISTRY_REPOSITORY
       value: #@ data.values.container_registry.repository
     - name: GITOPS_REPOSITORY
-      value: #@ "{}/tap-workshop/$(session_namespace).git".format(data.values.gitops.ssh_repository_prefix)
+      value: #@ "{}-$(session_namespace).git".format(data.values.gitops.ssh_repository_prefix)
     - name: GITOPS_SSH_PRIVATE_KEY
       value: #@ data.values.gitops.ssh_private_key
     objects:

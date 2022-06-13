@@ -5,7 +5,7 @@ A **ClusterRunTemplate** differs from supply chain templates in many aspects (e.
 Sounds like we've found a way to stamp out our immutable **TaskRuns** and **PipelineRuns**.
 ```editor:select-matching-text
 file: simple-supply-chain/config-writer-template.yaml
-text:   ytt: ""
+text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
 file: simple-supply-chain/config-writer-template.yaml
@@ -43,7 +43,7 @@ text: |2
 We'll now configure a TaskRun to push the deployment configuration to a GIT repository.
 ```editor:select-matching-text
 file: simple-supply-chain/run-template.yaml
-text:   outputs: {}
+text: "  outputs: {}"
 after: 1
 ```
 ```editor:replace-text-selection

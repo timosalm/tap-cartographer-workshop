@@ -15,7 +15,7 @@ text: |2
       - resource: app-config
         name: config
       params:
-      - key: git_repository
+      - name: git_repository
         value: {{ ENV_GITOPS_REPOSITORY }}
 ```
 
@@ -37,7 +37,7 @@ Tekton Pipelines defines the following entities:
 - **Pipelines** define a series of ordered Tasks if it's getting more complex
 - **TaskRuns** and **PipelineRuns** instantiate specific Tasks and Pipelines to execute on a particular set of inputs and produce a particular set of outputs
 
-![Pipeline Run Concept Diagram](../images/tekton-runs.png
+![Pipeline Run Concept Diagram](../images/tekton-runs.png)
 
 **TaskRuns** and **PipelineRuns** are immutable Kubernetes resources and therefore it's not possible to just configure it in our ClusterTemplate, because it will just try to update that immutable Kubernetes resource on every signal for an input change. 
 

@@ -35,7 +35,7 @@ text: |2
     imagePath: ""
     ytt: ""
 ```
-The ClusterImageTemplate requires the definition of an **imagePath** with the value of a valid image digest that has to be provided in the output of the underlying tool used for container building.
+The ClusterImageTemplate requires the definition of an `spec.imagePath` with the value of a valid image digest that has to be provided in the output of the underlying tool used for container building.
 As you can already see, we will use the second option for templating now - ytt.
 
 As a Kubernetes native tool for container building, we will use **VMware Tanzu Build Service** that is based on the OSS **kpack**.
