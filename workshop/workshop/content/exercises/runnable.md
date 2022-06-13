@@ -72,8 +72,9 @@ text: |2
               if git clone --depth 1 -b main "$(runnable.spec.inputs.git_repository)$" ./repo; then
                 cd ./repo
               else
-                git clone --depth 1 "$(runnable.spec.inputs.git_repository)$" ./repo
-                cd ./repo
+                mkdir ./repo && cd ./repo
+                git init 
+                git remote add origin "$(runnable.spec.inputs.git_repository)$"                
                 git checkout -b main
               fi
 
