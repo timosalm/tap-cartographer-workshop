@@ -202,6 +202,6 @@ But before, let's delete the resources that we applied to the cluster.
 ```terminal:execute
 command: |
   kubectl delete -f workload.yaml
-  kapp delete -a simple-supply-chain
+  kapp delete -a simple-supply-chain -y
 clear: true
 ```
