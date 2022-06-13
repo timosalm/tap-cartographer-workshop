@@ -2,25 +2,25 @@ modules:
     workshop-overview:
         name: Easily build Cloud Native Supply Chains
         exit_sign: Supply Chain
-    supply-chain:
+    exercises/supply-chain:
         name: ClusterSupplyChain
         exit_sign: Source Template
-    source-template:
+    exercises/source-template:
         name: ClusterSourceTemplate
         exit_sign: Image Template
-    image-template:
+    exercises/image-template:
         name: ClusterImageTemplate
         exit_sign: Config Template
-    config-template:
+    exercises/config-template:
         name: ClusterConfigTemplate
         exit_sign: Template
-    template: 
+    exercises/template: 
         name:  ClusterTemplate
         exit_sign: Runnable
-    runnable:
+    exercises/runnable:
         name: Runnable and ClusterRunTemplate
         exit_sign: Delivery
-    delivery:
+    exercises/delivery:
         name: Deliverable, ClusterDelivery, ClusterDeploymentTemplate
         exit_sign: OOTB SCs
     exercises/sc-ootb:
