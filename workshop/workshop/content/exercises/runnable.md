@@ -12,6 +12,7 @@ file: simple-supply-chain/config-writer-template.yaml
 text: |2
     ytt: |
       #@ load("@ytt:data", "data")
+      #@ load("@ytt:json", "json")
       ---
       apiVersion: carto.run/v1alpha1
       kind: Runnable
@@ -23,7 +24,7 @@ text: |2
 
         inputs:
           git_repository: #@ data.values.params.git_repository
-          git_files: #@ data.values.config
+          git_files: #@ json.encode(data.values.config)
 ```
 
 ```editor:append-lines-to-file
@@ -81,7 +82,9 @@ text: |2
               mkdir -p config && rm -rf config/*
               cd config
 
-              echo "$(runnable.spec.inputs.git_files)$" > files.yaml
+              echo "$(runnable.spec.inputs.git_files)$" > files.json
+              eval "$(cat files.json | jq -r 'to_entries | .[] | @sh "mkdir -p $(dirname \(.key)) && echo \(.value) > \(.key) && git add \(.key)"')"
+
               git add .
 
               git commit -m "Update deployment configuration"
