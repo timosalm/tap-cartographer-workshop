@@ -1,12 +1,12 @@
 apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: TrainingPortal
 metadata:
-  name: supply-chain-choreographer-workshops
+  name: scc-workshops
 spec:
   portal:
     title: Workshops for Supply Chain Choreographer
     ingress:
-        hostname: choreographer-workshops
+        hostname: scc-workshops
     registration:
         type: anonymous
     updates:
@@ -15,6 +15,6 @@ spec:
       maximum: 40
     reserved: 1
   workshops:
-    - name: supply-chain-choreographer-workshop
+    - name: scc-workshop
       expires: 200m
       orphaned: 200m

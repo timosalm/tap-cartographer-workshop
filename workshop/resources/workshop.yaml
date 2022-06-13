@@ -5,7 +5,7 @@
 apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: Workshop
 metadata:
-  name: supply-chain-choreographer-workshop
+  name: scc-workshop
 spec:
   title: Supply Chain Choreographer
   description: A workshop that demonstrates all the capabilities Supply Chain Choreographer provides.

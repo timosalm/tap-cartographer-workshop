@@ -7,8 +7,7 @@ kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registr
 
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.3/git-cli.yaml
 
-mkdir -p ~/.ssh
-git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=https://).*(?=/)')
+git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=https://).*?(?=/)')
 
 cat <<EOF | kubectl apply -f -
 kind: Secret

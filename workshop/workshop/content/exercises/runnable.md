@@ -80,11 +80,11 @@ text: |2
               mkdir -p config && rm -rf config/*
               cd config
 
-              echo '$(runnable.spec.inputs.git_files)' > files.yaml
+              echo "$(runnable.spec.inputs.git_files)$" > files.yaml
               git add .
 
               git commit -m "Update deployment configuration"
-              git push origin $(params.git_branch)
+              git push origin main
 ```
 
 The detailed specifications of the Runnable and ClusterRunTemplate can be found here: 
@@ -94,7 +94,9 @@ url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 
 Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 ```terminal:execute
-command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
+command: |
+  kapp deploy -a simple-supply-chain -f simple-supply-chain -y
+  kubectl apply -f workload.yaml
 clear: true
 ```
 

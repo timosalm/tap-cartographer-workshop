@@ -1,6 +1,6 @@
 Before we define our resources, let's have a look at the **Workload** which is an **abstraction for developers** to configure things like the location of the source code repository, environment variables and service claims for an application to be delivered through the supply chain.
 ```editor:append-lines-to-file
-file: simple-supply-chain/workload.yaml
+file: workload.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: Workload
