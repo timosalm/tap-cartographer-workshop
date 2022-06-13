@@ -1,6 +1,6 @@
 VMware Tanzu Application provides a **full integration of all of its components via out of the box Supply Chains** that can be customized for customers' processes and tools.
 
-The following four out of the box supply chains are provided with Tanzu Application Platform:
+The following three out of the box supply chains are provided with Tanzu Application Platform:
 
 - Out of the Box Supply Chain Basic
 - Out of the Box Supply Chain with Testing
@@ -10,11 +10,10 @@ All of them come with support for pre-built container images.
 
 As auxiliary components, Tanzu Application Platform also includes:
 - **Out of the Box Templates**, for providing templates used by the supply chains to perform common tasks like fetching source code, running tests, and building container images.
-- **Out of the Box Delivery Basic**, for delivering to a Kubernetes cluster the configuration built throughout a supply chain
+- **Out of the Box Delivery Basic**, for delivering to a Kubernetes cluster the configuration built throughout a supply chain.
 Both Templates and Delivery Basic are requirements for the Supply Chains.
 
-Let's now have a closer look at Supply Chain Choreographer and the **Out of the Box Supply Chain with Testing and Scanning**.
-
+Let's now have a closer look at the **Out of the Box Supply Chain with Testing and Scanning**.
 
 ```dashboard:open-url
 url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/hello-world
@@ -39,8 +38,9 @@ With the following command, we are able to extract it from the cluster and can h
 ```terminal:execute
 command: |
  mkdir supply-chain-testing-scanning
- kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate" | kubectl slice -o supply-chain-testing-scanning/ -f-
- find supply-chain-testing-scanning/  -type f -name '*custom*' -delete
+ kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate,deliverable" | kubectl slice -o supply-chain-testing-scanning/ -f-
+ find supply-chain-testing-scanning/ -type f -name '*custom*' -delete
+ find supply-chain-testing-scanning/ -type f -name '*simple*' -delete
 clear: true
 ```
 

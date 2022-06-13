@@ -41,6 +41,10 @@ spec:
       value: #@ data.values.container_registry.password
     - name: CONTAINER_REGISTRY_REPOSITORY
       value: #@ data.values.container_registry.repository
+    - name: GITOPS_REPOSITORY
+      value: #@ "{}/tap-workshop/$(session_namespace).git".format(data.values.gitops.ssh_repository_prefix)
+    - name: GITOPS_SSH_PRIVATE_KEY
+      value: #@ data.values.app_git.ssh_private_key
     objects:
       - apiVersion: v1
         kind: LimitRange

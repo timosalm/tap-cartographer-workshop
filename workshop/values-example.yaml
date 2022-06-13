@@ -14,3 +14,8 @@ workshop_git:
 tanzunet:
   username: user@example.com
   password:
+gitops:
+  ssh_repository_prefix: git@github.com:tsalm-pivotal/supply-chain-choreographer
+  ssh_private_key:_ssh_private_key: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    -----END OPENSSH PRIVATE KEY-----
