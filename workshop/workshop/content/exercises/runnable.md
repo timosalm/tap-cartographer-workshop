@@ -120,3 +120,6 @@ clear: true
 ```execute-2
 tanzu apps workload tail simple-app 
 ```
+
+The following diagram (which is available in the documentation) of a similar ClusterSupplyChain shows the relationship between all those different resource.
+![](../images/supply-chain.jpg)

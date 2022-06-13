@@ -188,6 +188,9 @@ clear: true
 url: https://simple-app-{{ session_namespace }}.cnr.{{ ENV_TAP_INGRESS }}
 ```
 
+The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resource.
+![](../images/delivery.jpg)
+
 The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here: 
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.3.0/reference/deliverable/
