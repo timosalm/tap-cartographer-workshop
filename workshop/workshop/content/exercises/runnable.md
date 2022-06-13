@@ -117,3 +117,6 @@ clear: true
 command: kubectl describe workload simple-app 
 clear: true
 ```
+```execute-2
+tanzu apps workload tail simple-app 
+```
