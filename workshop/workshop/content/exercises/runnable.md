@@ -59,7 +59,7 @@ text: |2
         workspaces:
         - name: ssh-directory
           secret:
-            secretName: git-ssh-credentials
+            secretName: tekton-basic-access-auth
         - name: source
           emptyDir: {}
         params:

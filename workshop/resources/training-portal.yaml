@@ -6,7 +6,7 @@ spec:
   portal:
     title: Workshops for Supply Chain Choreographer
     ingress:
-        hostname: supply-chain-choreographer-workshops
+        hostname: choreographer-workshops
     registration:
         type: anonymous
     updates:

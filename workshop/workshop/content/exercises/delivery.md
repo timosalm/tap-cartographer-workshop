@@ -31,10 +31,6 @@ metadata:
   labels:
     app.tanzu.vmware.com/deliverable-type: web
 spec:
-  params:
-    - name: gitops_repository
-      default: ""
-    
   template:
     apiVersion: carto.run/v1alpha1
     kind: Deliverable
@@ -44,8 +40,6 @@ spec:
         end2end.link/workshop-session: {{ session_namespace }}
     spec:
       params:
-      - name: "gitops_ssh_secret"
-        value: $(params.gitops_ssh_secret)
       source:
         git:
           url: $(params.gitops_repository)

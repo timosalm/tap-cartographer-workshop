@@ -42,10 +42,10 @@ spec:
     - name: CONTAINER_REGISTRY_REPOSITORY
       value: #@ data.values.container_registry.repository
     - name: GITOPS_REPOSITORY
-      value: #@ "{}-$(session_namespace).git".format(data.values.gitops.https_repository_prefix)
+      value: #@ "{}/$(session_namespace).git".format(data.values.gitops.https_repository_prefix)
     - name: GITOPS_REPOSITORY_USERNAME
       value: #@ data.values.gitops.basic_auth_username
-     - name: GITOPS_REPOSITORY_PASSWORD
+    - name: GITOPS_REPOSITORY_PASSWORD
       value: #@ data.values.gitops.basic_auth_password
     objects:
       - apiVersion: v1
