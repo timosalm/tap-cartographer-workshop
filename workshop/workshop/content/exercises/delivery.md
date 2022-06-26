@@ -63,11 +63,11 @@ text: |2
     - name: source-provider
       templateRef:
         kind: ClusterSourceTemplate
-        name: delivery-source-template-{{ session_namespace }}
+        name: simple-delivery-source-template-{{ session_namespace }}
     - name: deployer
       templateRef:
         kind: ClusterDeploymentTemplate
-        name: app-deploy-{{ session_namespace }}
+        name: simple-app-deploy-{{ session_namespace }}
       deployment:
         resource: source-provider
 ```
@@ -82,7 +82,7 @@ text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
   metadata:
-    name: delivery-source-template-{{ session_namespace }}
+    name: simple-delivery-source-template-{{ session_namespace }}
   spec:
     urlPath: .status.artifact.url
     revisionPath: .status.artifact.revision
@@ -107,7 +107,7 @@ text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterDeploymentTemplate
   metadata:
-    name: app-deploy-{{ session_namespace }}
+    name: simple-app-deploy-{{ session_namespace }}
   spec:
     observedCompletion:
       succeeded:
