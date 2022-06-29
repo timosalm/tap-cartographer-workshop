@@ -13,7 +13,7 @@ text: |2
 ```
 All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part for our path to production.
 
-For our continous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code GIT repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for the following steps/resources.
+For our continous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code Git repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for the following steps/resources.
 
 **In best case** there is already a Kubernetes native solution with a **custom resource available for the functionality** we are looking for. **Otherwise, we can leverage a Kubernetes native CI/CD solution** like Tekton to do the job, which is part of TAP. For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
 
@@ -40,7 +40,7 @@ More information can be found here:
 url: https://cartographer.sh/docs/v0.3.0/templating/
 ```
 
-For our first functionailty, we will use a simple template and use the configuration provided by the Workload.
+For our first functionality, we will use a simple template and use the configuration provided by the Workload.
 ```editor:select-matching-text
 file: simple-supply-chain/source-template.yaml
 text: "  template: {}"

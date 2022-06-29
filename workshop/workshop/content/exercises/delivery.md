@@ -1,4 +1,4 @@
-With our deployment configuration of our application available in a GIT repository we are now able to deploy it automatically to a fleet of cluster on every change. 
+With our deployment configuration of our application available in a Git repository we are now able to deploy it automatically to a fleet of cluster on every change. 
 There are several tools for this job available, like ArgoCD or Carvel's kapp-controller.
 
 Cartographer also provides a way to define a continuous delivery workflow that e.g. picks up that configuration from the Git repository to be promoted through multiple environments to first test/validate and finally run in production via the **ClusterDelivery**.
@@ -28,8 +28,6 @@ text: |2
   kind: ClusterTemplate
   metadata:
     name: simple-deliverable-template-{{ session_namespace }}
-    labels:
-      app.tanzu.vmware.com/deliverable-type: web
   spec:
     template:
       apiVersion: carto.run/v1alpha1

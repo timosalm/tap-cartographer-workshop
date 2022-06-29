@@ -41,6 +41,7 @@ command: |
  kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate,deliverable" | kubectl slice -o ootb-sc-testing-scanning/ -f-
  find ootb-sc-testing-scanning/ -type f -name '*custom*' -delete
  find ootb-sc-testing-scanning/ -type f -name '*simple*' -delete
+ find ootb-sc-testing-scanning/ -type f -name '*api*' -delete
 clear: true
 ```
 

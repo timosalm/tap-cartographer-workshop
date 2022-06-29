@@ -3,7 +3,7 @@ A **ClusterTemplate** instructs the supply chain to instantiate a Kubernetes obj
 To standardize our application deployment to a fleet of clusters we'll use **GitOps** which is an operational model that applies the principles of Git and best practices from software development to infrastructure configuration. 
 With the GitOps approach, Git is used to version and store the necessary deployment configuration of our application configuration files as the single source of truth for infrastructure running in development, staging, production, etc. 
 
-The last step of our Supply Chain is therefore the push of the deployment configuration to GIT repository. 
+The last step of our Supply Chain is therefore the push of the deployment configuration to Git repository. 
 ```editor:append-lines-to-file
 file: simple-supply-chain/supply-chain.yaml
 text: |2

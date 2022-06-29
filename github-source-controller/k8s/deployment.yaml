@@ -2,6 +2,7 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: github-source-controller
+  namespace: github-source-controller
 spec:
   template:
     metadata:
@@ -28,6 +29,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: github-source-controller-clusterbinding
+  namespace: github-source-controller
 subjects:
   - kind: ServiceAccount
     name: default

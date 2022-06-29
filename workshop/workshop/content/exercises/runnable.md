@@ -41,7 +41,7 @@ text: |2
 ```
 `spec.outputs` provides a free-form way of exposing any form of results from what has been run to the status of the Runnable object (as opposed to typed “source”, “image”, and “config” from supply chains). Because we don't have the need to expose any outputs to our Supply Chain and therefore using a ClusterTemplate, we don't have to specify it.
 
-We'll now configure a TaskRun to push the deployment configuration to a GIT repository.
+We'll now configure a TaskRun to push the deployment configuration to a Git repository.
 ```editor:select-matching-text
 file: simple-supply-chain/run-template.yaml
 text: "  outputs: {}"
