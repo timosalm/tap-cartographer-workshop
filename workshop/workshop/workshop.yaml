@@ -12,4 +12,5 @@ modules:
     - exercises/runnable
     - exercises/delivery
     - exercises/sc-ootb
+    - exercises/custom-sc
     - workshop-summary
