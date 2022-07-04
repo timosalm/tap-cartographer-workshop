@@ -28,6 +28,9 @@ modules:
         exit_sign: OOTB SCs
     exercises/sc-ootb:
         name: Out of the Box Supply Chains
+        exit_sign: Custom SC
+    exercises/custom-sc:
+        name: Building a custom Supply Chain
         exit_sign: Summary
     workshop-summary:
         name: Workshop Summary

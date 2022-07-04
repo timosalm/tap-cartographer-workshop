@@ -1,6 +1,6 @@
-VMware Tanzu Application provides a **full integration of all of its components via out of the box Supply Chains** that can be customized for customers' processes and tools.
+VMware Tanzu Application provides a **full integration of all of its components via out-of-the-box Supply Chains** that can be customized for customers' processes and tools.
 
-The following three out of the box supply chains are provided with Tanzu Application Platform:
+The following three out-of-the-box supply chains are provided with Tanzu Application Platform:
 
 - Out of the Box Supply Chain Basic
 - Out of the Box Supply Chain with Testing
@@ -8,7 +8,7 @@ The following three out of the box supply chains are provided with Tanzu Applica
 
 All of them come with support for pre-built container images.
 
-As auxiliary components, Tanzu Application Platform also includes:
+As auxiliary components, VMware Tanzu Application Platform also includes:
 - **Out of the Box Templates**, for providing templates used by the supply chains to perform common tasks like fetching source code, running tests, and building container images.
 - **Out of the Box Delivery Basic**, for delivering to a Kubernetes cluster the configuration built throughout a supply chain.
 Both Templates and Delivery Basic are requirements for the Supply Chains.
@@ -41,6 +41,7 @@ command: |
  kubectl eksporter "clusterconfigtemplate,clusterimagetemplates,clusterruntemplates,clustersourcetemplates,clustersupplychains,clustertemplates,clusterdelivery,ClusterDeploymentTemplate,deliverable" | kubectl slice -o ootb-sc-testing-scanning/ -f-
  find ootb-sc-testing-scanning/ -type f -name '*custom*' -delete
  find ootb-sc-testing-scanning/ -type f -name '*simple*' -delete
+ find ootb-sc-testing-scanning/ -type f -name '*api*' -delete
 clear: true
 ```
 

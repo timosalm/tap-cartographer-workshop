@@ -21,8 +21,8 @@ text: |2
 
 Those **Workloads** that match `spec.selector`, `spec.selectorMatchExpressions`, and/or `spec.selectorMatchFields` then go through the specified resources specified in `spec.resources`.
 
-The **matching of Workloads to a Supply Chain** follows the rule that if the seclectors of several Supply Chains match a Workload, **the more concise match (e.g. more matching labels) is selected**. If **more than one match** is returned, the **Workload will not be assigned to a Supply Chain**. 
-In our case we use just a label selector that is unique to this workshop session to ensure that there is no additional match.
+The **matching of Workloads to a Supply Chain** follows the rule that if the selectors of several Supply Chains match a Workload, **the more concise match (e.g. more matching labels) is selected**. If **more than one match** is returned, the **Workload will not be assigned to a Supply Chain**. 
+In our case, we use just a label selector that is unique to this workshop session to ensure that there is no additional match.
 
 A `.spec.serviceAccountRef` configuration refers to the Service account with permissions to create resources submitted by the supply chain. If it's like in our example not set, Cartographer will use the default service account in the Workload's namespace.
 
