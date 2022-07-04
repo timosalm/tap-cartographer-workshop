@@ -1,6 +1,6 @@
-A **ClusterConfigTemplate** instructs the supply chain how to instantiate a Kubernetes object like a ConfigMap that knows how to make Kubernetes configurations available to further resources in the chain.
+A **ClusterConfigTemplate** instructs the supply chain on how to instantiate a Kubernetes object like a ConfigMap that knows how to make Kubernetes configurations available to further resources in the chain.
 
-For our simple example we use it to provide the deployment configuration of our application to the last step of our Supply Chain and therefore have to consume the outputs of our ClusterImageTemplate resource by referencing it via the `spec.resources[*].images` field of our Supply Chain definition. 
+For our simple example, we use it to provide the deployment configuration of our application to the last step of our Supply Chain. We therefore have to consume the outputs of our ClusterImageTemplate resource by referencing it via the `spec.resources[*].images` field of our Supply Chain definition. 
 ```editor:append-lines-to-file
 file: simple-supply-chain/supply-chain.yaml
 text: |2

@@ -1,11 +1,11 @@
-The easiest way to get started with building a custom supply chain is to copy one of the out of the box supply chains from the cluster, change the `metadata.name` and add an unique selector by e.g. adding a label to the `spec.selector` configuration.
+The easiest way to get started with building a custom supply chain is to copy one of the out-of-the-box supply chains from the cluster, change the `metadata.name`, and add a unique selector by e.g. adding a label to the `spec.selector` configuration.
 
 For this exercise, we will build one from scratch and discover the three ways of providing an implementation for a template:
-- Using a Kuberentes custom resource that is already available for the functionality we are looking for
+- Using a Kubernetes custom resource that is already available for the functionality we are looking for
 - Leverage a Kubernetes native CI/CD solution like Tekton to do the job, which is part of TAP
 - For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
 
-You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of rigth now to build a custom Kubernetes controller and therefore, we will just have a look at an example.
+You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of right now to build a custom Kubernetes Controller, and therefore, we will just have a look at an example.
 You can make the solution for a specific step visible by clicking on the **Solution sections**.
 
 Let's now start the implementation with the following supply chain skeleton.
@@ -26,10 +26,11 @@ text: |2
     resources: []
 ```
 
-As with the other supply chains you already saw, the **first task** for our custom supply chain is also to **provide the latest version of a source code in a Git repository to subsequent steps**.
+As with the other supply chains you already saw, the **first task** for our custom supply chain is also to **provide the latest version of a source code in a Git repository for subsequent steps**.
 In the simple and ootb supply chains we used the [Flux](https://fluxcd.io) Source Controller for it. 
 
-As there is as far as I know no real alternative available, and the goal is to practice all three ways on how to provide an implementation for a template, I've **built a custom Kubernetes Controller for it**.
+
+As far as I know, no real alternative is available, and the goal is to practice all three ways to provide an implementation for a template. Therefore, I've **built a custom Kubernetes Controller for it**.
 
 The Kubernetes Controller is built with Spring Boot, but I could have implemented it easily with other programming languages/frameworks, where a [Kubernetes client library](https://kubernetes.io/docs/reference/using-api/client-libraries/) is available for.
 You can see the official Java Kubernetes client library dependency I'm using in the POM file of the project.
@@ -50,7 +51,7 @@ file: tap-cartographer-workshop/github-source-controller/src/main/java/com/examp
 
 Now it's getting a little bit more complex.
 **Controllers** are the core of Kubernetes.
-It’s a controller’s job to ensure that, for any given object, the actual state of the world (both the cluster state, and potentially external state like running containers for Kubelet or loadbalancers for a cloud provider) matches the desired state in the object. Each controller focuses on one root Kubernetes resource, but may interact with other Kubernetes resources. We call this process **reconciling**.
+It’s a controller’s job to ensure that, for any given object, the actual state of the world (both the cluster state and potentially external state like running containers for Kubelet or load balancers for a cloud provider) matches the desired state in the object. Each controller focuses on one root Kubernetes resource but may interact with other Kubernetes resources. We call this process **reconciling**.
 In our case the Kubernetes resource is a custom resource definition called `GitHubRepository`.
 ```editor:open-file
 file: tap-cartographer-workshop/github-source-controller/k8s/crds/github-repository-crd.yaml
@@ -67,7 +68,7 @@ To have actual instances of the Reconciler and Controller running in our applica
 file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/ControllerConfiguration.java
 ```
 
-The application then has to be packaged in a container, deployed to Kubernetes and exposed to be reachable by the GitHub Webhook of a Git repository that also has to be configured - which is already done for you.
+The application then has to be packaged in a container, deployed to Kubernetes, and exposed to be reachable by the GitHub Webhook of a Git repository that also has to be configured - which is already done for you.
 
 Based on the provided information it's now your turn to implement the `ClusterSourceTemplate` and add it as the first resource to the ClusterSupplyChain.
 ```editor:append-lines-to-file
@@ -133,7 +134,7 @@ text: |2
 ```section:end
 ```
 
-As with our simple supply chain, the **second step** is responsible for building of a container out of the provided source-code by the first step. 
+As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
 
 In addition to kpack, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
 
@@ -177,7 +178,7 @@ We can reuse the relevant part of the simple supply chain for it.
 file: simple-supply-chain/supply-chain.yaml
 line: 14
 ```
-But we want to implement in a way that the different implementations (kpack and kaniko) will be switched based on a selector - in this case whether the `dockerfile` parameter in the Workload is set or not.
+But we want to implement in a way that the different implementations (kpack and kaniko) will be switched based on a selector - in this case, whether the `dockerfile` parameter in the Workload is set or not.
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
@@ -332,7 +333,7 @@ text: |2
 ```section:end
 ```
 
-In our last step now just want to deploy the built container with a [Knative Serving Service](https://knative.dev/docs/serving/services/creating-services/) using an ClusterTemplate. Don't forget to add it as a resource with the required input to the ClusterSupplyChain.
+In our last step, we just want to deploy the built container using ClusterTemplate. The easiest way is to use a [Knative Serving Service](https://knative.dev/docs/serving/services/creating-services/) as an implementation because it creates everything it needs to also make our application accessible to the outer world. 
 
 ```editor:append-lines-to-file
 file: custom-supply-chain/deployment-template.yaml
@@ -343,6 +344,13 @@ text: |2
     name: custom-deployment-template-{{ session_namespace }}
   spec:
 ```
+
+We already learned that a Knative Serving Service has immutable creator/lastModifer annotations and if Cartographer (or kapp-controller) applies updates to resources, it "removes" them which, results in a request denial by the admission webhook. However, we can work around this by using a kapp-controller App resource and that additional ConfigMap you can copy from the simple supply chain.
+You can also add the Knative Serving Service specification in the `spec.fetch.inline` configuration instead of fetching them e.g. via http or from a Git repository.
+
+Don't forget to add the created ClusterTemplate as a resource with the required input to the ClusterSupplyChain.
+
+*Hint: You could also stamp out a Deployment, Service and Ingress resources instead of a Knative Serving Service directly in a ClusterTemplate because they don't have immutable fields. But you have to keep the limitation in mind that only the first resource specified in `spec.template` or `spec.ytt` will be stamped out by a Template. Therefore, you would have to define a ClusterTemplate for each and add them to the ClusterSupplyChain.*
 
 ```section:begin
 title: Solution ClusterTemplate
@@ -362,20 +370,47 @@ text: |2
 file: custom-supply-chain/deployment-template.yaml
 text: |2
     template:
-      apiVersion: serving.knative.dev/v1
-      kind: Service
+      apiVersion: kappctrl.k14s.io/v1alpha1
+      kind: App
       metadata:
         name: $(workload.metadata.name)$
-        annotations:
-          serving.knative.dev/creator: system:serviceaccount:{{ session_namespace }}:default
       spec:
-        template: 
-          spec:
-            containers:
-            - image: $(image)$
-              name: workload
-              ports:
-              - containerPort: 5000
+        serviceAccountName: default
+        fetch:
+        - inline:
+            paths:
+              deployment.yml: |
+                apiVersion: serving.knative.dev/v1
+                kind: Service
+                metadata:
+                  name: $(workload.metadata.name)$
+                  annotations:
+                    serving.knative.dev/creator: system:serviceaccount:scc-workshops-w02-s003:default
+                spec:
+                  template: 
+                    spec:
+                      containers:
+                      - image: $(image)$
+                        name: workload
+                        ports:
+                        - containerPort: 5000
+                ---
+                apiVersion: kapp.k14s.io/v1alpha1
+                kind: Config
+                rebaseRules:
+                  - path: [metadata, annotations, serving.knative.dev/creator]
+                    type: copy
+                    sources: [new, existing]
+                    resourceMatchers: &matchers
+                      - apiVersionKindMatcher: {apiVersion: serving.knative.dev/v1, kind: Service}
+                  - path: [metadata, annotations, serving.knative.dev/lastModifier]
+                    type: copy
+                    sources: [new, existing]
+                    resourceMatchers: *matchers
+        template:
+        - ytt: {}
+        deploy:
+        - kapp: {}
 ```
 ```section:end
 ```
@@ -434,7 +469,7 @@ clear: true
 tanzu apps workload tail simple-python-app
 ```
 
-That's it! You have built your first custom supply chain and hopefully many more will follow.
+That's it! You have built your first custom supply chain, and hopefully, many more will follow.
 Let's delete the resources that we applied to the cluster.
 ```terminal:execute
 command: |

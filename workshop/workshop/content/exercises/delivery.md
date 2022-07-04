@@ -1,14 +1,14 @@
-With our deployment configuration of our application available in a Git repository we are now able to deploy it automatically to a fleet of cluster on every change. 
+With the deployment configuration of our application available in a Git repository, we are now able to deploy it automatically to a fleet of clusters on every change. 
 There are several tools for this job available, like ArgoCD or Carvel's kapp-controller.
 
 Cartographer also provides a way to define a continuous delivery workflow that e.g. picks up that configuration from the Git repository to be promoted through multiple environments to first test/validate and finally run in production via the **ClusterDelivery**.
 
-A **ClusterDelivery** is analogous to SupplyChain, in that it specifies a list of resources that are created when requested by the developer. Early resources in the delivery are expected to configure the k8s environment (for example by deploying an application). Later resources validate the environment is healthy.
+A **ClusterDelivery** is analogous to SupplyChain, in that it specifies a list of resources that are created when requested by the developer. Early resources in the delivery are expected to configure the k8s environment (for example, by deploying an application). Later resources validate the environment is healthy.
 A **ClusterDeploymentTemplate** indicates how the ClusterDelivery should configure the environment.
 A **Deliverable** allows the operator to pass information about the configuration to be applied to the environment to the ClusterDelivery.
 
 For the sake of simplicity, we will now deploy our application to the same cluster we used for building it.
-Let's first create a **Deliverable** resource to pass required information to the ClusterDelivery. In in this case, all is already available in the Workload and the ClusterSupplyChain paramters. Therefore let's extend our Supply Chain to stamp out the Deliverable.
+Let's first create a **Deliverable** resource to pass the required information to the ClusterDelivery. In this case, all is already available in the Workload and the ClusterSupplyChain parameters. Therefore, let's extend our Supply Chain to stamp out the Deliverable.
 ```editor:append-lines-to-file
 file: simple-supply-chain/supply-chain.yaml
 text: |2
@@ -69,7 +69,7 @@ text: |2
       deployment:
         resource: source-provider
 ```
-As you can see the configuration of the ClusterDeliveries looks similar to ClusterSupplychain. You can specify the type of Deliverable they accept through the `spec.selector`, `spec.selectorMatchExpressions`, and `selectorMatchFields` fields and all of the resources via `spec.resources`.
+As you can see, the configuration of the ClusterDeliveries looks similar to ClusterSupplychain. You can specify the type of Deliverable they accept through the `spec.selector`, `spec.selectorMatchExpressions`, and `selectorMatchFields` fields and all of the resources via `spec.resources`.
 
 ClusterSourceTemplates and ClusterTemplates are valid for ClusterDelivery. It additionally has the resource ClusterDeploymentTemplates. Delivery can cast the values from a ClusterSourceTemplate so that they may be consumed by a ClusterDeploymentTemplate.
 
@@ -150,18 +150,20 @@ text: |2
 
 A **ClusterDeploymentTemplate** must specify criteria to determine whether the templated object has successfully completed its role in configuring the environment. Once the criteria are met, the ClusterDeploymentTemplate will output the deployment values. The criteria may be specified in `spec.observedMatches` or in `spec.observedCompletion`.
 
-To fetch the latest deployment configurtions from the url provided by the Flux Source Controller, we use Carvel's **kapp-controller** which provides a declarative way to install, manage, and upgrade applications on a Kubernetes cluster using the **[App CRD](https://carvel.dev/kapp-controller/docs/v0.38.0/app-overview/)**.
+To fetch the latest deployment configuration from the url provided by the Flux Source Controller, we use Carvel's **kapp-controller**, which provides a declarative way to install, manage, and upgrade applications on a Kubernetes cluster using the **[App CRD](https://carvel.dev/kapp-controller/docs/v0.38.0/app-overview/)**.
 The App CR comprises of three main sections:
 - `spec.fetch` declares source for fetching configuration and OCI images
 - `spec.template` declares templating tool and values
 - `spec.deploy` declares deployment tool and any deploy specific configuration. Currently only Carvel’s kapp CLI is supported.
+
+We are using a Knative Serving Service for our deployment. This resource type has immutable creator/lastModifer annotations that will be created if the resource is applied the first time. If Cartographer or kapp-controller applies updates to the resource due to a new input it "removes" them which results in a request denial by the admission webhook. Therefore, that additional ConfigMap is added which instructs kapp-controller to copy them from the resources already running in the cluster.
 
 We are now able to apply our updated and new resources to the cluster ...
 ```terminal:execute
 command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
 clear: true
 ```
-... and can check whether everything is working as expected and the deplyed application is accessible.
+... and can check whether everything is working as expected and the deployed application is accessible.
 ```terminal:execute
 command: kubectl describe ClusterDelivery simple-delivery-{{ session_namespace }}
 clear: true
@@ -186,7 +188,7 @@ clear: true
 url: https://simple-app-{{ session_namespace }}.cnr.{{ ENV_TAP_INGRESS }}
 ```
 
-The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resource.
+The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resources.
 ![](../images/delivery.jpg)
 
 The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here: 

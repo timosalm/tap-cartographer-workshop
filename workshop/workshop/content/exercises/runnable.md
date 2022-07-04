@@ -39,7 +39,7 @@ text: |2
     outputs: {}
     template: {}
 ```
-`spec.outputs` provides a free-form way of exposing any form of results from what has been run to the status of the Runnable object (as opposed to typed “source”, “image”, and “config” from supply chains). Because we don't have the need to expose any outputs to our Supply Chain and therefore using a ClusterTemplate, we don't have to specify it.
+`spec.outputs` provides a free-form way of exposing any form of results from what has been run to the status of the Runnable object (as opposed to typed “source”, “image”, and “config” from supply chains). Because we don't have the need to expose any outputs to subsequent steps and therefore, use a ClusterTemplate, we don't have to specify it.
 
 We'll now configure a TaskRun to push the deployment configuration to a Git repository.
 ```editor:select-matching-text
@@ -121,5 +121,5 @@ clear: true
 tanzu apps workload tail simple-app 
 ```
 
-The following diagram (which is available in the documentation) of a similar ClusterSupplyChain shows the relationship between all those different resource.
+The following diagram (which is available in the documentation) of a similar ClusterSupplyChain shows the relationship between all those different resources.
 ![](../images/supplychain.png)
