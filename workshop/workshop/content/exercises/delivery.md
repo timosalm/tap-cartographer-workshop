@@ -158,7 +158,7 @@ The App CR comprises of three main sections:
 
 We are now able to apply our updated and new resources to the cluster ...
 ```terminal:execute
-command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y
+command: kapp deploy -a simple-supply-chain -f simple-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
 clear: true
 ```
 ... and can check whether everything is working as expected and the deplyed application is accessible.

@@ -5,7 +5,7 @@ For this exercise, we will build one from scratch and discover the three ways of
 - Leverage a Kubernetes native CI/CD solution like Tekton to do the job, which is part of TAP
 - For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
 
-You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity. it's not part of the workshop as of rigth now to build a custom Kubernetes controller and therefore, we will just have a look at an example.
+You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of rigth now to build a custom Kubernetes controller and therefore, we will just have a look at an example.
 You can make the solution for a specific step visible by clicking on the **Solution sections**.
 
 Let's now start the implementation with the following supply chain skeleton.
@@ -28,16 +28,17 @@ text: |2
 
 As with the other supply chains you already saw, the **first task** for our custom supply chain is also to **provide the latest version of a source code in a Git repository to subsequent steps**.
 In the simple and ootb supply chains we used the [Flux](https://fluxcd.io) Source Controller for it. 
-If there is as far as I know no real alternative available, and the goal is to practive all three ways on how to provide an implementation for a template, I've **built a custom Kubernetes Controller for it**.
+
+As there is as far as I know no real alternative available, and the goal is to practice all three ways on how to provide an implementation for a template, I've **built a custom Kubernetes Controller for it**.
 
 The Kubernetes Controller is built with Spring Boot, but I could have implemented it easily with other programming languages/frameworks, where a [Kubernetes client library](https://kubernetes.io/docs/reference/using-api/client-libraries/) is available for.
-The first dependency is the official Java Kubernetes client library.
+You can see the official Java Kubernetes client library dependency I'm using in the POM file of the project.
 ```editor:open-file
 file: tap-cartographer-workshop/github-source-controller/pom.xml
 line: 29
 ```
 
-It provides a REST API for a GitHub Webhook that sends a POST request to it on every new commit after configuring it for a specific repository. 
+The Kubernetes Controller provides a REST API for a GitHub Webhook that sends a POST request to it on every new commit after configuring it for a specific repository. 
 ```editor:open-file
 file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/GitHubWebhookResource.java
 ```
@@ -133,7 +134,9 @@ text: |2
 ```
 
 As with our simple supply chain, the **second step** is responsible for building of a container out of the provided source-code by the first step. 
+
 In addition to kpack, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
+
 **[kaniko](https://github.com/GoogleContainerTools/kaniko)** is the solution we'll use for it. It's a tool to build container images from a Dockerfile, inside a container or Kubernetes cluster. 
 Because there is **no official Kubernetes CRD** for it available, we will use **Tekton** to run it in a container.
 
@@ -169,7 +172,12 @@ text: |2
       #@ end
 ```
 
-We can reuse the relevant part of the simple supply chain for it but the goal is to switch between our different implementations (kpack and kaniko) based on a selector - in this case whether the `dockerfile` parameter in the Workload is set or not.
+We can reuse the relevant part of the simple supply chain for it.
+```editor:open-file
+file: simple-supply-chain/supply-chain.yaml
+line: 14
+```
+But we want to implement in a way that the different implementations (kpack and kaniko) will be switched based on a selector - in this case whether the `dockerfile` parameter in the Workload is set or not.
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
@@ -191,7 +199,9 @@ This is possible via the `spec.resources[*].templateRef.options`. The documentat
 url: https://cartographer.sh/docs/v0.4.0/reference/workload/#clustersupplychain
 ```
 
-Due to the complexity, here is the ClusterRunTemplate which you have to reference from a Runnable that you have to define with its inputs in the ClusterImageTemplate. You can for sure also try to implement it yourself but please with the name "custom-kaniko-run-template-{{ session_namespace }}"
+Due to the complexity, here is the **ClusterRunTemplate which you have to reference from a Runnable** that you have to define with its inputs **in the ClusterImageTemplate**. 
+
+You can for sure also try to implement it yourself but please with the name **"custom-kaniko-run-template-{{ session_namespace }}"**.
 ```editor:append-lines-to-file
 file: custom-supply-chain/kaniko-run-template.yaml
 text: |2
@@ -289,27 +299,27 @@ text: |2
 ```editor:append-lines-to-file
 file: custom-supply-chain/image-template.yaml
 text: |2
-    apiVersion: carto.run/v1alpha1
-    kind: Runnable
-    metadata:
-      name: #@ data.values.workload.metadata.name + "-kaniko"
-    spec:
-      runTemplateRef:
-        name: custom-kaniko-run-template-{{ session_namespace }}
+      apiVersion: carto.run/v1alpha1
+      kind: Runnable
+      metadata:
+        name: #@ data.values.workload.metadata.name + "-kaniko"
+      spec:
+        runTemplateRef:
+          name: custom-kaniko-run-template-{{ session_namespace }}
 
-      inputs:
-        image: #@ image()
-        dockerfile: #@ data.values.params.dockerfile
-        source-url: #@ data.values.sources.source.url
-        source-revision: #@ data.values.sources.source.revision
-        source-subpath: #@ context_sub_path()
+        inputs:
+          image: #@ image()
+          dockerfile: #@ data.values.params.dockerfile
+          source-url: #@ data.values.sources.source.url
+          source-revision: #@ data.values.sources.source.revision
+          source-subpath: #@ context_sub_path()
 ```
 ```editor:select-matching-text
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/image-template.yaml
 text: "  imagePath: \"\""
 ```
 ```editor:replace-text-selection
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/image-template.yaml
 text: |2
     imagePath: .status.outputs.latest-image
 ```
@@ -320,7 +330,7 @@ text: |2
 In our last step now just want to deploy the built container with a [Knative Serving Service](https://knative.dev/docs/serving/services/creating-services/) using an ClusterTemplate. Don't forget to add it as a resource with the required input to the ClusterSupplyChain.
 
 ```editor:append-lines-to-file
-file: custom-supply-chain/deployment-templatee.yaml
+file: custom-supply-chain/deployment-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterTemplate
@@ -351,31 +361,34 @@ text: |2
       kind: Service
       metadata:
         name: $(workload.metadata.name)$
+        annotations:
+          serving.knative.dev/creator: system:serviceaccount:{{ session_namespace }}:default
       spec:
         template: 
           spec:
             containers:
-            - image: $(image)
+            - image: $(image)$
               name: workload
               ports:
-              - containerPort: 8080
+              - containerPort: 5000
 ```
 ```section:end
 ```
 
 We are now able to apply our custom supply chain to the cluster.
 ```terminal:execute
-command: kapp deploy -a custom-supply-chain -f custom-supply-chain -y
+command: kapp deploy -a custom-supply-chain -f custom-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
 clear: true
 ```
 To test it we last but not least have to create a **matching Workload**, ...
 ```editor:append-lines-to-file
-file: custom-supply-chain/workload-custom-sc.yaml
+file: workload-custom-sc.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: Workload
   metadata:
     labels:
+      app.kubernetes.io/part-of: simple-python-app
       end2end.link/workshop-session: {{ session_namespace }}
       end2end.link/is-custom: "true" 
     name: simple-python-app

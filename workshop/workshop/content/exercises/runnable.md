@@ -98,7 +98,7 @@ url: https://cartographer.sh/docs/v0.3.0/reference/runnable/
 Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 ```terminal:execute
 command: |
-  kapp deploy -a simple-supply-chain -f simple-supply-chain -y
+  kapp deploy -a simple-supply-chain -f simple-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
   kubectl apply -f workload.yaml
 clear: true
 ```
