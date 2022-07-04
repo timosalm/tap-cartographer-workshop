@@ -268,7 +268,12 @@ text: |2
 ```section:begin
 title: Solution ClusterImageTemplate
 ```
-```editor:append-lines-to-file
+```editor:select-matching-text
+file: custom-supply-chain/supply-chain.yaml
+text: "  - name: image-builder"
+after: 11
+```
+```editor:replace-text-selection
 file: custom-supply-chain/supply-chain.yaml
 text: |2
     - name: image-builder
