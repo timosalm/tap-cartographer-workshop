@@ -35,7 +35,7 @@ data:
   password: $(echo $GITOPS_REPOSITORY_PASSWORD | base64)
 EOF
 
-cat << EOF | kubectl apply -f -
+cat << \EOF | kubectl apply -f -
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
@@ -46,16 +46,16 @@ spec:
   params:
     - name: source-url                       # (!) required
     - name: source-revision                  # (!) required
-    - name: source-sub-path
+    - name: source-sub-path                  # (!) required
   tasks:
     - name: test
       params:
         - name: source-url
-          value: \$(params.source-url)
+          value: $(params.source-url)
         - name: source-revision
-          value: \$(params.source-revision)
+          value: $(params.source-revision)
         - name: source-sub-path
-          value: \$(params.source-sub-path)
+          value: $(params.source-sub-path)
       taskSpec:
         params:
           - name: source-url
@@ -63,13 +63,12 @@ spec:
           - name: source-sub-path
         steps:
           - name: test
-            image: gradle
+            image: maven:3-openjdk-11
             script: |-
               cd `mktemp -d`
-
-              wget -qO- \$(params.source-url) | tar xvz -m
-              cd \$(params.source-sub-path)
-              ./mvnw test
+              wget -qO- $(params.source-url) | tar xvz -m
+              cd $(params.source-sub-path)
+              mvn test
 EOF
 cat << EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
