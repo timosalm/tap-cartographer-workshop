@@ -187,39 +187,7 @@ spec:
           values.yaml: |
             ---
             namespace: $(session_namespace)
-            scanner:
-              pullSecret: ""
             targetImagePullSecret: registry-credentials
-      # Scan policy
-      - apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
-        kind: ScanPolicy
-        metadata:
-          name: scan-policy
-        spec:
-          regoFile: |
-            package policies
-
-            default isCompliant = false
-
-            # Accepted Values: "Critical", "High", "Medium", "Low", "Negligible", "UnknownSeverity"
-            violatingSeverities := ["Critical","High","UnknownSeverity"]
-            ignoreCVEs := ['GHSA-g36h-6r4f-3mqp']
-
-            contains(array, elem) = true {
-              array[_] = elem
-            } else = false { true }
-
-            isSafe(match) {
-              fails := contains(violatingSeverities, match.Ratings.Rating[_].Severity)
-              not fails
-            }
-
-            isSafe(match) {
-              ignore := contains(ignoreCVEs, match.Id)
-              ignore
-            }
-
-            isCompliant = isSafe(input.currentVulnerability)
       # Conventions Service
       - apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
