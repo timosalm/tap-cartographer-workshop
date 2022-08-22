@@ -46,6 +46,7 @@ spec:
   params:
     - name: source-url                       # (!) required
     - name: source-revision                  # (!) required
+    - name: source-sub-path
   tasks:
     - name: test
       params:
@@ -53,17 +54,22 @@ spec:
           value: $(params.source-url)
         - name: source-revision
           value: $(params.source-revision)
+        - name: source-sub-path
+          value: $(params.source-sub-path)
       taskSpec:
         params:
           - name: source-url
           - name: source-revision
+          - name: source-sub-path
         steps:
           - name: test
-            image: maven:3-openjdk-11
+            image: gradle
             script: |-
               cd `mktemp -d`
+
               wget -qO- $(params.source-url) | tar xvz -m
-              mvn test
+              cd $(params.source-sub-path)
+              ./mvnw test
 EOF
 cat << EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
