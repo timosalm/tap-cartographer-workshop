@@ -203,7 +203,7 @@ spec:
 
             # Accepted Values: "Critical", "High", "Medium", "Low", "Negligible", "UnknownSeverity"
             violatingSeverities := ["Critical","High","UnknownSeverity"]
-            ignoreCVEs := []
+            ignoreCVEs := ['GHSA-g36h-6r4f-3mqp']
 
             contains(array, elem) = true {
               array[_] = elem
