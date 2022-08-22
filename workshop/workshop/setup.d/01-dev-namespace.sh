@@ -11,6 +11,8 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/gi
 
 git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=https://).*?(?=/)')
 
+kubectl annotate namespace ${SESSION_NAMESPACE} secretgen.carvel.dev/excluded-from-wildcard-matching-
+
 cat <<EOF | kubectl apply -f -
 kind: Secret
 apiVersion: v1
