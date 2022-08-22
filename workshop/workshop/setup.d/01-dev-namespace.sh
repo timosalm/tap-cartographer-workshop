@@ -51,11 +51,11 @@ spec:
     - name: test
       params:
         - name: source-url
-          value: $(params.source-url)
+          value: \$(params.source-url)
         - name: source-revision
-          value: $(params.source-revision)
+          value: \$(params.source-revision)
         - name: source-sub-path
-          value: $(params.source-sub-path)
+          value: \$(params.source-sub-path)
       taskSpec:
         params:
           - name: source-url
@@ -67,8 +67,8 @@ spec:
             script: |-
               cd `mktemp -d`
 
-              wget -qO- $(params.source-url) | tar xvz -m
-              cd $(params.source-sub-path)
+              wget -qO- \$(params.source-url) | tar xvz -m
+              cd \$(params.source-sub-path)
               ./mvnw test
 EOF
 cat << EOF | kubectl apply -f -
