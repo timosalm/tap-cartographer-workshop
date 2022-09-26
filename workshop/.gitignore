@@ -1,3 +1,5 @@
+
+*.tar
 values.yaml
 resources/vmware-overlay.yaml
 
