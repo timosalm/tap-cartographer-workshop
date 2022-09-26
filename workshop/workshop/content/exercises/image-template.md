@@ -15,7 +15,7 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.emea.end2end.link
+          server: harbor.svcs.az-tkglab.sprok8s.com
           repository: tap-wkld
 ```
 In addition, we also define parameters for the resource with the configuration of a registry server and repository to which we want to push our container images. As we are setting them with `params[*].value` instead of `params[*].default`, they are not overridable by the global ClusterSupplyChain resource's and the Workload params. 

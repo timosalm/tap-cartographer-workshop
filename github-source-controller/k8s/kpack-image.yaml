@@ -12,4 +12,4 @@ spec:
       revision: main
       url: https://github.com/tsalm-pivotal/tap-cartographer-workshop.git
     subPath: github-source-controller
-  tag: harbor.emea.end2end.link/tap-workshop/github-source-controller
+  tag: harbor.svcs.az-tkglab.sprok8s.com/tap-workshop/github-source-controller

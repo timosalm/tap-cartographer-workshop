@@ -192,7 +192,7 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.emea.end2end.link
+          server: harbor.svcs.az-tkglab.sprok8s.com
           repository: tap-wkld
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
@@ -297,7 +297,7 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.emea.end2end.link
+          server: harbor.svcs.az-tkglab.sprok8s.com
           repository: tap-wkld
       - name: dockerfile
         default: ""
