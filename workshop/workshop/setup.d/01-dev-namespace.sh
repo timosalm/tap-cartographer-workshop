@@ -21,10 +21,10 @@ metadata:
 type: Opaque
 stringData:
   .gitconfig: |
-    [credential "https://$git_hostname"]
+    [credential "http://$git_hostname"]
       helper = store
   .git-credentials: |
-    https://$GITOPS_REPOSITORY_USERNAME:$GITOPS_REPOSITORY_PASSWORD@$git_hostname
+    http://$GITOPS_REPOSITORY_USERNAME:$GITOPS_REPOSITORY_PASSWORD@$git_hostname
 EOF
 
 cat <<EOF | kubectl apply -f -

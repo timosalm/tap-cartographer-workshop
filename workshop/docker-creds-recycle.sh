@@ -1,4 +1,4 @@
-#!/usr/binm/env bash
+#!/usr/bin/env bash
 set -ex
 # https://steinbaugh.com/posts/docker-credential-pass.html
 

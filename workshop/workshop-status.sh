@@ -10,4 +10,4 @@ set -ex
 # workshops
 # workshopsessions
 
-k get systemprofiles,trainingportals,workshopenvironments,workshoprequests,workshops,workshopsessions
+kubectl get systemprofiles,trainingportals,workshopenvironments,workshoprequests,workshops,workshopsessions
