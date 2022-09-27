@@ -12,7 +12,7 @@ spec:
   vendor: tanzu.vmware.com
   difficulty: beginner
   duration: 200m
-  url: https://github.com/tsalm-pivotal/tap-cartographer-workshop
+  url: https://github.com/mrgaryg/tap-cartographer-workshop
   content:
     image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
     files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.username,data.values.workshop_git.branch)
