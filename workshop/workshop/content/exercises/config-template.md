@@ -53,5 +53,5 @@ The ClusterConfigTemplate requires definition of a `spec.configPath` and it will
 
 The detailed specifications of the ClusterConfigTemplate can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.3.0/reference/template/#clusterconfigtemplate
+url: https://cartographer.sh/docs/v0.4.0/reference/template/#clusterconfigtemplate
 ```
