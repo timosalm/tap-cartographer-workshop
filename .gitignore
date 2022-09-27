@@ -1,6 +1,7 @@
 .DS_Store
 TODO
 values.yaml
+local-config
 
 ### IntelliJ IDEA ###
 .idea
