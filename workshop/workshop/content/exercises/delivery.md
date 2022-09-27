@@ -185,7 +185,7 @@ command: kubectl describe kservice simple-app
 clear: true
 ```
 ```dashboard:open-url
-url: https://simple-app-{{ session_namespace }}.cnr.{{ ENV_TAP_INGRESS }}
+url: http://simple-app-{{ session_namespace }}.cnr.{{ ENV_TAP_INGRESS }}
 ```
 
 The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resources.
