@@ -9,7 +9,7 @@ git clone https://github.com/mrgaryg/tap-cartographer-workshop.git
 
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.3/git-cli.yaml
 
-git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=https://).*?(?=/)')
+git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=http://).*?(?=/)')
 
 kubectl annotate namespace ${SESSION_NAMESPACE} secretgen.carvel.dev/excluded-from-wildcard-matching-
 
