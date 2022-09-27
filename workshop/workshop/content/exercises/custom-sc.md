@@ -451,7 +451,7 @@ clear: true
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 
 ```dashboard:open-url
-url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-python-app
+url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-python-app
 ```
 ```terminal:execute
 command: kubectl describe clustersupplychain custom-supplychain-{{ session_namespace }}
