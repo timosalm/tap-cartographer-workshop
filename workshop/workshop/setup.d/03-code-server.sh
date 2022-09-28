@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 set +e
-
+exit 0
 jq ". + { \"java.server.launchMode\": \"Standard\", \"tanzu.sourceImage\": \"${REGISTRY_HOST}/spring-sensors-source\", \"tanzu.namespace\": \"${SESSION_NAMESPACE}\", \"redhat.telemetry.enabled\": false }" /home/eduk8s/.local/share/code-server/User/settings.json > /tmp/settings.json
 mv /tmp/settings.json /home/eduk8s/.local/share/code-server/User/settings.json
 
