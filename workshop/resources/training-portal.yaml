@@ -4,17 +4,17 @@ metadata:
   name: scc-workshops
 spec:
   portal:
-    title: Workshops for Supply Chain Choreographer
+    title: Workshops for Custom Supply Chain Choreographer
     ingress:
         hostname: scc-workshops
     registration:
         type: anonymous
+    sessions:
+      maximum: 20
+    reserved: 0
     updates:
       workshop: true
-    sessions:
-      maximum: 40
-    reserved: 1
   workshops:
-    - name: scc-workshop
-      expires: 200m
-      orphaned: 200m
+    - expires: 300m
+      name: scc-workshop
+      orphaned: 40m
