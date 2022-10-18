@@ -2,7 +2,12 @@ A **Runnable** object declares the intention of having immutable objects submitt
 
 A **ClusterRunTemplate** differs from supply chain templates in many aspects (e.g. cannot be referenced directly by a ClusterSupplyChain, **outputs** provide a free-form way of exposing any form of results). It defines how an immutable object should be stamped out based on data provided by a **Runnable**.
 
-It Sounds like we've found a way to stamp out our immutable **TaskRuns** and **PipelineRuns**.
+```editor:select-matching-text
+file: simple-supply-chain/source-template.yaml
+text: "  template: {}"
+```
+
+Sounds like we've found a way to stamp out our immutable **TaskRuns** and **PipelineRuns**.
 
 ```editor:select-matching-text
 file: simple-supply-chain/config-writer-template.yaml
