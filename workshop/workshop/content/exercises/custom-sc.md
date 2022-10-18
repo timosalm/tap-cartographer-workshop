@@ -197,7 +197,7 @@ text: |2
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.4.0/reference/workload/#clustersupplychain
+url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
 ```
 
 Due to the complexity, here is the **ClusterRunTemplate which you have to reference from a Runnable** that you have to define with its inputs **in the ClusterImageTemplate**. 

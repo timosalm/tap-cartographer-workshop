@@ -3,10 +3,12 @@ A **Runnable** object declares the intention of having immutable objects submitt
 A **ClusterRunTemplate** differs from supply chain templates in many aspects (e.g. cannot be referenced directly by a ClusterSupplyChain, **outputs** provide a free-form way of exposing any form of results). It defines how an immutable object should be stamped out based on data provided by a **Runnable**.
 
 Sounds like we've found a way to stamp out our immutable **TaskRuns** and **PipelineRuns**.
+
 ```editor:select-matching-text
 file: simple-supply-chain/config-writer-template.yaml
 text: "  ytt: \"\""
 ```
+
 ```editor:replace-text-selection
 file: simple-supply-chain/config-writer-template.yaml
 text: |2
@@ -39,14 +41,17 @@ text: |2
     outputs: {}
     template: {}
 ```
+
 `spec.outputs` provides a free-form way of exposing any form of results from what has been run to the status of the Runnable object (as opposed to typed “source”, “image”, and “config” from supply chains). Because we don't have the need to expose any outputs to subsequent steps and therefore, use a ClusterTemplate, we don't have to specify it.
 
 We'll now configure a TaskRun to push the deployment configuration to a Git repository.
+
 ```editor:select-matching-text
 file: simple-supply-chain/run-template.yaml
 text: "  outputs: {}"
 after: 1
 ```
+
 ```editor:replace-text-selection
 file: simple-supply-chain/run-template.yaml
 text: |2
@@ -91,11 +96,13 @@ text: |2
 ```
 
 The detailed specifications of the Runnable and ClusterRunTemplate can be found here: 
+
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.4.0/reference/runnable/
+url: https://cartographer.sh/docs/v0.5.0/reference/runnable/
 ```
 
 Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
+
 ```terminal:execute
 command: |
   kapp deploy -a simple-supply-chain -f simple-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
@@ -104,28 +111,34 @@ clear: true
 ```
 
 That should now kick off the build on Tanzu Build Server. Let's see what it looks like
+
 ```terminal:execute
 command: |
 kp build logs simple-app
 clear: true
 ```
+
 Now let's see what it looks like in TAP GUI
 
 ```dashboard:open-url
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-app
 ```
+
 ```terminal:execute
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
 clear: true
 ```
+
 ```terminal:execute
 command: kubectl tree workload simple-app
 clear: true
 ```
+
 ```terminal:execute
 command: kubectl describe workload simple-app 
 clear: true
 ```
+
 ```execute-2
 tanzu apps workload tail simple-app 
 ```

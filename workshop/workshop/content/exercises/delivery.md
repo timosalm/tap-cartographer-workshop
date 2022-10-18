@@ -193,10 +193,10 @@ The following diagram (which is available in the documentation) of a similar Clu
 
 The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.4.0/reference/deliverable/
+url: https://cartographer.sh/docs/v0.5.0/reference/deliverable/
 ```
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.4.0/reference/template/#clusterdeploymenttemplate
+url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterdeploymenttemplate
 ```
 
 Now that you have a better understanding of how all the building blocks of Cartographer work, let's have a look what's out of the box with VMware Application Platform.

@@ -4,6 +4,7 @@ To standardize our application deployment to a fleet of clusters, we'll use **Gi
 With the GitOps approach, Git is used to version and store the necessary deployment configuration of our application configuration files as the single source of truth for infrastructure running in development, staging, production, etc. 
 
 Therefore, the last step of our Supply Chain is the push of the deployment configuration to Git repository. 
+
 ```editor:append-lines-to-file
 file: simple-supply-chain/supply-chain.yaml
 text: |2
@@ -43,5 +44,5 @@ Tekton Pipelines defines the following entities:
 
 The detailed specifications of the ClusterTemplate can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.4.0/reference/template/#clustertemplate
+url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustertemplate
 ```
