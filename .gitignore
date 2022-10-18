@@ -3,6 +3,12 @@ TODO
 values.yaml
 local-config
 
+*.tar
+*.gz
+*.tgz
+*.zip
+*.log
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
