@@ -104,8 +104,7 @@ clear: true
 ```
 That should now kick off the build on Tanzu Build Server. Let's see what it looks like
 ```terminal:execute
-command: |
-kp build logs simple-app
+command: kp build logs simple-app
 clear: true
 ```
 Now let's see what it looks like in TAP GUI
