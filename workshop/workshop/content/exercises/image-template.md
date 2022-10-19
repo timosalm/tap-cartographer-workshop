@@ -15,8 +15,8 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.svcs.az-tkglab.sprok8s.com
-          repository: tap-wkld
+          server: harbor.services.demo.jg-aws.com
+          repository: tap-workshop-workloads
 ```
 In addition, we also define parameters for the resource with the configuration of a registry server and repository to which we want to push our container images. As we are setting them with `params[*].value` instead of `params[*].default`, they are not overridable by the global ClusterSupplyChain resource's and the Workload params. 
 

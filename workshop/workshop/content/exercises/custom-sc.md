@@ -192,8 +192,8 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.svcs.az-tkglab.sprok8s.com
-          repository: tap-wkld
+          server: harbor.services.demo.jg-aws.com
+          repository: tap-workshop-workloads
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
 ```dashboard:open-url
@@ -297,8 +297,8 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.svcs.az-tkglab.sprok8s.com
-          repository: tap-wkld
+          server: harbor.services.demo.jg-aws.com
+          repository: tap-workshop-workloads
       - name: dockerfile
         default: ""
 ```

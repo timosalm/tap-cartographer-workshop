@@ -10,7 +10,7 @@ spec:
         autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
-        - image: harbor.svcs.az-tkglab.sprok8s.com/tap-workshop/github-source-controller
+        - image: harbor.services.demo.jg-aws.com/tap-workshop-workloads/github-source-controller
           name: user-container
 ---
 apiVersion: rbac.authorization.k8s.io/v1
