@@ -7,6 +7,7 @@ text: |2
   metadata:
     labels:
       app.kubernetes.io/part-of: simple-app
+      apps.tanzu.vmware.com/workload-type: web
       end2end.link/workshop-session: {{ session_namespace }}
     name: simple-app
   spec:
