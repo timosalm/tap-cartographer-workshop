@@ -28,6 +28,8 @@ text: |2
   metadata:
     name: simple-config-writer-template-{{ session_namespace }}
   spec:
+    healthRule:
+      singleConditionType: Ready
     ytt: ""
 ```
 
