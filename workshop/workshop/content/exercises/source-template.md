@@ -77,7 +77,7 @@ text: |2
       kind: GitRepository
       metadata:
         name: #@ data.values.workload.metadata.name
-        labels: #@ merge_labels({ "app.kubernetes.io/component": "source", "app.kubernetes.io/part-of": #@ data.values.workload.metadata.name })
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source", "app.kubernetes.io/part-of": "simple-app" })
       spec:
         interval: 1m0s
         url: #@ data.values.workload.spec.source.git.url
