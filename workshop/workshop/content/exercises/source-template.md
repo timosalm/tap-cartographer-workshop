@@ -7,6 +7,8 @@ text: |2
   metadata:
     name: simple-source-template-{{ session_namespace }}
   spec:
+    healthRule:
+      singleConditionType: Succeeded
     urlPath: ""
     revisionPath: ""
     template: {}
