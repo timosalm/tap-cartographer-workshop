@@ -53,6 +53,8 @@ text: |2
     template:
       apiVersion: source.toolkit.fluxcd.io/v1beta1
       kind: GitRepository
+      labels:
+        app.kubernetes.io/component: source
       metadata:
         name: $(workload.metadata.name)$
       spec:
