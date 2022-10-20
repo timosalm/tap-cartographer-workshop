@@ -102,9 +102,18 @@ command: |
   kubectl apply -f workload.yaml
 clear: true
 ```
-That should now kick off the build on Tanzu Build Server. Let's see what it looks like
+That should now kick off the build on Tanzu Build Server. We'll use `kp list` command from the Carvel toolchain
+
+```terminal:execute
+command: watch kp build list
+clear: true
+session: 2
+```
+Let's see what the build looks like.
+
 ```terminal:execute
 command: kp build logs simple-app
+session: 1
 clear: true
 ```
 Now let's see what it looks like in TAP GUI
@@ -123,8 +132,10 @@ clear: true
 command: kubectl describe workload simple-app 
 clear: true
 ```
-```execute-2
-tanzu apps workload tail simple-app 
+```terminal:execute
+commnad: tanzu apps workload tail simple-app
+clear: true
+session:2
 ```
 
 The following diagram (which is available in the documentation) of a similar ClusterSupplyChain shows the relationship between all those different resources.
