@@ -29,6 +29,8 @@ text: |2
   metadata:
     name: simple-image-template-{{ session_namespace }}
   spec:
+    healthRule:
+      singleConditionType: Ready
     params:
       - name: registry
         default: {}
@@ -73,6 +75,9 @@ text: |2
       kind: Image
       metadata:
         name: #@ data.values.workload.metadata.name
+        labels:
+          app.kubernetes.io/component: image
+          app.kubernetes.io/part-of: #@ data.values.metadata.name
       spec:
         tag: #@ image()
         source:
