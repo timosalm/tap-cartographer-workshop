@@ -11,6 +11,35 @@ text: |2
       singleConditionType: Ready
     urlPath: ""
     revisionPath: ""
+  ytt: |
+    #@ load("@ytt:data", "data")
+    #@ load("@ytt:yaml", "yaml")
+
+    #@ def merge_labels(fixed_values):
+    #@   labels = {}
+    #@   if hasattr(data.values.workload.metadata, "labels"):
+    #@     labels.update(data.values.workload.metadata.labels)
+    #@   end
+    #@   labels.update(fixed_values)
+    #@   return labels
+    #@ end
+
+    #@ def param(key):
+    #@   if not key in data.values.params:
+    #@     return None
+    #@   end
+    #@   return data.values.params[key]
+    #@ end
+
+    #@ def maven_param(key):
+    #@   if not key in data.values.params["maven"]:
+    #@     return None
+    #@   end
+    #@   return data.values.params["maven"][key]
+    #@ end
+
+    #@ if/end param("maven"):
+    ---    
     template: {}
 ```
 All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part of our path to production.
@@ -53,9 +82,7 @@ text: |2
     template:
       apiVersion: source.toolkit.fluxcd.io/v1beta1
       kind: GitRepository
-      labels:
-        app.kubernetes.io/component: source
-        app.kubernetes.io/part-of: simple-app
+      labels: #@ merge_labels({ "app.kubernetes.io/component": "source" }, { app.kubernetes.io/part-of: $(workload.spec.name)$ })        
       metadata:
         name: $(workload.metadata.name)$
       spec:
