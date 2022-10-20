@@ -11,36 +11,69 @@ text: |2
       singleConditionType: Ready
     urlPath: ""
     revisionPath: ""
-  ytt: |
-    #@ load("@ytt:data", "data")
-    #@ load("@ytt:yaml", "yaml")
+ytt: |
+  #@ load("@ytt:data", "data")
+  #@ load("@ytt:yaml", "yaml")
 
-    #@ def merge_labels(fixed_values):
-    #@   labels = {}
-    #@   if hasattr(data.values.workload.metadata, "labels"):
-    #@     labels.update(data.values.workload.metadata.labels)
-    #@   end
-    #@   labels.update(fixed_values)
-    #@   return labels
-    #@ end
+  #@ def merge_labels(fixed_values):
+  #@   labels = {}
+  #@   if hasattr(data.values.workload.metadata, "labels"):
+  #@     labels.update(data.values.workload.metadata.labels)
+  #@   end
+  #@   labels.update(fixed_values)
+  #@   return labels
+  #@ end
 
-    #@ def param(key):
-    #@   if not key in data.values.params:
-    #@     return None
-    #@   end
-    #@   return data.values.params[key]
-    #@ end
+  #@ def param(key):
+  #@   if not key in data.values.params:
+  #@     return None
+  #@   end
+  #@   return data.values.params[key]
+  #@ end
 
-    #@ def maven_param(key):
-    #@   if not key in data.values.params["maven"]:
-    #@     return None
-    #@   end
-    #@   return data.values.params["maven"][key]
-    #@ end
+  #@ def maven_param(key):
+  #@   if not key in data.values.params["maven"]:
+  #@     return None
+  #@   end
+  #@   return data.values.params["maven"][key]
+  #@ end
 
-    #@ if/end param("maven"):
-    ---    
-    template: {}
+  #@ if/end param("maven"):
+  
+  #@ if hasattr(data.values.workload.spec, "source"):
+  #@ if/end hasattr(data.values.workload.spec.source, "git"):
+  ---
+  apiVersion: source.toolkit.fluxcd.io/v1beta1
+  kind: GitRepository
+  metadata:
+    name: #@ data.values.workload.metadata.name
+    labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
+  spec:
+    interval: 1m0s
+    url: #@ data.values.workload.spec.source.git.url
+    ref: #@ data.values.workload.spec.source.git.ref
+    gitImplementation: #@ data.values.params.gitImplementation
+    ignore: |
+      !.git
+    #@ if/end param("gitops_ssh_secret"):
+    secretRef:
+      name: #@ param("gitops_ssh_secret")
+  #@ end
+
+
+  #@ if hasattr(data.values.workload.spec, "source"):
+  #@ if/end hasattr(data.values.workload.spec.source, "image"):
+  ---
+  apiVersion: source.apps.tanzu.vmware.com/v1alpha1
+  kind: ImageRepository
+  metadata:
+    name: #@ data.values.workload.metadata.name
+    labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
+  spec:
+    serviceAccountName: #@ data.values.params.serviceAccount
+    interval: 1m0s
+    image: #@ data.values.workload.spec.source.image
+  #@ end
 ```
 All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part of our path to production.
 
