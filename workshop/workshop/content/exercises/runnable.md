@@ -116,7 +116,7 @@ session: 1
 ```
 Now let's see what it looks like in TAP GUI
 ```dashboard:open-url
-url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-app
+url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/simple-app
 ```
 ```terminal:execute
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
