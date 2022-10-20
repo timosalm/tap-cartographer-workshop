@@ -11,69 +11,7 @@ text: |2
       singleConditionType: Ready
     urlPath: ""
     revisionPath: ""
-ytt: |
-  #@ load("@ytt:data", "data")
-  #@ load("@ytt:yaml", "yaml")
-
-  #@ def merge_labels(fixed_values):
-  #@   labels = {}
-  #@   if hasattr(data.values.workload.metadata, "labels"):
-  #@     labels.update(data.values.workload.metadata.labels)
-  #@   end
-  #@   labels.update(fixed_values)
-  #@   return labels
-  #@ end
-
-  #@ def param(key):
-  #@   if not key in data.values.params:
-  #@     return None
-  #@   end
-  #@   return data.values.params[key]
-  #@ end
-
-  #@ def maven_param(key):
-  #@   if not key in data.values.params["maven"]:
-  #@     return None
-  #@   end
-  #@   return data.values.params["maven"][key]
-  #@ end
-
-  #@ if/end param("maven"):
-  
-  #@ if hasattr(data.values.workload.spec, "source"):
-  #@ if/end hasattr(data.values.workload.spec.source, "git"):
-  ---
-  apiVersion: source.toolkit.fluxcd.io/v1beta1
-  kind: GitRepository
-  metadata:
-    name: #@ data.values.workload.metadata.name
-    labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
-  spec:
-    interval: 1m0s
-    url: #@ data.values.workload.spec.source.git.url
-    ref: #@ data.values.workload.spec.source.git.ref
-    gitImplementation: #@ data.values.params.gitImplementation
-    ignore: |
-      !.git
-    #@ if/end param("gitops_ssh_secret"):
-    secretRef:
-      name: #@ param("gitops_ssh_secret")
-  #@ end
-
-
-  #@ if hasattr(data.values.workload.spec, "source"):
-  #@ if/end hasattr(data.values.workload.spec.source, "image"):
-  ---
-  apiVersion: source.apps.tanzu.vmware.com/v1alpha1
-  kind: ImageRepository
-  metadata:
-    name: #@ data.values.workload.metadata.name
-    labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
-  spec:
-    serviceAccountName: #@ data.values.params.serviceAccount
-    interval: 1m0s
-    image: #@ data.values.workload.spec.source.image
-  #@ end
+    ytt: ""
 ```
 All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part of our path to production.
 
@@ -104,24 +42,66 @@ More information can be found here:
 url: https://cartographer.sh/docs/v0.5.0/templating/
 ```
 
-For our first functionality, we will use a simple template and use the configuration provided by the Workload.
+For our first functionality, we will use a `ytt` and use the configuration provided by the Workload.
 ```editor:select-matching-text
 file: simple-supply-chain/source-template.yaml
-text: "  template: {}"
+text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
 file: simple-supply-chain/source-template.yaml
 text: |2
-    template:
+    ytt: |
+      #@ load("@ytt:data", "data")
+      #@ load("@ytt:yaml", "yaml")
+
+      #@ def merge_labels(fixed_values):
+      #@   labels = {}
+      #@   if hasattr(data.values.workload.metadata, "labels"):
+      #@     labels.update(data.values.workload.metadata.labels)
+      #@   end
+      #@   labels.update(fixed_values)
+      #@   return labels
+      #@ end
+
+      #@ def param(key):
+      #@   if not key in data.values.params:
+      #@     return None
+      #@   end
+      #@   return data.values.params[key]
+      #@ end
+
+      #@ if hasattr(data.values.workload.spec, "source"):
+      #@ if/end hasattr(data.values.workload.spec.source, "git"):
+      ---
       apiVersion: source.toolkit.fluxcd.io/v1beta1
       kind: GitRepository
-      labels: #@ merge_labels({ "app.kubernetes.io/component": "source" }, { app.kubernetes.io/part-of: $(workload.spec.name)$ })        
       metadata:
-        name: $(workload.metadata.name)$
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source", "app.kubernetes.io/part-of": #@ data.values.workload.metadata.name })
       spec:
         interval: 1m0s
-        url: $(workload.spec.source.git.url)$
-        ref: $(workload.spec.source.git.ref)$
+        url: #@ data.values.workload.spec.source.git.url
+        ref: #@ data.values.workload.spec.source.git.ref
+        ignore: |
+          !.git
+        #@ if/end param("gitops_ssh_secret"):
+        secretRef:
+          name: #@ param("gitops_ssh_secret")
+      #@ end
+
+      #@ if hasattr(data.values.workload.spec, "source"):
+      #@ if/end hasattr(data.values.workload.spec.source, "image"):
+      ---
+      apiVersion: source.apps.tanzu.vmware.com/v1alpha1
+      kind: ImageRepository
+      metadata:
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
+      spec:
+        serviceAccountName: #@ data.values.params.serviceAccount
+        interval: 1m0s
+        image: #@ data.values.workload.spec.source.image
+      #@ end
 ```
 
 On every successful repository sync, the status of the custom GitRepository resource will be updated with an url to download an archive that contains the source code and the revision. We can use this information as the output of our Template specified in jsonpath.
