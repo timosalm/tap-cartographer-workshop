@@ -8,7 +8,7 @@ text: |2
     name: simple-source-template-{{ session_namespace }}
   spec:
     healthRule:
-      singleConditionType: Succeeded
+      singleConditionType: Ready
     urlPath: ""
     revisionPath: ""
     template: {}
