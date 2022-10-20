@@ -77,7 +77,7 @@ text: |2
         name: #@ data.values.workload.metadata.name
         labels:
           app.kubernetes.io/component: image
-          app.kubernetes.io/part-of: #@ data.values.metadata.name
+          app.kubernetes.io/part-of: #@ data.values.workload.metadata.name
       spec:
         tag: #@ image()
         source:
