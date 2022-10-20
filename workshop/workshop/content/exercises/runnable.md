@@ -19,6 +19,9 @@ text: |2
       kind: Runnable
       metadata:
         name: #@ data.values.workload.metadata.name + "-config-writer"
+        labels:
+          app.kubernetes.io/component: runnable
+          app.kubernetes.io/part-of: #@ data.values.workload.metadata.name
       spec:
         runTemplateRef:
           name: simple-run-template-{{ session_namespace }}
