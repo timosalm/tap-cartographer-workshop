@@ -111,8 +111,8 @@ session: 2
 Let's see what the build looks like.
 ```terminal:execute
 command: kp build logs simple-app
-session: 1
 clear: true
+session: 1
 ```
 Now let's see what it looks like in TAP GUI
 ```dashboard:open-url
