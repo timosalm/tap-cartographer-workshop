@@ -131,7 +131,7 @@ command: kubectl describe workload simple-app
 clear: true
 ```
 ```terminal:execute
-commnad: tanzu apps workload tail simple-app
+command: tanzu apps workload tail simple-app
 clear: true
 session: 2
 ```
