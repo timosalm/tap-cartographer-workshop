@@ -103,14 +103,12 @@ command: |
 clear: true
 ```
 That should now kick off the build on Tanzu Build Server. We'll use `kp list` command from the Carvel toolchain
-
 ```terminal:execute
 command: watch kp build list
 clear: true
 session: 2
 ```
 Let's see what the build looks like.
-
 ```terminal:execute
 command: kp build logs simple-app
 session: 1
