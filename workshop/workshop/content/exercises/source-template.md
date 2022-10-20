@@ -55,6 +55,7 @@ text: |2
       kind: GitRepository
       labels:
         app.kubernetes.io/component: source
+        app.kubernetes.io/part-of: simple-app
       metadata:
         name: $(workload.metadata.name)$
       spec:
