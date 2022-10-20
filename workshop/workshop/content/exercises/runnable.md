@@ -133,7 +133,7 @@ clear: true
 ```terminal:execute
 commnad: tanzu apps workload tail simple-app
 clear: true
-session:2
+session: 2
 ```
 
 The following diagram (which is available in the documentation) of a similar ClusterSupplyChain shows the relationship between all those different resources.
