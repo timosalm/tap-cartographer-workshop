@@ -3,7 +3,7 @@ set -x
 set +e
 
 REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD kp secret create registry-credentials --registry ${CONTAINER_REGISTRY_HOSTNAME} --registry-user ${CONTAINER_REGISTRY_USERNAME}
-kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}, {"name": "tanzu-net-credentials"}]}'
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}, {"name": "tanzu-net-credentials"}, {"name": "tap-registry"}, {"name": "jgharbor-tap-registry-creds"}]}'
 
 git clone https://github.com/mrgaryg/tap-cartographer-workshop.git
 
@@ -72,6 +72,7 @@ spec:
               cd $(params.source-sub-path)
               mvn test
 EOF
+# Apply Scan Policies to the session workshop
 cat << EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
 kind: ScanPolicy
@@ -113,6 +114,8 @@ spec:
       msg = sprintf("CVE %s %s %s", [comp.name, vuln.id, ratings])
     }
 EOF
+
+# Deploy sample workload through testing and scanning supply chain
 cat << EOF | kubectl apply -f -
 apiVersion: carto.run/v1alpha1
 kind: Workload
@@ -127,5 +130,5 @@ spec:
     git:
       ref:
         branch: main
-      url: https://github.com/tsalm-pivotal/spring-boot-hello-world.git
+      url: https://github.com/mrgaryg/spring-boot-hello-world.git
 EOF
