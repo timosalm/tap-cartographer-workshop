@@ -14,7 +14,7 @@ text: |2
     source:
       git:
         ref:
-          branch: se-supplychains-workshop
+          branch: main
         url: https://github.com/mrgaryg/spring-boot-hello-world.git
 ```
 For the matching of our Workload and Supply Chain we have to set the **label of our ClusterSupplyChain's label selector**. We also defined `app.kubernetes.io/part-of: simple-app` as a label that is required for the commercial Supply Chain Choreographer UI plugin. 
