@@ -3,6 +3,7 @@ set -x
 set +e
 
 REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD kp secret create registry-credentials --registry ${CONTAINER_REGISTRY_HOSTNAME} --registry-user ${CONTAINER_REGISTRY_USERNAME}
+REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD kp secret create tap-registry --registry ${CONTAINER_REGISTRY_HOSTNAME} --registry-user ${CONTAINER_REGISTRY_USERNAME}
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}, {"name": "tanzu-net-credentials"}, {"name": "tap-registry"}, {"name": "jgharbor-tap-registry-creds"}]}'
 
 git clone https://github.com/mrgaryg/tap-cartographer-workshop.git
@@ -13,6 +14,8 @@ git_hostname=$(echo $GITOPS_REPOSITORY | grep -oP '(?<=http://).*?(?=/)')
 
 kubectl annotate namespace ${SESSION_NAMESPACE} secretgen.carvel.dev/excluded-from-wildcard-matching-
 
+# Create Tekton Secret for GitOps repo
+# We use Gitea for GitOps repo
 cat <<EOF | kubectl apply -f -
 kind: Secret
 apiVersion: v1
@@ -27,6 +30,8 @@ stringData:
     http://$GITOPS_REPOSITORY_USERNAME:$GITOPS_REPOSITORY_PASSWORD@$git_hostname
 EOF
 
+# Create Flux Secret for GitOps repo
+# We use Gitea for GitOps repo
 cat <<EOF | kubectl apply -f -
 kind: Secret
 apiVersion: v1
@@ -37,6 +42,7 @@ data:
   password: $(echo $GITOPS_REPOSITORY_PASSWORD | base64)
 EOF
 
+# Create a custom Tekton Pipeline to for code scanning
 cat << \EOF | kubectl apply -f -
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
@@ -48,7 +54,6 @@ spec:
   params:
     - name: source-url                       # (!) required
     - name: source-revision                  # (!) required
-    - name: source-sub-path                  # (!) required
   tasks:
     - name: test
       params:
@@ -56,22 +61,19 @@ spec:
           value: $(params.source-url)
         - name: source-revision
           value: $(params.source-revision)
-        - name: source-sub-path
-          value: $(params.source-sub-path)
       taskSpec:
         params:
           - name: source-url
           - name: source-revision
-          - name: source-sub-path
         steps:
           - name: test
             image: maven:3-openjdk-11
             script: |-
               cd `mktemp -d`
               wget -qO- $(params.source-url) | tar xvz -m
-              cd $(params.source-sub-path)
               mvn test
 EOF
+
 # Apply Scan Policies to the session workshop
 cat << EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
