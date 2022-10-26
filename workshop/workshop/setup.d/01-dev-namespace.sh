@@ -4,7 +4,7 @@ set +e
 
 REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD kp secret create registry-credentials --registry ${CONTAINER_REGISTRY_HOSTNAME} --registry-user ${CONTAINER_REGISTRY_USERNAME}
 REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD kp secret create tap-registry --registry ${CONTAINER_REGISTRY_HOSTNAME} --registry-user ${CONTAINER_REGISTRY_USERNAME}
-kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}, {"name": "tanzu-net-credentials"}, {"name": "tap-registry"}, {"name": "jgharbor-tap-registry-creds"}]}'
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}, {"name": "tanzu-net-credentials"}, {"name": "tap-registry"}]}'
 
 git clone https://github.com/mrgaryg/tap-cartographer-workshop.git
 
