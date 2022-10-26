@@ -11,7 +11,7 @@ A [Learning Center for VMware Tanzu](https://docs.vmware.com/en/Tanzu-Applicatio
 Download the Tanzu CLI for Linux to the root of this sub-directory.
 Create a public project called **tap-workshop** in your registry instance. 
 
-There is a Dockerfile in the root directory of this repo. From that root directory, build a Docker image and push it to the project you created:
+There is a Dockerfile in the `workshop` directory of this repo. From that directory, build a Docker image and push it to the project you created:
 ```
 docker build . -t <your-registry-hostname>/tap-workshop/cartographer-workshop
 docker push <your-registry-hostname>/tap-workshop/cartographer-workshop
