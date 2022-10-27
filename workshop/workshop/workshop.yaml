@@ -13,4 +13,5 @@ modules:
     - exercises/delivery
     - exercises/sc-ootb
     - exercises/custom-sc
+    - exercises/custom-sc-p2
     - workshop-summary

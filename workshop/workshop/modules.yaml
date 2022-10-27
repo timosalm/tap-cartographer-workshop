@@ -33,7 +33,7 @@ modules:
         name: Building a custom Supply Chain
         exit_sign: Custom SC - p2
     exercises/custom-sc-p2:
-        name: --Customize OOTB Supply Chain--
+        name: Customize OOTB Supply Chain
         exit_sign: Summary
     workshop-summary:
         name: Workshop Summary
