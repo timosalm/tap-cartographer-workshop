@@ -4,7 +4,7 @@ A [Learning Center for VMware Tanzu](https://docs.vmware.com/en/Tanzu-Applicatio
 
 ## Prerequisites
 
-- A TAP 1.1 environment with OOTB Testing/Scanning Supply Chain installed
+- A TAP 1.2 environment with OOTB Testing/Scanning Supply Chain installed
 - [Gitea](https://gitea.io) for the creation of Git repositories for each session
 
 ## Workshop installation
