@@ -545,7 +545,7 @@ text: |2
                 metadata:
                   name: $(workload.metadata.name)$
                   annotations:
-                    serving.knative.dev/creator: system:serviceaccount:scc-workshops-w02-s003:default
+                    serving.knative.dev/creator: system:serviceaccount:{{ session_namespace }}
                 spec:
                   template: 
                     spec:
