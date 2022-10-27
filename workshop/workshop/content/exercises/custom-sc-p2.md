@@ -1,34 +1,10 @@
-The easiest way to get started with building a custom supply chain is to copy one of the out-of-the-box supply chains from the cluster, change the `metadata.name`, and add a unique selector by e.g. adding a label to the `spec.selector` configuration.
-
-For this exercise, we will build one from scratch and discover the three ways of providing an implementation for a template:
-- Using a Kubernetes custom resource that is already available for the functionality we are looking for
-- Leverage a Kubernetes native CI/CD solution like Tekton to do the job, which is part of TAP
-- For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
-
-You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of right now to build a custom Kubernetes Controller, and therefore, we will just have a look at an example.
-You can make the solution for a specific step visible by clicking on the **Solution sections**.
-
-Let's now start the implementation with the following supply chain skeleton.
-```terminal:execute
-command: mkdir custom-supply-chain
+Working Custom Supply Chain (GG,DK) Start
+```section:begin
+title: Working Custom Supply Chain (GG,DK)
 ```
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
-  apiVersion: carto.run/v1alpha1
-  kind: ClusterSupplyChain
-  metadata:
-    name: custom-supplychain-{{ session_namespace }}
-  spec:
-    selector:
-      end2end.link/workshop-session: {{ session_namespace }}
-      end2end.link/is-custom: "true"
-    resources: []
-```
-
-# <<<OUR Supply Chain Version>>>
-
-```
 apiVersion: carto.run/v1alpha1
 kind: ClusterSupplyChain
 metadata:
@@ -183,50 +159,52 @@ spec:
     apps.tanzu.vmware.com/workload-type: web
     end2end.link/workshop-session: {{ session_namespace }}
 ```
+```section:end
+```
+Working Custom Supply Chain (GG,DK) End
 
 
 
+
+
+
+
+
+
+
+The easiest way to get started with building a custom supply chain is to copy one of the out-of-the-box supply chains from the cluster, change the `metadata.name`, and add a unique selector by e.g. adding a label to the `spec.selector` configuration.
+
+For this exercise, we will build one from scratch and discover the three ways of providing an implementation for a template:
+- Using a Kubernetes custom resource that is already available for the functionality we are looking for
+- Leverage a Kubernetes native CI/CD solution like Tekton to do the job, which is part of TAP
+- For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
+
+You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of right now to build a custom Kubernetes Controller, and therefore, we will just have a look at an example.
+You can make the solution for a specific step visible by clicking on the **Solution sections**.
+
+Let's now start the implementation with the following supply chain skeleton.
+```terminal:execute
+command: mkdir custom-supply-chain
+```
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterSupplyChain
+  metadata:
+    name: custom-supplychain-{{ session_namespace }}
+    labels:
+      apps.tanzu.vmware.com/workload-type: web
+      end2end.link/is-custom: "true"
+      end2end.link/workshop-session: {{ session_namespace }}
+  spec:
+    selector:
+      end2end.link/workshop-session: {{ session_namespace }}
+      end2end.link/is-custom: "true"
+    resources: []
+```
 As with the other supply chains you already saw, the **first task** for our custom supply chain is also to **provide the latest version of a source code in a Git repository for subsequent steps**.
 In the simple and ootb supply chains we used the [Flux](https://fluxcd.io) Source Controller for it. 
-
-
-As far as I know, no real alternative is available, and the goal is to practice all three ways to provide an implementation for a template. Therefore, I've **built a custom Kubernetes Controller for it**.
-
-The Kubernetes Controller is built with Spring Boot, but I could have implemented it easily with other programming languages/frameworks, where a [Kubernetes client library](https://kubernetes.io/docs/reference/using-api/client-libraries/) is available for.
-You can see the official Java Kubernetes client library dependency I'm using in the POM file of the project.
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/pom.xml
-line: 29
-```
-
-The Kubernetes Controller provides a REST API for a GitHub Webhook that sends a POST request to it on every new commit after configuring it for a specific repository. 
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/GitHubWebhookResource.java
-```
-
-Based on the provided information, the Kubernetes Controller generates a tarball url for the source code version that can be used by subsequent steps to download it and stores it in a HashMap.
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/GitHubSourceApplicationService.java
-```
-
-Now it's getting a little bit more complex.
-**Controllers** are the core of Kubernetes.
-It’s a controller’s job to ensure that, for any given object, the actual state of the world (both the cluster state and potentially external state like running containers for Kubelet or load balancers for a cloud provider) matches the desired state in the object. Each controller focuses on one root Kubernetes resource but may interact with other Kubernetes resources. We call this process **reconciling**.
-In our case the Kubernetes resource is a custom resource definition called `GitHubRepository`.
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/k8s/crds/github-repository-crd.yaml
-```
-
-Let's now have a look at our reconcile function.
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/GitHubSourceReconciler.java
-```
-It's passed a reconciliation request that includes information about a custom resource of the type `GitHubRepository` which's state has to be matched to the actual state of the world (in our example every 30 seconds). The `status.artifact` information of the custom resource will be updated with the latest revision (`status.artifact.revision`) and tarball url (`status.artifact.url`) from the HashMap for the configured Git repository and branch if available.
-
-To have actual instances of the Reconciler and Controller running in our application, we have to register them as Beans and provide all the required parameters via additional configuration.
-```editor:open-file
-file: tap-cartographer-workshop/github-source-controller/src/main/java/com/example/ControllerConfiguration.java
-```
 
 The application then has to be packaged in a container, deployed to Kubernetes, and exposed to be reachable by the GitHub Webhook of a Git repository that also has to be configured - which is already done for you.
 
@@ -241,7 +219,22 @@ text: |2
   spec:
     urlPath: ""
     revisionPath: ""
-    template: {}
+    ytt: ""
+```
+In TAP 1.2 we have the ability to detect the **Health Status** of the Supply Chain component. To accomplish that, we need to add `healthRule` spec to the respective component. We will be  adding for the rest of the components.
+This is possible via the `spec.healthRule`. The documentation is available here:
+```dashboard:open-url
+url: https://cartographer.sh/docs/v0.5.0/health-rules/
+```
+```editor:select-matching-text
+file: custom-supply-chain/source-template.yamll
+text: "  spec:"
+```
+```editor:append-lines-to-file
+file: custom-supply-chain/source-template.yaml
+text: |2
+    healthRule:
+      singleConditionType: Ready
 ```
 
 ```section:begin
@@ -265,19 +258,63 @@ text: |2
 
 ```editor:select-matching-text
 file: custom-supply-chain/source-template.yaml
-text: "  template: {}"
+text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
 file: custom-supply-chain/source-template.yaml
 text: |2
-    template:
-      apiVersion: timosalm.de/v1
-      kind: GitHubRepository
+    ytt: |
+      #@ load("@ytt:data", "data")
+      #@ load("@ytt:yaml", "yaml")
+
+      #@ def merge_labels(fixed_values):
+      #@   labels = {}
+      #@   if hasattr(data.values.workload.metadata, "labels"):
+      #@     labels.update(data.values.workload.metadata.labels)
+      #@   end
+      #@   labels.update(fixed_values)
+      #@   return labels
+      #@ end
+
+      #@ def param(key):
+      #@   if not key in data.values.params:
+      #@     return None
+      #@   end
+      #@   return data.values.params[key]
+      #@ end
+
+      #@ if hasattr(data.values.workload.spec, "source"):
+      #@ if/end hasattr(data.values.workload.spec.source, "git"):
+      ---
+      apiVersion: source.toolkit.fluxcd.io/v1beta1
+      kind: GitRepository
       metadata:
-        name: $(workload.metadata.name)$
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source", "app.kubernetes.io/part-of": "simple-app" })
       spec:
-        url: $(workload.spec.source.git.url)$
-        branch: $(workload.spec.source.git.ref.branch)$
+        interval: 1m0s
+        url: #@ data.values.workload.spec.source.git.url
+        ref: #@ data.values.workload.spec.source.git.ref
+        ignore: |
+          !.git
+        #@ if/end param("gitops_ssh_secret"):
+        secretRef:
+          name: #@ param("gitops_ssh_secret")
+      #@ end
+
+      #@ if hasattr(data.values.workload.spec, "source"):
+      #@ if/end hasattr(data.values.workload.spec.source, "image"):
+      ---
+      apiVersion: source.apps.tanzu.vmware.com/v1alpha1
+      kind: ImageRepository
+      metadata:
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source" })
+      spec:
+        serviceAccountName: #@ data.values.params.serviceAccount
+        interval: 1m0s
+        image: #@ data.values.workload.spec.source.image
+      #@ end
 ```
 
 ```editor:select-matching-text
@@ -296,7 +333,7 @@ text: |2
 
 As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
 
-In addition to kpack, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
+In addition to `kpack`, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
 
 **[kaniko](https://github.com/GoogleContainerTools/kaniko)** is the solution we'll use for it. It's a tool to build container images from a Dockerfile, inside a container or Kubernetes cluster. 
 Because there is **no official Kubernetes CRD** for it available, we will use **Tekton** to run it in a container.
