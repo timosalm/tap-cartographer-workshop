@@ -44,6 +44,38 @@ EOF
 
 # Create a custom Tekton Pipeline to for code scanning
 cat << \EOF | kubectl apply -f -
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: developer-defined-tekton-pipeline
+  labels:
+    apps.tanzu.vmware.com/pipeline: test     # (!) required
+spec:
+  params:
+    - name: source-url                       # (!) required
+    - name: source-revision                  # (!) required
+  tasks:
+    - name: test
+      params:
+        - name: source-url
+          value: $(params.source-url)
+        - name: source-revision
+          value: $(params.source-revision)
+      taskSpec:
+        params:
+          - name: source-url
+          - name: source-revision
+        steps:
+          - name: test
+            image: maven:3-openjdk-11
+            script: |-
+              cd `mktemp -d`
+              wget -qO- $(params.source-url) | tar xvz -m
+              mvn test
+EOF
+
+# Apply relaxed scan policy to the session workshop
+cat << \EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
 kind: ScanPolicy
 metadata:
@@ -86,7 +118,7 @@ spec:
     }
 EOF
 
-# Apply strict scan policy to the session workshop
+# Apply strict scan policy to the session workshop with some `ignoreCves` as example
 cat << EOF | kubectl apply -f -
 apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
 kind: ScanPolicy
