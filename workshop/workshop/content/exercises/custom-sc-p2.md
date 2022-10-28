@@ -198,19 +198,19 @@ text: |2
       end2end.link/is-custom: "true"
       end2end.link/workshop-session: {{ session_namespace }}
   spec:
-  params:
-  - name: maven_repository_url
-    value: https://repo.maven.apache.org/maven2
-  - default: main
-    name: gitops_branch
-  - default: supplychain
-    name: gitops_user_name
-  - default: supplychain
-    name: gitops_user_email
-  - default: supplychain@cluster.local
-    name: gitops_commit_message
-  - default: ""
-    name: gitops_ssh_secret  
+    params:
+    - name: maven_repository_url
+      value: https://repo.maven.apache.org/maven2
+    - default: main
+      name: gitops_branch
+    - default: supplychain
+      name: gitops_user_name
+    - default: supplychain
+      name: gitops_user_email
+    - default: supplychain@cluster.local
+      name: gitops_commit_message
+    - default: ""
+      name: gitops_ssh_secret  
     selector:
       end2end.link/workshop-session: {{ session_namespace }}
       end2end.link/is-custom: "true"
