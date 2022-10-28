@@ -198,6 +198,19 @@ text: |2
       end2end.link/is-custom: "true"
       end2end.link/workshop-session: {{ session_namespace }}
   spec:
+  params:
+  - name: maven_repository_url
+    value: https://repo.maven.apache.org/maven2
+  - default: main
+    name: gitops_branch
+  - default: supplychain
+    name: gitops_user_name
+  - default: supplychain
+    name: gitops_user_email
+  - default: supplychain@cluster.local
+    name: gitops_commit_message
+  - default: ""
+    name: gitops_ssh_secret  
     selector:
       end2end.link/workshop-session: {{ session_namespace }}
       end2end.link/is-custom: "true"
@@ -233,6 +246,7 @@ text: |2
       singleConditionType: Ready
 ```
 
+We will continue `ClusterSourceTemplate` in this below section. Click below tile to expand it first.
 ```section:begin
 title: Solution ClusterSourceTemplate
 ```
@@ -247,6 +261,11 @@ file: custom-supply-chain/supply-chain.yaml
 text: |2
     resources:
     - name: source-provider
+      params:
+      - name: serviceAccount
+        value: default
+      - name: gitImplementation
+        value: go-git
       templateRef:
         kind: ClusterSourceTemplate
         name: custom-source-template-{{ session_namespace }}
@@ -343,7 +362,8 @@ text: |2
   metadata:
     name: custom-image-template-{{ session_namespace }}
   spec:
-    #TODO: healthRule
+    healthRule:
+      singleConditionType: Ready
     params:
       - name: registry
         default: {}
@@ -365,6 +385,19 @@ text: |2
       #@ def context_sub_path():
       #@   return data.values.workload.spec.source.git.url.replace("https://github.com/","").replace(".git","").replace("/","-") + "-" + data.values.source.revision[0:7]
       #@ end
+```
+
+Since we want to enforce the source testing, we need to consider the `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested.
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+  - name: source-tester
+    sources:
+    - name: source
+      resource: source-provider
+    templateRef:
+      kind: ClusterSourceTemplate
+      name: testing-pipeline
 ```
 
 We can reuse the relevant part of the simple supply chain for it.
@@ -405,7 +438,8 @@ text: |2
     metadata:
       name: custom-kaniko-run-template-{{ session_namespace }}
     spec:
-      #TODO: healthRule
+      healthRule:
+        singleConditionType: Ready
       outputs:
         latest-image: .status.taskResults[?(@.name=="latest-image")].value
       template:
@@ -507,7 +541,8 @@ text: |2
       spec:
         runTemplateRef:
           name: custom-kaniko-run-template-{{ session_namespace }}
-        #TODO: healthRule
+        healthRule:
+          singleConditionType: Ready
 
         inputs:
           image: #@ image()
@@ -539,7 +574,9 @@ text: |2
   metadata:
     name: custom-deployment-template-{{ session_namespace }}
   spec:
-    #TODO: healthRule
+    healthRule:
+      singleConditionType: Ready
+
 ```
 
 We already learned that a Knative Serving Service has immutable creator/lastModifer annotations and if Cartographer (or kapp-controller) applies updates to resources, it "removes" them which, results in a request denial by the admission webhook. However, we can work around this by using a kapp-controller App resource and that additional ConfigMap you can copy from the simple supply chain.
@@ -572,7 +609,8 @@ text: |2
       metadata:
         name: $(workload.metadata.name)$
       spec:
-        #TODO: healthRule
+        healthRule:
+          singleConditionType: Ready
         serviceAccountName: default
         fetch:
         - inline:
