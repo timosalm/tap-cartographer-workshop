@@ -226,10 +226,6 @@ This is possible via the `spec.healthRule`. The documentation is available here:
 ```dashboard:open-url
 url: https://cartographer.sh/docs/v0.5.0/health-rules/
 ```
-```editor:select-matching-text
-file: custom-supply-chain/source-template.yamll
-text: "  spec:"
-```
 ```editor:append-lines-to-file
 file: custom-supply-chain/source-template.yaml
 text: |2
@@ -290,7 +286,7 @@ text: |2
       kind: GitRepository
       metadata:
         name: #@ data.values.workload.metadata.name
-        labels: #@ merge_labels({ "app.kubernetes.io/component": "source", "app.kubernetes.io/part-of": "simple-app" })
+        labels: #@ merge_labels({ "app.kubernetes.io/part-of": data.values.workload.metadata.name })
       spec:
         interval: 1m0s
         url: #@ data.values.workload.spec.source.git.url
@@ -347,6 +343,7 @@ text: |2
   metadata:
     name: custom-image-template-{{ session_namespace }}
   spec:
+    #TODO: healthRule
     params:
       - name: registry
         default: {}
@@ -408,6 +405,7 @@ text: |2
     metadata:
       name: custom-kaniko-run-template-{{ session_namespace }}
     spec:
+      #TODO: healthRule
       outputs:
         latest-image: .status.taskResults[?(@.name=="latest-image")].value
       template:
@@ -509,6 +507,7 @@ text: |2
       spec:
         runTemplateRef:
           name: custom-kaniko-run-template-{{ session_namespace }}
+        #TODO: healthRule
 
         inputs:
           image: #@ image()
@@ -540,6 +539,7 @@ text: |2
   metadata:
     name: custom-deployment-template-{{ session_namespace }}
   spec:
+    #TODO: healthRule
 ```
 
 We already learned that a Knative Serving Service has immutable creator/lastModifer annotations and if Cartographer (or kapp-controller) applies updates to resources, it "removes" them which, results in a request denial by the admission webhook. However, we can work around this by using a kapp-controller App resource and that additional ConfigMap you can copy from the simple supply chain.
@@ -572,6 +572,7 @@ text: |2
       metadata:
         name: $(workload.metadata.name)$
       spec:
+        #TODO: healthRule
         serviceAccountName: default
         fetch:
         - inline:
