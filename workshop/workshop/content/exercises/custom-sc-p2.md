@@ -663,10 +663,10 @@ text: |2
   kind: Workload
   metadata:
     labels:
-      app.kubernetes.io/part-of: simple-python-app
+      app.kubernetes.io/part-of: app-with-custom-supply-chain
       end2end.link/workshop-session: {{ session_namespace }}
       end2end.link/is-custom: "true" 
-    name: simple-python-app
+    name: app-with-custom-supply-chain
   spec:
     params:
     - name: dockerfile
