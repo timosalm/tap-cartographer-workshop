@@ -346,6 +346,19 @@ text: |2
 ```section:end
 ```
 
+Since we want to enforce the source testing, we need to consider the `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested.
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+  - name: source-tester
+    sources:
+    - name: source
+      resource: source-provider
+    templateRef:
+      kind: ClusterSourceTemplate
+      name: custom-source-template-{{ session_namespace }}
+```
+
 As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
 
 In addition to `kpack`, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
@@ -386,20 +399,6 @@ text: |2
       #@   return data.values.workload.spec.source.git.url.replace("https://github.com/","").replace(".git","").replace("/","-") + "-" + data.values.source.revision[0:7]
       #@ end
 ```
-
-Since we want to enforce the source testing, we need to consider the `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested.
-```editor:append-lines-to-file
-file: custom-supply-chain/supply-chain.yaml
-text: |2
-  - name: source-tester
-    sources:
-    - name: source
-      resource: source-provider
-    templateRef:
-      kind: ClusterSourceTemplate
-      name: testing-pipeline
-```
-
 We can reuse the relevant part of the simple supply chain for it.
 ```editor:open-file
 file: simple-supply-chain/supply-chain.yaml
