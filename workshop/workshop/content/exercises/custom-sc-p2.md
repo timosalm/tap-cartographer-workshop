@@ -198,6 +198,9 @@ text: |2
       end2end.link/is-custom: "true"
       end2end.link/workshop-session: {{ session_namespace }}
   spec:
+    selector:
+      end2end.link/workshop-session: {{ session_namespace }}
+      end2end.link/is-custom: "true"
     params:
     - name: maven_repository_url
       value: https://repo.maven.apache.org/maven2
@@ -211,9 +214,6 @@ text: |2
       name: gitops_commit_message
     - default: ""
       name: gitops_ssh_secret  
-    selector:
-      end2end.link/workshop-session: {{ session_namespace }}
-      end2end.link/is-custom: "true"
     resources: []
 ```
 As with the other supply chains you already saw, the **first task** for our custom supply chain is also to **provide the latest version of a source code in a Git repository for subsequent steps**.
@@ -268,7 +268,7 @@ text: |2
         value: go-git
       templateRef:
         kind: ClusterSourceTemplate
-        name: custom-source-template-{{ session_namespace }}
+        name: source-template
 ```
 
 ```editor:select-matching-text
@@ -346,7 +346,7 @@ text: |2
 ```section:end
 ```
 
-Since we want to enforce the source testing, we need to consider the `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested.
+Since we want to enforce the source testing, we need to consider creating a resource called `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested and the Tekton task with `testing-pipeline` which is of `kind: Pipeline`.
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
@@ -356,7 +356,7 @@ text: |2
         resource: source-provider
       templateRef:
         kind: ClusterSourceTemplate
-        name: custom-source-template-{{ session_namespace }}
+        name: testing-pipeline
 ```
 
 As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
@@ -675,7 +675,7 @@ text: |2
       git:
         ref:
           branch: main
-        url: https://github.com/tsalm-pivotal/python-hello-world-workshop-example.git
+        url: https://github.com/dkhopade/tanzu-java-web-app.git
 ```
 ... apply it, ...
 ```terminal:execute
