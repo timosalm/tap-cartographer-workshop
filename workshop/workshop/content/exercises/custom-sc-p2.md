@@ -350,13 +350,13 @@ Since we want to enforce the source testing, we need to consider the `source-tes
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
-  - name: source-tester
-    sources:
-    - name: source
-      resource: source-provider
-    templateRef:
-      kind: ClusterSourceTemplate
-      name: custom-source-template-{{ session_namespace }}
+    - name: source-tester
+      sources:
+      - name: source
+        resource: source-provider
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: custom-source-template-{{ session_namespace }}
 ```
 
 As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
