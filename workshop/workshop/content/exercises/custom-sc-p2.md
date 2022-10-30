@@ -378,7 +378,27 @@ text: |2
         name: testing-pipeline
 ```
 
-As with our simple supply chain, the **second step** is responsible for the building of a container image out of the provided source code by the first step. 
+We also have a requirement to scan our source code for CVEs. Let's add those pieces together to get it done. Once again we will use the OOTB provided source scanning template named `source-scanner-template` of kind `ClusterSourceTemplate` that was deployed with `source-test-scan-to-url` OOTB supply chain.
+Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `scan-policy` and the scanning template (`ScanTemplate`) named `blob-source-scan-template` via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
+ 
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+    - name: source-scanner
+      params:
+      - default: scan-policy
+        name: scanning_source_policy
+      - default: blob-source-scan-template
+        name: scanning_source_template
+      sources:
+      - name: source
+        resource: source-tester
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: source-scanner-template
+```
+
+As with our custom supply chain, the **next step** is responsible for the building of a container image out of the provided source code by the first step. 
 
 In addition to `kpack`, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
 
@@ -433,7 +453,7 @@ text: |2
         name: kpack-template
       sources:
       - name: source
-        resource: source-tester
+        resource: source-scanner
       params:
       - name: registry
         value:
