@@ -346,7 +346,8 @@ text: |2
 ```section:end
 ```
 
-Since we want to enforce the source testing, we need to consider creating a resource called `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested and the Tekton task with `testing-pipeline` which is of `kind: Pipeline`.
+Since we want to enforce the source testing, we need to consider creating a resource called `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested and the Tekton task with `testing-pipeline` which is of `kind: ClusterSourceTemplate`. For this workshop we are using the `testing-pipeline` deployed by OOTB. You can always create custom one depending on your use case.
+
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
