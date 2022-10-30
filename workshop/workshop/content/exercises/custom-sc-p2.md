@@ -686,22 +686,22 @@ clear: true
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 
 ```dashboard:open-url
-url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-python-app
+url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/app-with-custom-supply-chain
 ```
 ```terminal:execute
 command: kubectl describe clustersupplychain custom-supplychain-{{ session_namespace }}
 clear: true
 ```
 ```terminal:execute
-command: kubectl tree workload simple-python-app
+command: kubectl tree workload app-with-custom-supply-chain
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe workload simple-python-app
+command: kubectl describe workload app-with-custom-supply-chain
 clear: true
 ```
 ```execute-2
-tanzu apps workload tail simple-python-app
+tanzu apps workload tail app-with-custom-supply-chain
 ```
 
 That's it! You have built your first custom supply chain, and hopefully, many more will follow.
