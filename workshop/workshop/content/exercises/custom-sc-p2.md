@@ -560,7 +560,7 @@ text: |2
                 operator: Exists
       sources:
       - name: source
-        resource: source-provider
+        resource: source-scanner
       params:
       - name: registry
         value:
