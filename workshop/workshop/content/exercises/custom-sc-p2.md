@@ -433,7 +433,7 @@ text: |2
         name: kpack-template
       sources:
       - name: source
-        resource: source-provider
+        resource: source-tester
       params:
       - name: registry
         value:
