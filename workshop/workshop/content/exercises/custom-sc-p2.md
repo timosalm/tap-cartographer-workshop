@@ -177,7 +177,7 @@ The easiest way to get started with building a custom supply chain is to copy on
 For this exercise, we will build one from scratch and discover the three ways of providing an implementation for a template:
 - Using a Kubernetes custom resource that is already available for the functionality we are looking for
 - Leverage a Kubernetes native CI/CD solution like Tekton to do the job, which is part of TAP
-- For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
+- For more **complex and asynchronous functionalities**, one needs to **implement their own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**. We will not be able to cover that in this workshop
 
 You are invited to implement the custom supply chain yourself based on the information and basic templates which you have use to **avoid conflicts with other workshop sessions**. Due to the complexity, it's not part of the workshop as of right now to build a custom Kubernetes Controller, and therefore, we will just have a look at an example.
 You can make the solution for a specific step visible by clicking on the **Solution sections**.
