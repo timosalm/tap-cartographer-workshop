@@ -346,6 +346,24 @@ text: |2
 ```section:end
 ```
 
+Now we need to let the supply chain know the delieverable. Let's add the `ClusterTemplate` to achieve that and add a reference to the supply chain. For this workshop we will use the `ClusterTemplate` named `deliverable-template` deployed by OOTB. You can always create custom one depending on your use case.
+
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+    - name: deliverable
+      params:
+      - name: registry
+        value:
+          ca_cert_data: ""
+          repository: tap-workshop-workloads
+          server: harbor.services.demo.jg-aws.com
+      templateRef:
+        kind: ClusterTemplate
+        name: deliverable-template
+```
+
+
 Since we want to enforce the source testing, we need to consider creating a resource called `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested and the Tekton task with `testing-pipeline` which is of `kind: ClusterSourceTemplate`. For this workshop we are using the `testing-pipeline` deployed by OOTB. You can always create custom one depending on your use case.
 
 ```editor:append-lines-to-file
