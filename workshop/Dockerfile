@@ -10,6 +10,10 @@ RUN cd /tmp && tar -xvf "tanzu-framework-linux-amd64.tar" -C /tmp && \
     sudo install "cli/core/v0.11.6/tanzu-core-linux_amd64" /usr/local/bin/tanzu && \ 
     tanzu plugin install --local cli all
 
+# Knative
+RUN curl -L -o /usr/local/bin/kn https://github.com/knative/client/releases/download/knative-v1.4.1/kn-linux-amd64 && \
+    chmod 755 /usr/local/bin/kn
+
 # TBS CLI
 RUN curl -L -o /usr/local/bin/kp https://github.com/vmware-tanzu/kpack-cli/releases/download/v0.5.0/kp-linux-0.5.0 && \
   chmod 755 /usr/local/bin/kp
