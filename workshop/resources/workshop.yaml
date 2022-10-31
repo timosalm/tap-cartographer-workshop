@@ -29,6 +29,13 @@ spec:
         vendor: octant
       editor:
         enabled: true
+    dashboards:
+      - name: Cartographer
+        url: https://cartographer.sh/docs/development/
+      - name: Cartographer Live Editor
+        url: https://cartographer.sh/live-editor/index.htm
+      - name: K9S
+        url: terminal:k9s
     env: 
     - name: TAP_INGRESS
       value: #@ data.values.tap.ingress_domain
