@@ -16,7 +16,7 @@ spec:
   #! url: #@ data.values.workshop_git.git_url + "/" + #@ data.values.workshop_git.git_org_name + "/" + #@ data.values.workshop_git.git_repo
   content:
     image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
-    files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.username,data.values.workshop_git.branch)
+    files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.git_org_name,data.values.workshop_git.branch)
   session:
     namespaces:
       budget: custom
