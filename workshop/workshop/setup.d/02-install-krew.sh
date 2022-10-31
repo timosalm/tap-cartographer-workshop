@@ -11,7 +11,7 @@ curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${
 
 tar zxvf "${KREW}.tar.gz" 
 
-./"${KREW}" install krew tree eksporter slice
+./"${KREW}" install krew tree slice ns ctx
 # cp ~/.krew/bin/kubectl-krew /usr/local/bin/
 
 echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> ~/.bashrc
