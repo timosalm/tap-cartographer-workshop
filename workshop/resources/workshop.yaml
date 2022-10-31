@@ -10,13 +10,22 @@ spec:
   title: Supply Chain Choreographer
   description: A workshop that demonstrates all the capabilities Supply Chain Choreographer provides.
   vendor: tanzu.vmware.com
-  difficulty: beginner
-  duration: 200m
+  authors:
+    - Timo Salm
+    - Gary Gutman
+    - Deepak Khopade
+  #! The difficulty field indicates the target audiences of the workshop. 
+  #! The value can be: beginner, intermediate, advanced, or extreme.
+  difficulty: intermediate
+  #! The duration field gives the maximum amount of time the workshop takes to complete. 
+  #! This field provides informational value and does not guarantee how long a workshop instance lasts. 
+  #! The field format is an integer number with s, m, or h suffix.
+  duration: 3h
   # url: https://github.com/mrgaryg/tap-cartographer-workshop
   url: #@ data.values.workshop_git.git_url + "/" + data.values.workshop_git.git_org_name + "/" + data.values.workshop_git.git_repo
   content:
     image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
-    files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.username,data.values.workshop_git.branch)
+    files: #@ "{}/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.git_url,data.values.workshop_git.git_org_name,data.values.workshop_git.branch)
   session:
     namespaces:
       budget: custom
@@ -30,12 +39,12 @@ spec:
       editor:
         enabled: true
     dashboards:
-      - name: Cartographer
+      - name: Cartographer Docs
         url: https://cartographer.sh/docs/development/
       - name: Cartographer Live Editor
         url: https://cartographer.sh/live-editor/index.htm
-      - name: K9S
-        url: terminal:k9s
+      - name: Supply Chain Choreographer for Tanzu
+        url: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.2/tap/GUID-scc-about.html
     env: 
     - name: TAP_INGRESS
       value: #@ data.values.tap.ingress_domain
