@@ -168,6 +168,10 @@ Working Custom Supply Chain (GG,DK) End
 
 
 
+**TODO: Labels for ScanPolicy needs to be there `app.kubernetes.io/part-of: scan-system`** 
+
+
+
 
 
 
@@ -346,7 +350,8 @@ text: |2
 ```section:end
 ```
 
-Since we want to enforce the source testing, we need to consider creating a resource called `source-tester`. Lets add that to our supply chain; and it still uses the `ClusterSourceTemplate` to look for source code to be tested and the Tekton task with `testing-pipeline` which is of `kind: ClusterSourceTemplate`. For this workshop we are using the `testing-pipeline` deployed by OOTB. You can always create custom one depending on your use case.
+Since we want to enforce the source testing, we need to consider creating another `ClusterSourceTemplate` and name it as `source-tester`. 
+Lets add the reference of this `ClusterSourceTemplate` to our supply chain before and then we will create the template.
 
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
@@ -357,8 +362,59 @@ text: |2
         resource: source-provider
       templateRef:
         kind: ClusterSourceTemplate
-        name: testing-pipeline
+        name: custom-source-template-testing-pipeline-{{ session_namespace }}
 ```
+Create a template now:
+```editor:append-lines-to-file
+file: custom-supply-chain/testing-pipeline-source-template.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterSourceTemplate
+  metadata:
+    name: custom-source-template-testing-pipeline-{{ session_namespace }}
+  spec:
+    healthRule:
+      singleConditionType: Ready
+    revisionPath: .status.outputs.revision
+    urlPath: .status.outputs.url
+    ytt: |
+      #@ load("@ytt:data", "data")
+
+      #@ def merge_labels(fixed_values):
+      #@   labels = {}
+      #@   if hasattr(data.values.workload.metadata, "labels"):
+      #@     labels.update(data.values.workload.metadata.labels)
+      #@   end
+      #@   labels.update(fixed_values)
+      #@   return labels
+      #@ end
+
+      ---
+      apiVersion: carto.run/v1alpha1
+      kind: Runnable
+      metadata:
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "test" })
+      spec:
+        #@ if/end hasattr(data.values.workload.spec, "serviceAccountName"):
+        serviceAccountName: #@ data.values.workload.spec.serviceAccountName
+
+        runTemplateRef:
+          name: tekton-source-pipelinerun
+          kind: ClusterRunTemplate
+
+        selector:
+          resource:
+            apiVersion: tekton.dev/v1beta1
+            kind: Pipeline
+          matchingLabels:
+            apps.tanzu.vmware.com/pipeline: test
+
+        inputs:
+          source-url: #@ data.values.source.url
+          source-revision: #@ data.values.source.revision
+```
+
 
 We also have a requirement to scan our source code for CVEs. Let's add those pieces together to get it done. Once again we will use the OOTB provided source scanning template named `source-scanner-template` of kind `ClusterSourceTemplate` that was deployed with `source-test-scan-to-url` OOTB supply chain.
 Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `scan-policy` and the scanning template (`ScanTemplate`) named `blob-source-scan-template` via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
