@@ -729,18 +729,18 @@ Lets add a reference to the Supply Chain.
 file: custom-supply-chain/supply-chain.yaml
 text: |2
 
-  - images:
-    - name: image
-      resource: image-builder
-    name: image-scanner
-    params:
-    - default: lax-scan-policy
-      name: scanning_image_policy
-    - default: private-image-scan-template
-      name: scanning_image_template
-    templateRef:
-      kind: ClusterImageTemplate
-      name: custom-image-scanner-template-{{ session_namespace }}
+    - images:
+      - name: image
+        resource: image-builder
+      name: image-scanner
+      params:
+      - default: lax-scan-policy
+        name: scanning_image_policy
+      - default: private-image-scan-template
+        name: scanning_image_template
+      templateRef:
+        kind: ClusterImageTemplate
+        name: custom-image-scanner-template-{{ session_namespace }}
 ```
 
 
