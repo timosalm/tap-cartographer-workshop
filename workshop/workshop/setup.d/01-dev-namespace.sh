@@ -80,6 +80,8 @@ apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
 kind: ScanPolicy
 metadata:
   name: lax-scan-policy
+  labels:
+    app.kubernetes.io/part-of: scan-system
 spec:
   regoFile: |
     package main
@@ -124,6 +126,8 @@ apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
 kind: ScanPolicy
 metadata:
   name: scan-policy
+  labels:
+    app.kubernetes.io/part-of: scan-system
 spec:
   regoFile: |
     package main

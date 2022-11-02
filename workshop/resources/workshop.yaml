@@ -12,8 +12,8 @@ spec:
   vendor: tanzu.vmware.com
   difficulty: beginner
   duration: 200m
-  url: https://github.com/mrgaryg/tap-cartographer-workshop
-  #! url: #@ data.values.workshop_git.git_url + "/" + #@ data.values.workshop_git.git_org_name + "/" + #@ data.values.workshop_git.git_repo
+  # url: https://github.com/mrgaryg/tap-cartographer-workshop
+  url: #@ data.values.workshop_git.git_url + "/" + #@ data.values.workshop_git.git_org_name + "/" + #@ data.values.workshop_git.git_repo
   content:
     image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
     files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.git_org_name,data.values.workshop_git.branch)
