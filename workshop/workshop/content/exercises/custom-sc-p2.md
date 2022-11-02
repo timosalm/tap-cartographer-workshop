@@ -259,11 +259,12 @@ title: Solution ClusterSourceTemplate
 file: custom-supply-chain/supply-chain.yaml
 text: "  resources: []"
 ```
-
+Add `source-provider` to Supply Chain.
 ```editor:replace-text-selection
 file: custom-supply-chain/supply-chain.yaml
 text: |2
     resources:
+
     - name: source-provider
       params:
       - name: serviceAccount
@@ -274,7 +275,7 @@ text: |2
         kind: ClusterSourceTemplate
         name: source-template
 ```
-
+Replace the `ytt` with actual steps with adding a `GitRepository` kind.
 ```editor:select-matching-text
 file: custom-supply-chain/source-template.yaml
 text: "  ytt: \"\""
@@ -350,23 +351,12 @@ text: |2
 ```section:end
 ```
 
-Since we want to enforce the source testing, we need to consider creating another `ClusterSourceTemplate` and name it as `source-tester`. 
-Lets add the reference of this `ClusterSourceTemplate` to our supply chain before and then we will create the template.
+Since we want to enforce the source testing, we need to consider creating another `ClusterSourceTemplate` and add its reference as `source-tester` to the supply chain.
+Lets add the template `ClusterSourceTemplate`.
 
-```editor:append-lines-to-file
-file: custom-supply-chain/supply-chain.yaml
-text: |2
-    - name: source-tester
-      sources:
-      - name: source
-        resource: source-provider
-      templateRef:
-        kind: ClusterSourceTemplate
-        name: custom-source-template-testing-pipeline-{{ session_namespace }}
-```
 Create a template now:
 ```editor:append-lines-to-file
-file: custom-supply-chain/testing-pipeline-source-template.yaml
+file: custom-supply-chain/source-testing-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
@@ -414,30 +404,27 @@ text: |2
           source-url: #@ data.values.source.url
           source-revision: #@ data.values.source.revision
 ```
-
-
-We also have a requirement to scan our source code for CVEs. Let's add those pieces together to get it done. Once again we will use the OOTB provided source scanning template named `source-scanner-template` of kind `ClusterSourceTemplate` that was deployed with `source-test-scan-to-url` OOTB supply chain.
-Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `scan-policy` and the scanning template (`ScanTemplate`) named `blob-source-scan-template` via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
- 
+Add reference to Supply Chain.
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
-    - name: source-scanner
-      params:
-      - default: scan-policy
-        name: scanning_source_policy
-      - default: blob-source-scan-template
-        name: scanning_source_template
+
+    - name: source-tester
       sources:
       - name: source
-        resource: source-tester
+        resource: source-provider
       templateRef:
         kind: ClusterSourceTemplate
-        name: custom-source-scanner-template-{{ session_namespace }}
+        name: custom-source-template-testing-pipeline-{{ session_namespace }}
 ```
+
+We have a requirement to scan our source code for any coding or dependency level CVEs. Let's add those pieces together to get it done.
+To achieve this, we will need to create a `ClusterSourceTemplate` that uses `SourceScan`, and then add the reference of it to the Supply Chain. 
+Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `scan-policy` and the scanning template (`ScanTemplate`) named `blob-source-scan-template` via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
+
 Create a template now:
 ```editor:append-lines-to-file
-file: custom-supply-chain/testing-pipeline-source-template.yaml
+file: custom-supply-chain/source-scanning-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
@@ -472,6 +459,24 @@ text: |2
           revision: #@ data.values.source.revision
         scanTemplate: #@ data.values.params.scanning_source_template
         scanPolicy: #@ data.values.params.scanning_source_policy
+```
+Lets add a reference to the Supply Chain.
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+
+    - name: source-scanner
+      params:
+      - default: scan-policy
+        name: scanning_source_policy
+      - default: blob-source-scan-template
+        name: scanning_source_template
+      sources:
+      - name: source
+        resource: source-tester
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: custom-source-scanner-template-{{ session_namespace }}
 ```
 
 As with our custom supply chain, the **next step** is responsible for the building of a container image out of the provided source code by the first step. 
@@ -523,6 +528,7 @@ But we want to implement in a way that the different implementations (kpack and 
 ```editor:append-lines-to-file
 file: custom-supply-chain/supply-chain.yaml
 text: |2
+
     - name: image-builder
       templateRef:
         kind: ClusterImageTemplate
@@ -620,6 +626,7 @@ after: 11
 ```editor:replace-text-selection
 file: custom-supply-chain/supply-chain.yaml
 text: |2
+
     - name: image-builder
       templateRef:
         kind: ClusterImageTemplate
@@ -677,6 +684,65 @@ text: |2
 
 ```section:end
 ```
+
+We also have a requirement to scan the container image that was produced in a previous build step. We need to create `ClusterImageTemplate` and add its reference as `image-scanner` to the supply chain.
+Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `lax-scan-policy` that was created as a custom policy thats different than what we have used on Source Scan earlier. Also, the scanning template (`ScanTemplate`) named `private-image-scan-template` is specific template to scan container images for container level CVEs via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
+
+Create a template now:
+```editor:append-lines-to-file
+file: custom-supply-chain/image-scanning-template.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterImageTemplate
+  metadata:
+    name: custom-image-scanner-template-{{ session_namespace }}
+  spec:
+    healthRule:
+      singleConditionType: Succeeded
+    imagePath: .status.compliantArtifact.registry.image
+    ytt: |
+      #@ load("@ytt:data", "data")
+
+      #@ def merge_labels(fixed_values):
+      #@   labels = {}
+      #@   if hasattr(data.values.workload.metadata, "labels"):
+      #@     labels.update(data.values.workload.metadata.labels)
+      #@   end
+      #@   labels.update(fixed_values)
+      #@   return labels
+      #@ end
+
+      ---
+      apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+      kind: ImageScan
+      metadata:
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "image-scan" })
+      spec:
+        registry:
+          image: #@ data.values.image
+        scanTemplate: #@ data.values.params.scanning_image_template
+        scanPolicy: #@ data.values.params.scanning_image_policy
+```
+Lets add a reference to the Supply Chain.
+```editor:append-lines-to-file
+file: custom-supply-chain/supply-chain.yaml
+text: |2
+
+  - images:
+    - name: image
+      resource: image-builder
+    name: image-scanner
+    params:
+    - default: lax-scan-policy
+      name: scanning_image_policy
+    - default: private-image-scan-template
+      name: scanning_image_template
+    templateRef:
+      kind: ClusterImageTemplate
+      name: custom-image-scanner-template-{{ session_namespace }}
+```
+
 
 
 We are now able to apply our custom supply chain to the cluster.
