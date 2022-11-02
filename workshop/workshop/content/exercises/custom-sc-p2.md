@@ -433,7 +433,45 @@ text: |2
         resource: source-tester
       templateRef:
         kind: ClusterSourceTemplate
-        name: source-scanner-template
+        name: custom-source-scanner-template-{{ session_namespace }}
+```
+Create a template now:
+```editor:append-lines-to-file
+file: custom-supply-chain/testing-pipeline-source-template.yaml
+text: |2
+  apiVersion: carto.run/v1alpha1
+  kind: ClusterSourceTemplate
+  metadata:
+    name: custom-source-scanner-template-{{ session_namespace }}
+  spec:
+    healthRule:
+      singleConditionType: Succeeded
+    revisionPath: .status.compliantArtifact.blob.revision
+    urlPath: .status.compliantArtifact.blob.url
+    ytt: |
+      #@ load("@ytt:data", "data")
+
+      #@ def merge_labels(fixed_values):
+      #@   labels = {}
+      #@   if hasattr(data.values.workload.metadata, "labels"):
+      #@     labels.update(data.values.workload.metadata.labels)
+      #@   end
+      #@   labels.update(fixed_values)
+      #@   return labels
+      #@ end
+
+      ---
+      apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+      kind: SourceScan
+      metadata:
+        name: #@ data.values.workload.metadata.name
+        labels: #@ merge_labels({ "app.kubernetes.io/component": "source-scan" })
+      spec:
+        blob:
+          url: #@ data.values.source.url
+          revision: #@ data.values.source.revision
+        scanTemplate: #@ data.values.params.scanning_source_template
+        scanPolicy: #@ data.values.params.scanning_source_policy
 ```
 
 As with our custom supply chain, the **next step** is responsible for the building of a container image out of the provided source code by the first step. 
