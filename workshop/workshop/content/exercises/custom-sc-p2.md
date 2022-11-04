@@ -561,7 +561,7 @@ text: |2
       healthRule:
         singleConditionType: Ready
       outputs:
-        latest-image: .status.taskResults[?(@.name=="latest-image")].value
+        image-ref: .status.taskResults[?(@.name=="image-ref")].value
       template:
         apiVersion: tekton.dev/v1beta1
         kind: TaskRun
@@ -570,15 +570,14 @@ text: |2
         spec:
           taskSpec:
             results:
-            - name: latest-image
+            - name: image-ref
             steps:
             - name: download-and-unpack-tarball
               image: alpine
               script: |-
+                set -xv
                 cd `mktemp -d`
-                wget -qO- $(runnable.spec.inputs.source-url)$ | tar xvz -m
-
-                cp -a $(runnable.spec.inputs.source-subpath)$/. /source
+                wget -O- $(runnable.spec.inputs.source-url)$ | tar xvz -m -C /source
               volumeMounts:
               - name: source-dir
                 mountPath: /source
@@ -603,7 +602,7 @@ text: |2
                 digest_path=/tekton/results/digest-file
                 digest="$(cat ${digest_path})"
 
-                echo -n "${image}@${digest}" | tee /tekton/results/latest-image
+                echo -n "${image}@${digest}" | tee /tekton/results/image-ref
             volumes:
               - name: source-dir
                 emptyDir: {}
