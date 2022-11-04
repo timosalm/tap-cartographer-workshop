@@ -1,4 +1,4 @@
-Working Custom Supply Chain (GG,DK) Start
+<!-- Working Custom Supply Chain (GG,DK) Start
 ```section:begin
 title: Working Custom Supply Chain (GG,DK)
 ```
@@ -171,7 +171,7 @@ Working Custom Supply Chain (GG,DK) End
 **TODO: Labels for ScanPolicy needs to be there `app.kubernetes.io/part-of: scan-system`** 
 
 
-
+ -->
 
 
 
@@ -251,6 +251,9 @@ text: |2
 ```
 
 We will continue `ClusterSourceTemplate` in this below section. Click below tile to expand it first.
+
+TODO: Depak remove colapsable section below
+
 ```section:begin
 title: Solution ClusterSourceTemplate
 ```
@@ -481,6 +484,8 @@ text: |2
 
 As with our custom supply chain, the **next step** is responsible for the building of a container image out of the provided source code by the first step. 
 
+TODO: Add colapsable for `kpack` and `Dockerfile` deploy
+
 In addition to `kpack`, with our custom supply chain we want to provide a solution that builds a container image based on a **Dockerfile**. 
 
 **[kaniko](https://github.com/GoogleContainerTools/kaniko)** is the solution we'll use for it. It's a tool to build container images from a Dockerfile, inside a container or Kubernetes cluster. 
@@ -614,9 +619,9 @@ text: |2
                       path: config.json
 ```
 
-```section:begin
+TODO: Remove calapsable section below
 title: Solution ClusterImageTemplate
-```
+
 ```editor:select-matching-text
 file: custom-supply-chain/supply-chain.yaml
 text: "  - name: image-builder"
@@ -678,14 +683,14 @@ text: "  imagePath: \"\""
 ```editor:replace-text-selection
 file: custom-supply-chain/image-template.yaml
 text: |2
-    imagePath: .status.outputs.latest-image
+    imagePath: .status.outputs.image-ref
 ```
 
-```section:end
-```
 
 We also have a requirement to scan the container image that was produced in a previous build step. We need to create `ClusterImageTemplate` and add its reference as `image-scanner` to the supply chain.
 Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `lax-scan-policy` that was created as a custom policy thats different than what we have used on Source Scan earlier. Also, the scanning template (`ScanTemplate`) named `private-image-scan-template` is specific template to scan container images for container level CVEs via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
+
+TODO: check all temapltes have "---" between `ytt` and `api`
 
 Create a template now:
 ```editor:append-lines-to-file
@@ -801,7 +806,7 @@ text: |2
         #@   annotations.update(fixed_values)
         #@   return annotations
         #@ end
-
+        ---
         apiVersion: conventions.apps.tanzu.vmware.com/v1alpha1
         kind: PodIntent
         metadata:
@@ -1296,8 +1301,6 @@ text: |2
         #@    ])
         #@   ]) + ":" + data.values.workload.metadata.uid
         #@ end
-
-
         ---
         apiVersion: carto.run/v1alpha1
         kind: Deliverable
@@ -1367,8 +1370,8 @@ text: |2
     source:
       git:
         ref:
-          branch: main
-        url: https://github.com/dkhopade/tanzu-java-web-app.git
+          branch: dockerfile
+        url: https://github.com/sample-accelerators/tanzu-java-web-app.git
 ```
 ... apply it, ...
 ```terminal:execute
@@ -1390,7 +1393,7 @@ command: kubectl tree workload app-with-custom-supply-chain
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe workload app-with-custom-supply-chain
+command: tanzu apps workload get app-with-custom-supply-chain
 clear: true
 ```
 ```execute-2
