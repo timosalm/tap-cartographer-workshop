@@ -67,7 +67,7 @@ spec:
           - name: source-revision
         steps:
           - name: test
-            image: maven:3-openjdk-11
+            image: maven:3.5-jdk-11
             script: |-
               cd `mktemp -d`
               wget -qO- $(params.source-url) | tar xvz -m
