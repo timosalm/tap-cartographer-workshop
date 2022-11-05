@@ -94,7 +94,8 @@ text: |2
 ```
 
 The detailed specifications of the Runnable and ClusterRunTemplate can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/runnable/
 ```
 
@@ -107,7 +108,7 @@ clear: true
 ```
 That should now kick off the build on Tanzu Build Server. We'll use `kp list` command from the Carvel toolchain
 ```terminal:execute
-command: watch kp build list
+command: watch kp build list -n {{ session_namespace}}
 clear: true
 session: 2
 ```
@@ -118,7 +119,8 @@ clear: true
 session: 1
 ```
 Now let's see what it looks like in TAP GUI
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/simple-app
 ```
 ```terminal:execute

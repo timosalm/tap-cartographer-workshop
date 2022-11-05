@@ -1,8 +1,10 @@
+##### Workshop Overview
 The goal of this workshop is to get familiar with all the capabilities Supply Chain Choreographer provides.
 
-VMware Tanzu Application Platform (TAP) uses **Supply Chain Choreographer** which is based on the open-source **Cartographer**, to **allow App Operators to create pre-approved paths to production** by integrating Kubernetes resources with the elements of their existing toolchains.
+VMware Tanzu Application Platform (TAP) uses **Supply Chain Choreographer** which is based on the open-source project, **Cartographer** project, which **provides a  capability for App Operators to create pre-approved paths to production** by integrating Kubernetes resources with the elements of their existing toolchains.
 
-```dashboard:open-url
+```dashboard:create-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh
 ```
 
@@ -24,7 +26,8 @@ In the **choreography** model, each step of the path to production and the tool 
 Because **steps of the path to production are rarely synchronous**, for example, if a new CVE comes up, someone clicks the button on a build, and so on, choreography is a natural choice as a workflow engine. **Flexibility and the ability to swap steps of the path to production is also of extreme importance**.
 
 A more detailed explanation is available here:
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://tanzu.vmware.com/developer/guides/supply-chain-choreography/
 ```
 
@@ -35,8 +38,9 @@ While the **supply chain is operator** facing, Cartographer also provides an **a
 By design, **a supply chain can be used by many workloads of a specific type, like any web application**. This allows an operator to specify the steps in the path to production a single time and for developers to specify their applications independently but for each to use the same path to production. The intent is that developers are able to focus on providing value for their users and can reach production quickly and easily while providing peace of mind for app operators, who are ensured that each application has passed through the steps of the path to production that they've defined.
 ![Cartographer Diagram](images/cartographer.png)
 
-To enable app operators to consistently apply runtime configurations to fleets of workloads of a specific type implemented in different technologies, **Convention Service** is another component of TAP that is not yet available as OSS. 
-```dashboard:open-url
+To enable app operators with ability to consistently apply runtime configurations to fleets of workloads of a specific type implemented in different technologies, **Convention Service** is another component of TAP that is not yet available as OSS. 
+```dashboard:create-dashboard
+name: TAP Docs
 url: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.2/tap/GUID-convention-service-about.html
 ```
 
@@ -47,5 +51,7 @@ With Cartographer, it's possible to choreograph both Kubernetes and non-Kubernet
 
 TAP provides a **full integration of all of its components via out of the box Supply Chains** that can be customized for customers' processes and tools.
 
-Let's now explore the two fundamental resources that an operator deploys, **Supply Chains** and **Templates**, and how these interact with the resource a developer deploys, the **Workload**. 
-We'll do this hands-on with an example of a simple supply chain that watches a Git repository for changes, builds a container image, and deploys it to the cluster.
+Let's now explore the two fundamental resources that an operator deploys, **Supply Chains** and **Templates**, and how these interact with the resource that a developer deploys, the **Workload**. 
+We'll do it in a hands-on session with an example of a simple supply chain that watches a Git repository for changes, builds a container image, and deploys it to the cluster.
+
+TODO: Add a basic workflow diagram here

@@ -1,3 +1,9 @@
+#### Cluster Image Template
+The details of ClusterImageTemplate specifications can be found here: 
+```dashboard:reload-dashboard
+name: Cartographer Docs
+url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterimagetemplate
+```
 A **ClusterImageTemplate** instructs how the supply chain should instantiate an object responsible for supplying container images.
 
 Sounds like a perfect match for our second step in the path to production - the building of a container image out of the provided source code by the first step. 
@@ -42,7 +48,8 @@ As you can already see, we will use the second option for templating now - ytt.
 
 As a Kubernetes native tool for container building, we will use **VMware Tanzu Build Service** that is based on the OSS **kpack**.
 You can have a closer look at the various configuration options of the relevant **Image** custom resource the solution provides here:
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://github.com/pivotal/kpack/blob/main/docs/image.md
 ```
 
@@ -88,11 +95,6 @@ text: |2
           name: default
 
 ```
-We are using a ytt function to construct the tag of the container image and are using the data values defined in our Workload, the parameters, and the source input.
+We are using a **ytt** function to construct the tag of the container image. We are also using the data values, the parameters, and the source input as defined in our **Workload**.
 
 When an image resource has successfully built with its current configuration and pushed to the container registry, the custom report will report the up-to-date, fully qualified built OCI image reference in the `status.latestImage`, which we can use as the output of our Template specified in jsonpath.
-
-The detailed specifications of the ClusterImageTemplate can be found here: 
-```dashboard:open-url
-url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterimagetemplate
-```

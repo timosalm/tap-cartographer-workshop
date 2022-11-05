@@ -1,180 +1,3 @@
-<!-- Working Custom Supply Chain (GG,DK) Start
-```section:begin
-title: Working Custom Supply Chain (GG,DK)
-```
-```editor:append-lines-to-file
-file: custom-supply-chain/supply-chain.yaml
-text: |2
-apiVersion: carto.run/v1alpha1
-kind: ClusterSupplyChain
-metadata:
-  labels:
-    abc.com/is-custom: "true"
-    apps.tanzu.vmware.com/workload-type: web
-    end2end.link/workshop-session: {{ session_namespace }}
-  name: simple-supplychain-{{ session_namespace }}
-spec:
-  params:
-  - name: maven_repository_url
-    value: https://repo.maven.apache.org/maven2
-  - default: main
-    name: gitops_branch
-  - default: supplychain
-    name: gitops_user_name
-  - default: supplychain
-    name: gitops_user_email
-  - default: supplychain@cluster.local
-    name: gitops_commit_message
-  - default: ""
-    name: gitops_ssh_secret
-  resources:
-  
-  - name: source-provider
-    params:
-    - name: serviceAccount
-      value: default
-    - name: gitImplementation
-      value: go-git
-    templateRef:
-      kind: ClusterSourceTemplate
-      name: source-template
-  
-  - name: deliverable
-    params:
-    - name: registry
-      value:
-        ca_cert_data: ""
-        repository: tap-workshop-workloads
-        server: harbor.services.demo.jg-aws.com
-    templateRef:
-      kind: ClusterTemplate
-      name: deliverable-template
-  
-  - name: source-tester
-    sources:
-    - name: source
-      resource: source-provider
-    templateRef:
-      kind: ClusterSourceTemplate
-      name: testing-pipeline
-  
-  - name: source-scanner
-    params:
-    - default: scan-policy
-      name: scanning_source_policy
-    - default: blob-source-scan-template
-      name: scanning_source_template
-    sources:
-    - name: source
-      resource: source-tester
-    templateRef:
-      kind: ClusterSourceTemplate
-      name: source-scanner-template
-  
-  - name: image-builder
-    params:
-    - name: serviceAccount
-      value: default
-    - name: registry
-      value:
-        ca_cert_data: ""
-        repository: tap-workshop-workloads
-        server: harbor.services.demo.jg-aws.com
-    - default: default
-      name: clusterBuilder
-    - default: ./Dockerfile
-      name: dockerfile
-    - default: ./
-      name: docker_build_context
-    - default: []
-      name: docker_build_extra_args
-    sources:
-    - name: source
-      resource: source-scanner
-    templateRef:
-      kind: ClusterImageTemplate
-      options:
-      - name: kpack-template
-        selector:
-          matchFields:
-          - key: spec.params[?(@.name=="dockerfile")]
-            operator: DoesNotExist
-      - name: kaniko-template
-        selector:
-          matchFields:
-          - key: spec.params[?(@.name=="dockerfile")]
-            operator: Exists
-  
-  - images:
-    - name: image
-      resource: image-builder
-    name: image-scanner
-    params:
-    - default: lax-scan-policy
-      name: scanning_image_policy
-    - default: private-image-scan-template
-      name: scanning_image_template
-    templateRef:
-      kind: ClusterImageTemplate
-      name: image-scanner-template
-  
-  - images:
-    - name: image
-      resource: image-scanner
-    name: config-provider
-    params:
-    - name: serviceAccount
-      value: default
-    templateRef:
-      kind: ClusterConfigTemplate
-      name: convention-template
-  
-  - configs:
-    - name: config
-      resource: config-provider
-    name: app-config
-    templateRef:
-      kind: ClusterConfigTemplate
-      name: config-template
-  
-  - configs:
-    - name: config
-      resource: app-config
-    name: config-writer
-    params:
-    - name: serviceAccount
-      value: default
-    - name: registry
-      value:
-        ca_cert_data: ""
-        repository: tap-workshop-workloads
-        server: harbor.services.demo.jg-aws.com
-    templateRef:
-      kind: ClusterTemplate
-      name: config-writer-template
-  
-  selector:
-    # apps.tanzu.vmware.com/has-tests: "true"
-    abc.com/is-custom: "true"
-    apps.tanzu.vmware.com/workload-type: web
-    end2end.link/workshop-session: {{ session_namespace }}
-```
-```section:end
-```
-Working Custom Supply Chain (GG,DK) End
-
-
-
-
-
-
-**TODO: Labels for ScanPolicy needs to be there `app.kubernetes.io/part-of: scan-system`** 
-
-
- -->
-
-
-
 
 The easiest way to get started with building a custom supply chain is to copy one of the out-of-the-box supply chains from the cluster, change the `metadata.name`, and add a unique selector by e.g. adding a label to the `spec.selector` configuration.
 
@@ -240,7 +63,8 @@ text: |2
 ```
 In TAP 1.2 we have the ability to detect the **Health Status** of the Supply Chain component. To accomplish that, we need to add `healthRule` spec to the respective component. We will be  adding for the rest of the components.
 This is possible via the `spec.healthRule`. The documentation is available here:
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/health-rules/
 ```
 ```editor:append-lines-to-file
@@ -548,7 +372,8 @@ text: |2
           repository: tap-workshop-workloads
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
 ```
 
@@ -1360,6 +1185,7 @@ text: |2
   metadata:
     labels:
       app.kubernetes.io/part-of: app-with-custom-supply-chain
+      apps.tanzu.vmware.com/workload-type: web
       end2end.link/workshop-session: {{ session_namespace }}
       end2end.link/is-custom: "true" 
     name: app-with-custom-supply-chain
@@ -1381,7 +1207,8 @@ clear: true
 ```
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/app-with-custom-supply-chain
 ```
 ```terminal:execute

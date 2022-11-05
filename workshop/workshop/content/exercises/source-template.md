@@ -1,4 +1,13 @@
-A **ClusterSourceTemplate** indicates how the supply chain could instantiate an object responsible for providing source code. 
+## Cluster Source Template
+---
+
+Cluster Source Template documentation: 
+```dashboard:create-dashboard
+name: cartographer-docs
+url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetemplate
+```
+`ClusterSourceTemplate` indicates how the supply chain could instantiate an object responsible for providing source code.
+
 ```editor:append-lines-to-file
 file: simple-supply-chain/source-template.yaml
 text: |2
@@ -15,12 +24,12 @@ text: |2
 ```
 All ClusterSourceTemplate cares about is whether the `spec.urlPath` and `spec.revisionPath` are passed in correctly from the templated object that implements the actual functionality we want to use as part of our path to production.
 
-For our continuous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code Git repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for the following steps/resources.
+For our continuous path to production where every git commit to the codebase will trigger another execution of the Supply Chain, we need a solution that watches our configured source code Git repository for changes or will be trigger via e.g. a Webhook and provides the sourcecode for steps/resources that follow it.
 
-**In the best case** there is already a Kubernetes native solution with a **custom resource available for the functionality** we are looking for. **Otherwise, we can leverage a Kubernetes native CI/CD solution** like Tekton to do the job, which is part of TAP. For more **complex and asynchronous functionalities**, we have to **implement our own [Kubernetes Controller](https://kubernetes.io/docs/concepts/architecture/controller/)**.
+**In the best case** there is already a Kubernetes native solution with a **custom resource available for the functionality** we are looking for. **Otherwise, we can leverage a Kubernetes native CI/CD solution** like Tekton to do the job, which is part of TAP.
 
 In this case, the [Flux](https://fluxcd.io) Source Controller is part of TAP for this functionality, which is a Kubernetes operator that helps to acquire artifacts from external sources such as Git, Helm repositories, and S3 buckets. 
-We can have a closer look at the custom resource the solution provides via the following command and then only have to configure it as a template in the ClusterSourceTemplate.
+We can have a closer look at the custom resource this solution provides via the following command, and then only have to configure it as a template in the ClusterSourceTemplate.
 ```terminal:execute
 command: kubectl describe crds gitrepositories
 clear: true
@@ -35,12 +44,7 @@ Both options for templating **provide a data structure** that contains:
 - Inputs that are specified in the ClusterSupplyChain (or ClusterDelivery) for the template (sources, images, configs, deployments)
 - Parameters
 
-**Hint:** It's only supported to define a resource template for **one** Kubernetes (Custom) Resource. Additional resources will not be stamped out!
-
-More information can be found here: 
-```dashboard:open-url
-url: https://cartographer.sh/docs/v0.5.0/templating/
-```
+**Hint:** Currently, there's only support to define and stamp-out **one** resource template **for each** Kubernetes (Custom) Resource. Additional resources **will not** be stamped out!
 
 For our first functionality, we will use a `ytt` and use the configuration provided by the Workload.
 ```editor:select-matching-text
@@ -136,6 +140,7 @@ text: |2
 With the `spec.resources[*].templateRef.options` field, it's also possible to define multiple templates of the same kind for one resource to change the implementation of a step based on a selector.
 
 The detailed specifications of the ClusterSourceTemplate can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetemplate
 ```

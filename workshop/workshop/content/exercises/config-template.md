@@ -52,6 +52,7 @@ text: |2
 The ClusterConfigTemplate requires definition of a `spec.configPath` and it will update its status to emit a config value, which is a reflection of the value at the path on the created object. 
 
 The detailed specifications of the ClusterConfigTemplate can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterconfigtemplate
 ```

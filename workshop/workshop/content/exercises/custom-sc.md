@@ -196,7 +196,8 @@ text: |2
           repository: tap-workshop-workloads
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
 ```
 
@@ -450,7 +451,8 @@ clear: true
 ```
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-python-app
 ```
 ```terminal:execute

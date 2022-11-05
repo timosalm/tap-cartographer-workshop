@@ -184,18 +184,24 @@ clear: true
 command: kubectl describe kservice simple-app
 clear: true
 ```
-```dashboard:open-url
+And now that our **Simple App** is deployed. We can take a look at it here
+```dashboard:create-dashboard
+name: Hello World App!
 url: http://simple-app.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
 ```
 
 The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resources.
 ![](../images/delivery.jpg)
 
-The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here: 
-```dashboard:open-url
+The detailed specifications of the Deliverable, ClusterDelivery, and ClusterDeploymentTemplate can be found here
+
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/deliverable/
 ```
-```dashboard:open-url
+For additional information on `ClusterDeploymentTemplate` go here
+```dashboard:open-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterdeploymenttemplate
 ```
 

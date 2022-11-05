@@ -29,7 +29,8 @@ A `.spec.serviceAccountRef` configuration refers to the Service account with per
 Additional parameters can be configured with `.spec.params`. They follow a hierarchy and default values (`.spec.params[*].default`) can be overriden by the Workload in constrast to those set with `.spec.params[*].value`.  
 
 The detailed specification can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
 ```
 

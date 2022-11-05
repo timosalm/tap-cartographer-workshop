@@ -26,6 +26,7 @@ Other configuration options are available for resource constraints (`spec.limits
 Last but not least via (`.spec.params`), it's possible to override default values of the additional parameters that are used in the Supply Chain but not part of the official Workload specification.
 
 The detailed specification can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/workload/#workload
 ```

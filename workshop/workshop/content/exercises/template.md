@@ -45,6 +45,7 @@ Tekton Pipelines defines the following entities:
 **TaskRuns** and **PipelineRuns** are immutable Kubernetes resources, and therefore, it's not possible to configure it in our ClusterTemplate, because it will try to update that immutable Kubernetes resource on every signal for an input change. 
 
 The detailed specifications of the ClusterTemplate can be found here: 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustertemplate
 ```

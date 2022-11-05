@@ -15,7 +15,8 @@ Both Templates and Delivery Basic are requirements for the Supply Chains.
 
 Let's now have a closer look at the **Out of the Box Supply Chain with Testing and Scanning**.
 
-```dashboard:open-url
+```dashboard:reload-dashboard
+name: Cartographer Docs
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/ootb-sc-demo
 ```
 
