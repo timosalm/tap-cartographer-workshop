@@ -1,6 +1,6 @@
 modules:
     workshop-overview:
-        name: Easily build Cloud Native Supply Chains
+        name: Easily Build Cloud Native Supply Chains
         exit_sign: Supply Chain
     exercises/supply-chain:
         name: ClusterSupplyChain
