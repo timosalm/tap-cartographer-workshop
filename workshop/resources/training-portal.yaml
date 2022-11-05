@@ -18,3 +18,6 @@ spec:
     - expires: 300m
       name: scc-workshop
       orphaned: 40m
+    - expires: 300m
+      name: scc-workshop-test
+      orphaned: 40m
