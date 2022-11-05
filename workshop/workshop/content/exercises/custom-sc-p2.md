@@ -1226,6 +1226,11 @@ clear: true
 ```execute-2
 tanzu apps workload tail app-with-custom-supply-chain
 ```
+Now that we deployed our workload, let's confirm by going to the following URL
+```dashboard:create-dashboard
+name: app-with-custom-supply-chain
+url: http://app-with-custom-supply-chain.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
+```
 
 That's it! You have built your first custom supply chain, and hopefully, many more will follow.
 Let's delete the resources that we applied to the cluster.
