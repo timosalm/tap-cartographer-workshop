@@ -1,0 +1,300 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:base64", "base64")
+#@ load("@ytt:json", "json")
+---
+apiVersion: learningcenter.tanzu.vmware.com/v1beta1
+kind: Workshop
+metadata:
+  name: scc-workshop-test
+spec:
+  title: Supply Chain Choreographer - Test Version
+  description: A workshop that demonstrates the capabilities Supply Chain Choreographer provides.
+  vendor: tanzu.vmware.com
+  authors:
+    - Timo Salm
+    - Gary Gutman
+    - Deepak Khopade
+  #! The difficulty field indicates the target audiences of the workshop. 
+  #! The value can be: beginner, intermediate, advanced, or extreme.
+  difficulty: intermediate
+  #! The duration field gives the maximum amount of time the workshop takes to complete. 
+  #! This field provides informational value and does not guarantee how long a workshop instance lasts. 
+  #! The field format is an integer number with s, m, or h suffix.
+  duration: 3h
+  # url: https://github.com/mrgaryg/tap-cartographer-workshop
+  url: #@ data.values.workshop_git.git_url + "/" + data.values.workshop_git.git_org_name + "/" + data.values.workshop_git.git_repo
+  content:
+    image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
+    files: #@ "{}/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.git_url,data.values.workshop_git.git_org_name,data.values.workshop_git.branch)
+  session:
+    namespaces:
+      budget: custom
+    applications:
+      terminal:
+        enabled: true
+        layout: split
+      console:
+        enabled: true
+        vendor: octant
+      editor:
+        enabled: true
+    
+    dashboards:
+      - name: Cartographer Docs
+        url: https://cartographer.sh/docs/development/
+      - name: TAP GUI
+        url: #@ "http://tap-gui.{}/supply-chain/".format(data.values.tap.ingress_domain)
+      - name: Cartographer Live Editor
+        url: https://cartographer.sh/live-editor/index.htm
+      - name: Supply Chain Choreographer for Tanzu
+        url: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.2/tap/GUID-scc-about.html
+
+    env: 
+    - name: TAP_INGRESS
+      value: #@ data.values.tap.ingress_domain
+    - name: TAP_CNRS_SUBDOMAIN
+      value: #@ data.values.tap.cnrs_subdomain
+    - name: CONTAINER_REGISTRY_HOSTNAME
+      value: #@ data.values.container_registry.hostname
+    - name: CONTAINER_REGISTRY_USERNAME
+      value: #@ data.values.container_registry.username
+    - name: CONTAINER_REGISTRY_PASSWORD
+      value: #@ data.values.container_registry.password
+    - name: CONTAINER_REGISTRY_REPOSITORY
+      value: #@ data.values.container_registry.repository
+    - name: GITOPS_REPOSITORY
+      value: #@ "{}/$(session_namespace).git".format(data.values.gitops.https_repository_prefix)
+    - name: GITOPS_REPOSITORY_USERNAME
+      value: #@ data.values.gitops.basic_auth_username
+    - name: GITOPS_REPOSITORY_PASSWORD
+      value: #@ data.values.gitops.basic_auth_password
+    objects:
+      - apiVersion: v1
+        kind: LimitRange
+        metadata:
+          name: resource-limits
+        spec:
+          limits:
+            - type: PersistentVolumeClaim
+              max:
+                storage: 10Gi
+      #! Permissions for tap-sa (Supply Chain)
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: tanzu-net-credentials
+        type: kubernetes.io/dockerconfigjson
+        data:
+          #@ docker_auth = base64.encode("{}:{}".format(data.values.tanzunet.username, data.values.tanzunet.password))
+          #@ docker_creds = {"username": data.values.tanzunet.username, "password": data.values.tanzunet.password, "auth": docker_auth}
+          .dockerconfigjson: #@ base64.encode(json.encode({"auths": {"registry.tanzu.vmware.com": docker_creds}}))
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: $(session_namespace)-default
+        #! rules:
+        #! - apiGroups: ["*"]
+        #!   resources: ["*"]
+        #!   verbs: ["*"]
+        rules:
+        - apiGroups:
+          - source.toolkit.fluxcd.io
+          resources:
+          - gitrepositories
+          verbs:
+          - '*'
+        - apiGroups:
+          - source.apps.tanzu.vmware.com
+          resources:
+          - imagerepositories
+          verbs:
+          - '*'
+        - apiGroups:
+          - carto.run
+          resources:
+          - deliverables
+          - runnables
+          verbs:
+          - '*'
+        - apiGroups:
+          - kpack.io
+          resources:
+          - images
+          verbs:
+          - '*'
+        - apiGroups:
+          - conventions.apps.tanzu.vmware.com
+          resources:
+          - podintents
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          verbs:
+          - list
+        - apiGroups:
+          - tekton.dev
+          resources:
+          - taskruns
+          - pipelineruns
+          verbs:
+          - '*'
+        - apiGroups:
+          - tekton.dev
+          resources:
+          - pipelines
+          verbs:
+          - list
+        - apiGroups:
+          - kappctrl.k14s.io
+          resources:
+          - apps
+          verbs:
+          - '*'
+        - apiGroups:
+          - serving.knative.dev
+          resources:
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - servicebinding.io
+          resources:
+          - servicebindings
+          verbs:
+          - '*'
+        - apiGroups:
+          - services.apps.tanzu.vmware.com
+          resources:
+          - resourceclaims
+          verbs:
+          - '*'
+        - apiGroups:
+          - scanning.apps.tanzu.vmware.com
+          resources:
+          - imagescans
+          - sourcescans
+          verbs:
+          - '*'
+        #! ---End of RBAC Rule ---
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-default
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: Role
+          name: $(session_namespace)-default
+        subjects:
+          - kind: ServiceAccount
+            name: default
+            namespace: $(session_namespace)
+      #! Permissions for workshop session
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-session-crb
+          namespace: $(session_namespace)
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            namespace: $(workshop_namespace)
+            name: $(service_account)
+
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-default-crb
+          namespace: $(session_namespace)
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            namespace: $(session_namespace)
+            name: default
+
+      #! Install grype
+      - apiVersion: packaging.carvel.dev/v1alpha1
+        kind: PackageInstall
+        metadata:
+          name: $(session_namespace)-grype
+          namespace: tap-install
+        spec:
+          serviceAccountName: tap-install-sa
+          packageRef:
+            refName: grype.scanning.apps.tanzu.vmware.com
+            versionSelection:
+              constraints: ">=0.0.0"
+              prereleases:
+                identifiers: [beta, build]
+          values:
+          - secretRef:
+              name: $(session_namespace)-grype-values
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: $(session_namespace)-grype-values
+          namespace: tap-install
+        stringData:
+          values.yaml: |
+            ---
+            namespace: $(session_namespace)
+            targetImagePullSecret: registry-credentials
+      #! Conventions Service
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $(session_namespace)-cluster-resources-reader
+        rules:
+        - apiGroups: [conventions.apps.tanzu.vmware.com]
+          resources: ["clusterpodconventions"]
+          verbs: ["get", "watch", "list"]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: $(session_namespace)-cluster-resources
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: $(session_namespace)-cluster-resources-reader
+        subjects:
+        - kind: Group
+          name: system:serviceaccounts:$(workshop_namespace)
+          apiGroup: rbac.authorization.k8s.io
+      #! supply chain
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $(session_namespace)-cluster-supplychain
+        rules:
+        - apiGroups: [carto.run]
+          resources: ["clusterconfigtemplates", "clusterdeliveries", "clusterdeploymenttemplates","clusterimagetemplates", "clusterruntemplates", "clustersourcetemplates", "clustersupplychains", "clustertemplates"]
+          verbs: ["*"]
+        - apiGroups: [apiextensions.k8s.io]
+          resources: ["customresourcedefinitions"]
+          verbs: ["get", "watch", "list"]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: $(session_namespace)-cluster-supplychain
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: $(session_namespace)-cluster-supplychain
+        subjects:
+          - kind: Group
+            name: system:serviceaccounts:$(workshop_namespace)
+            apiGroup: rbac.authorization.k8s.io
