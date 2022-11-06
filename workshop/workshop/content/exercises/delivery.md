@@ -185,7 +185,7 @@ command: kubectl describe kservice simple-app
 clear: true
 ```
 And now that our **Simple App** is deployed. We can take a look at it here
-```dashboard:create-dashboard
+```dashboard:reload-dashboard
 name: Hello World App!
 url: http://simple-app.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
 ```
