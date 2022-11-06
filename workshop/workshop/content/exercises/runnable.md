@@ -103,7 +103,7 @@ Let's now apply our resources to the cluster as a group of resources via the kap
 ```terminal:execute
 command: |
   kapp deploy -a simple-supply-chain -f simple-supply-chain -y --dangerous-scope-to-fallback-allowed-namespaces
-  kubectl apply -f workload.yaml
+  kubectl apply -f workloads/workload.yaml
 clear: true
 ```
 That should now kick off the build on Tanzu Build Server. We'll use `kp list` command from the Carvel toolchain

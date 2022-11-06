@@ -1165,7 +1165,7 @@ clear: true
 ```
 To test it we last but not least have to create a **matching Workload**, ...
 ```editor:append-lines-to-file
-file: workload-custom-sc.yaml
+file: workloads/workload-custom-sc.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: Workload
@@ -1189,7 +1189,7 @@ text: |2
 ... apply it, ...
 ```terminal:execute
 command: |
-  kubectl apply -f workload-custom-sc.yaml
+  kubectl apply -f workloads/workload-custom-sc.yaml
 clear: true
 ```
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
