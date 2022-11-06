@@ -7,19 +7,19 @@ text: |2
     - name: app-config
       templateRef:
         kind: ClusterConfigTemplate
-        name: simple-config-template-{{ session_namespace }}
+        name: simple-config-provider-template-{{ session_namespace }}
       images:
       - resource: image-builder
         name: image
 ```
 For the deployment of our application, we will use Knative, which is a serverless application runtime for Kubernetes with e.g. auto-scaling capabilities to save costs.
 ```editor:append-lines-to-file
-file: simple-supply-chain/config-template.yaml
+file: simple-supply-chain/simple-config-provider-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterConfigTemplate
   metadata:
-    name: simple-config-template-{{ session_namespace }}
+    name: simple-config-provider-template-{{ session_namespace }}
   spec:
     configPath: .data.delivery
     ytt: |

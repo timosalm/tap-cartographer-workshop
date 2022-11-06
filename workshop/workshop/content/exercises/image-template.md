@@ -14,7 +14,7 @@ text: |2
     - name: image-builder
       templateRef:
         kind: ClusterImageTemplate
-        name: simple-image-template-{{ session_namespace }}
+        name: simple-image-kpack-template-{{ session_namespace }}
       sources:
       - name: source
         resource: source-provider
@@ -28,12 +28,12 @@ In addition, we also define parameters for the resource with the configuration o
 
 With all the data we need, we can configure our ClusterImageTemplate resource.
 ```editor:append-lines-to-file
-file: simple-supply-chain/image-template.yaml
+file: simple-supply-chain/simple-image-kpack-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterImageTemplate
   metadata:
-    name: simple-image-template-{{ session_namespace }}
+    name: simple-image-kpack-template-{{ session_namespace }}
   spec:
     healthRule:
       singleConditionType: Ready
@@ -55,12 +55,12 @@ url: https://github.com/pivotal/kpack/blob/main/docs/image.md
 
 Let's add it to our ClusterImageTemplate resource.
 ```editor:select-matching-text
-file: simple-supply-chain/image-template.yaml
+file: simple-supply-chain/simple-image-kpack-template.yaml
 text: "  imagePath: \"\""
 after: 1
 ```
 ```editor:replace-text-selection
-file: simple-supply-chain/image-template.yaml
+file: simple-supply-chain/simple-image-kpack-template.yaml
 text: |2
     imagePath: .status.latestImage
     ytt: |

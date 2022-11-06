@@ -21,7 +21,7 @@ text: |2
 ```
 
 ```editor:append-lines-to-file
-file: simple-supply-chain/config-writer-template.yaml
+file: simple-supply-chain/simple-config-writer-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterTemplate

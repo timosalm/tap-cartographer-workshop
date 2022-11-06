@@ -22,7 +22,7 @@ text: |2
 ```
 
 ```editor:append-lines-to-file
-file: simple-supply-chain/deliverable-template.yaml
+file: simple-supply-chain/simple-deliverable-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterTemplate
@@ -47,7 +47,7 @@ text: |2
 
 We will now create our full ClusterDelivery and after that implement all the required Templates.
 ```editor:append-lines-to-file
-file: simple-supply-chain/delivery.yaml
+file: simple-supply-chain/simple-delivery.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterDelivery
@@ -75,7 +75,7 @@ ClusterSourceTemplates and ClusterTemplates are valid for ClusterDelivery. It ad
 
 Like for the Supply Chain, we will use the [Flux](https://fluxcd.io) Source Controller to watch our GitOps repository for changes.
 ```editor:append-lines-to-file
-file: simple-supply-chain/delivery-source-template.yaml
+file: simple-supply-chain/simple-delivery-source-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
@@ -100,7 +100,7 @@ text: |2
 
 Let's now continue with the creation of the **ClusterDeploymentTemplate**.
 ```editor:append-lines-to-file
-file: simple-supply-chain/deployment-template.yaml
+file: simple-supply-chain/simple-deployment-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterDeploymentTemplate

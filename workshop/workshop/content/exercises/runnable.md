@@ -4,11 +4,11 @@ A **ClusterRunTemplate** differs from supply chain templates in many aspects (e.
 
 Sounds like we've found a way to stamp out our immutable **TaskRuns** and **PipelineRuns**.
 ```editor:select-matching-text
-file: simple-supply-chain/config-writer-template.yaml
+file: simple-supply-chain/simple-config-writer-template.yaml
 text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
-file: simple-supply-chain/config-writer-template.yaml
+file: simple-supply-chain/simple-config-writer-template.yaml
 text: |2
     ytt: |
       #@ load("@ytt:data", "data")
@@ -32,7 +32,7 @@ text: |2
 ```
 
 ```editor:append-lines-to-file
-file: simple-supply-chain/run-template.yaml
+file: simple-supply-chain/simple-run-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterRunTemplate
@@ -46,12 +46,12 @@ text: |2
 
 We'll now configure a TaskRun to push the deployment configuration to a Git repository.
 ```editor:select-matching-text
-file: simple-supply-chain/run-template.yaml
+file: simple-supply-chain/simple-run-template.yaml
 text: "  outputs: {}"
 after: 1
 ```
 ```editor:replace-text-selection
-file: simple-supply-chain/run-template.yaml
+file: simple-supply-chain/simple-run-template.yaml
 text: |2
     template:
       apiVersion: tekton.dev/v1beta1

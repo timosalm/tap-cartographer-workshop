@@ -9,7 +9,7 @@ url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetempla
 `ClusterSourceTemplate` indicates how the supply chain could instantiate an object responsible for providing source code.
 
 ```editor:append-lines-to-file
-file: simple-supply-chain/source-template.yaml
+file: simple-supply-chain/simple-source-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
@@ -48,11 +48,11 @@ Both options for templating **provide a data structure** that contains:
 
 For our first functionality, we will use a `ytt` and use the configuration provided by the Workload.
 ```editor:select-matching-text
-file: simple-supply-chain/source-template.yaml
+file: simple-supply-chain/simple-source-template.yaml
 text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
-file: simple-supply-chain/source-template.yaml
+file: simple-supply-chain/simple-source-template.yaml
 text: |2
     ytt: |
       #@ load("@ytt:data", "data")
@@ -110,12 +110,12 @@ text: |2
 
 On every successful repository sync, the status of the custom GitRepository resource will be updated with an url to download an archive that contains the source code and the revision. We can use this information as the output of our Template specified in jsonpath.
 ```editor:select-matching-text
-file: simple-supply-chain/source-template.yaml
+file: simple-supply-chain/simple-source-template.yaml
 text: "  urlPath: \"\""
 after: 1
 ```
 ```editor:replace-text-selection
-file: simple-supply-chain/source-template.yaml
+file: simple-supply-chain/simple-source-template.yaml
 text: |2
     urlPath: .status.artifact.url
     revisionPath: .status.artifact.revision
