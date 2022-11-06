@@ -3,7 +3,7 @@ The goal of this workshop is to get familiar with all the capabilities Supply Ch
 
 VMware Tanzu Application Platform (TAP) uses **Supply Chain Choreographer** which is based on the open-source project, **Cartographer** project, which **provides a  capability for App Operators to create pre-approved paths to production** by integrating Kubernetes resources with the elements of their existing toolchains.
 
-```dashboard:create-dashboard
+```dashboard:open-dashboard
 name: Cartographer Docs
 url: https://cartographer.sh
 ```

@@ -200,7 +200,7 @@ name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/deliverable/
 ```
 For additional information on `ClusterDeploymentTemplate` go here
-```dashboard:open-dashboard
+```dashboard:reload-dashboard
 name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterdeploymenttemplate
 ```
