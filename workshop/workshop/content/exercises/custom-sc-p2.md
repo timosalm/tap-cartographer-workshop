@@ -50,12 +50,12 @@ The application then has to be packaged in a container, deployed to Kubernetes, 
 
 Based on the provided information it's now your turn to implement the `ClusterSourceTemplate` and add it as the first resource to the ClusterSupplyChain.
 ```editor:append-lines-to-file
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
   metadata:
-    name: custom-source-template-{{ session_namespace }}
+    name: custom-source-provider-template-{{ session_namespace }}
   spec:
     urlPath: ""
     revisionPath: ""
@@ -68,19 +68,13 @@ name: Cartographer Docs
 url: https://cartographer.sh/docs/v0.5.0/health-rules/
 ```
 ```editor:append-lines-to-file
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: |2
     healthRule:
       singleConditionType: Ready
 ```
 
 We will continue `ClusterSourceTemplate` in this below section. Click below tile to expand it first.
-
-TODO: Depak remove colapsable section below
-
-```section:begin
-title: Solution ClusterSourceTemplate
-```
 
 ```editor:select-matching-text
 file: custom-supply-chain/supply-chain.yaml
@@ -100,15 +94,15 @@ text: |2
         value: go-git
       templateRef:
         kind: ClusterSourceTemplate
-        name: source-template
+        name: custom-source-provider-template-{{ session_namespace }}
 ```
 Replace the `ytt` with actual steps with adding a `GitRepository` kind.
 ```editor:select-matching-text
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: "  ytt: \"\""
 ```
 ```editor:replace-text-selection
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: |2
     ytt: |
       #@ load("@ytt:data", "data")
@@ -165,17 +159,15 @@ text: |2
 ```
 
 ```editor:select-matching-text
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: "  urlPath: \"\""
 after: 1
 ```
 ```editor:replace-text-selection
-file: custom-supply-chain/source-template.yaml
+file: custom-supply-chain/custom-source-provider-template.yaml
 text: |2
     urlPath: .status.artifact.url
     revisionPath: .status.artifact.revision
-```
-```section:end
 ```
 
 Since we want to enforce the source testing, we need to consider creating another `ClusterSourceTemplate` and add its reference as `source-tester` to the supply chain.
@@ -183,12 +175,12 @@ Lets add the template `ClusterSourceTemplate`.
 
 Create a template now:
 ```editor:append-lines-to-file
-file: custom-supply-chain/source-testing-template.yaml
+file: custom-supply-chain/custom-source-tester-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
   metadata:
-    name: custom-source-template-testing-pipeline-{{ session_namespace }}
+    name: custom-source-tester-template-{{ session_namespace }}
   spec:
     healthRule:
       singleConditionType: Ready
@@ -242,7 +234,7 @@ text: |2
         resource: source-provider
       templateRef:
         kind: ClusterSourceTemplate
-        name: custom-source-template-testing-pipeline-{{ session_namespace }}
+        name: custom-source-tester-template-{{ session_namespace }}
 ```
 
 We have a requirement to scan our source code for any coding or dependency level CVEs. Let's add those pieces together to get it done.
@@ -251,7 +243,7 @@ Lets understand what this section is. We are using a scan policy (`ScanPolicy`) 
 
 Create a template now:
 ```editor:append-lines-to-file
-file: custom-supply-chain/source-scanning-template.yaml
+file: custom-supply-chain/custom-source-scanner-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterSourceTemplate
@@ -317,12 +309,12 @@ Because there is **no official Kubernetes CRD** for it available, we will use **
 
 Let's first create the skeleton for our new `ClusterImageTemplate`. As you can se we also added an additional ytt function that generates the context sub-path out of the Git url and revision which we need for our custom implementation.
 ```editor:append-lines-to-file
-file: custom-supply-chain/image-template.yaml
+file: custom-supply-chain/custom-image-kaniko-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterImageTemplate
   metadata:
-    name: custom-image-template-{{ session_namespace }}
+    name: custom-image-kaniko-template-{{ session_namespace }}
   spec:
     healthRule:
       singleConditionType: Ready
@@ -361,7 +353,7 @@ text: |2
     - name: image-builder
       templateRef:
         kind: ClusterImageTemplate
-        name: kpack-template
+        name: kpack-template # we are using this one `kpack-template` thats deployed by OOTB 
       sources:
       - name: source
         resource: source-scanner
@@ -381,7 +373,7 @@ Due to the complexity, here is the **ClusterRunTemplate which you have to refere
 
 You can for sure also try to implement it yourself but please with the name **"custom-kaniko-run-template-{{ session_namespace }}"**.
 ```editor:append-lines-to-file
-file: custom-supply-chain/kaniko-run-template.yaml
+file: custom-supply-chain/custom-kaniko-run-template.yaml
 text: |2
     apiVersion: carto.run/v1alpha1
     kind: ClusterRunTemplate
@@ -444,9 +436,6 @@ text: |2
                       path: config.json
 ```
 
-TODO: Remove calapsable section below
-title: Solution ClusterImageTemplate
-
 ```editor:select-matching-text
 file: custom-supply-chain/supply-chain.yaml
 text: "  - name: image-builder"
@@ -460,12 +449,12 @@ text: |2
       templateRef:
         kind: ClusterImageTemplate
         options:
-        - name: kpack-template
+        - name: kpack-template # we are using this one `kpack-template` thats deployed by OOTB
           selector:
             matchFields:
               - key: spec.params[?(@.name=="dockerfile")]
                 operator: DoesNotExist
-        - name: custom-image-template-{{ session_namespace }}
+        - name: custom-image-kaniko-template-{{ session_namespace }} 
           selector:
             matchFields:
               - key: spec.params[?(@.name=="dockerfile")]
@@ -482,7 +471,7 @@ text: |2
         default: ""
 ```
 ```editor:append-lines-to-file
-file: custom-supply-chain/image-template.yaml
+file: custom-supply-chain/custom-image-kaniko-template.yaml
 text: |2
       apiVersion: carto.run/v1alpha1
       kind: Runnable
@@ -502,11 +491,11 @@ text: |2
           source-subpath: #@ context_sub_path()
 ```
 ```editor:select-matching-text
-file: custom-supply-chain/image-template.yaml
+file: custom-supply-chain/custom-image-kaniko-template.yaml
 text: "  imagePath: \"\""
 ```
 ```editor:replace-text-selection
-file: custom-supply-chain/image-template.yaml
+file: custom-supply-chain/custom-image-kaniko-template.yaml
 text: |2
     imagePath: .status.outputs.image-ref
 ```
@@ -515,11 +504,9 @@ text: |2
 We also have a requirement to scan the container image that was produced in a previous build step. We need to create `ClusterImageTemplate` and add its reference as `image-scanner` to the supply chain.
 Lets understand what this section is. We are using a scan policy (`ScanPolicy`) named `lax-scan-policy` that was created as a custom policy thats different than what we have used on Source Scan earlier. Also, the scanning template (`ScanTemplate`) named `private-image-scan-template` is specific template to scan container images for container level CVEs via `scanning.apps.tanzu.vmware.com/v1beta1` that was already deployed on this workshop & the TAP cluster by OOTB supply chain. We can change the policies and templates with our custom ones. We will explain this more during the image scanning section when we add it to the supply chain.
 
-TODO: check all temapltes have "---" between `ytt` and `api`
-
 Create a template now:
 ```editor:append-lines-to-file
-file: custom-supply-chain/image-scanning-template.yaml
+file: custom-supply-chain/custom-image-scanner-template.yaml
 text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterImageTemplate
@@ -576,12 +563,12 @@ Let's add `ClusterConfigTemplate`s
 Step1: In this step we will add `ClusterConfigTemplate` for `PodIntent` and its reference to the Supply Chain.
 Lets add a template:
 ```editor:append-lines-to-file
-file: custom-supply-chain/cluster-convention-template.yaml
+file: custom-supply-chain/custom-config-provider-template.yaml
 text: |2
     apiVersion: carto.run/v1alpha1
     kind: ClusterConfigTemplate
     metadata:
-      name: custom-convention-template-{{ session_namespace }}
+      name: custom-config-provider-template-{{ session_namespace }}
     spec:
       configPath: .status.template
       healthRule:
@@ -677,19 +664,19 @@ text: |2
         value: default
       templateRef:
         kind: ClusterConfigTemplate
-        name: custom-convention-template-{{ session_namespace }}
+        name: custom-config-provider-template-{{ session_namespace }}
 ```
 
 
 Step2: In this step we will add `ClusterConfigTemplate` and the `ClusterTemplate` templates and the reference to the Supply Chain for configs.
 Lets add a template:
 ```editor:append-lines-to-file
-file: custom-supply-chain/cluster-config-template.yaml
+file: custom-supply-chain/custom-app-config-template.yaml
 text: |2
     apiVersion: carto.run/v1alpha1
     kind: ClusterConfigTemplate
     metadata:
-      name: custom-cluster-config-template-{{ session_namespace }}
+      name: custom-app-config-template-{{ session_namespace }}
     spec:
       configPath: .data
       healthRule:
@@ -839,17 +826,17 @@ text: |2
       name: app-config
       templateRef:
         kind: ClusterConfigTemplate
-        name: custom-cluster-config-template-{{ session_namespace }}
+        name: custom-app-config-template-{{ session_namespace }}
 ```
 
 Lets add a template:
 ```editor:append-lines-to-file
-file: custom-supply-chain/cluster-config-writer-template.yaml
+file: custom-supply-chain/custom-config-writer-template.yaml
 text: |2
     apiVersion: carto.run/v1alpha1
     kind: ClusterTemplate
     metadata:
-      name: custom-cluster-config-writer-template-{{ session_namespace }}
+      name: custom-config-writer-template-{{ session_namespace }}
     spec:
       healthRule:
         singleConditionType: Ready
@@ -1020,20 +1007,20 @@ text: |2
           server: harbor.services.demo.jg-aws.com
       templateRef:
         kind: ClusterTemplate
-        name: custom-cluster-config-writer-template-{{ session_namespace }}
+        name: custom-config-writer-template-{{ session_namespace }}
 ```
 
 **Finally**, lets add a deliverable before we apply the supply chain to the cluster.
 Lets add a `ClusterTemplate`:
 ```editor:append-lines-to-file
-file: custom-supply-chain/cluster-deliverable-template.yaml
+file: custom-supply-chain/custom-deliverable-template.yaml
 text: |2
     apiVersion: carto.run/v1alpha1
     kind: ClusterTemplate
     metadata:
       labels:
         app.tanzu.vmware.com/deliverable-type: web
-      name: custom-cluster-deliverable-template-{{ session_namespace }}
+      name: custom-deliverable-template-{{ session_namespace }}
     spec:
       params:
       - default: {}
@@ -1168,7 +1155,7 @@ text: |2
           server: harbor.services.demo.jg-aws.com
       templateRef:
         kind: ClusterTemplate
-        name: custom-cluster-deliverable-template-{{ session_namespace }}
+        name: custom-deliverable-template-{{ session_namespace }}
 ```
 
 We are now able to apply our custom supply chain to the cluster.
