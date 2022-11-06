@@ -2,7 +2,7 @@
 ---
 
 Cluster Source Template documentation: 
-```dashboard:create-dashboard
+```dashboard:reload-dashboard
 name: cartographer-docs
 url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetemplate
 ```
