@@ -1195,7 +1195,7 @@ clear: true
 ... and then we are able to see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.
 
 ```dashboard:reload-dashboard
-name: Cartographer Docs
+name: TAP Gui for Supply Chain
 url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/app-with-custom-supply-chain
 ```
 ```terminal:execute
