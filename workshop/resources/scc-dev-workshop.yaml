@@ -5,9 +5,9 @@
 apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: Workshop
 metadata:
-  name: scc-workshop-test
+  name: scc-workshop-dev
 spec:
-  title: Supply Chain Choreographer - Test Version
+  title: Supply Chain Choreographer - Development Version
   description: A workshop that demonstrates the capabilities Supply Chain Choreographer provides.
   vendor: tanzu.vmware.com
   authors:
@@ -27,6 +27,8 @@ spec:
     image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
     files: #@ "{}/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.git_url,data.values.workshop_git.git_org_name,data.values.workshop_git.branch)
   session:
+    resources:
+      memory: 3Gi
     namespaces:
       budget: custom
     applications:
@@ -38,15 +40,15 @@ spec:
         vendor: octant
       editor:
         enabled: true
-    
     dashboards:
-    - name: Cartographer Docs
-      url: https://cartographer.sh/docs/development/
-    - name: Cartographer Live Editor
-      url: https://cartographer.sh/live-editor/index.htm
-    - name: TAP GUI
-      url: #@ "http://tap-gui.{}/supply-chain/".format(data.values.tap.ingress_domain)
-
+      - name: Cartographer Docs
+        url: https://cartographer.sh/docs/development/
+      - name: TAP GUI
+        url: #@ "http://tap-gui.{}/supply-chain/".format(data.values.tap.ingress_domain)
+      - name: Cartographer Live Editor
+        url: https://cartographer.sh/live-editor/index.htm
+      - name: Supply Chain Choreographer for Tanzu
+        url: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.2/tap/GUID-scc-about.html
     env: 
     - name: TAP_INGRESS
       value: #@ data.values.tap.ingress_domain

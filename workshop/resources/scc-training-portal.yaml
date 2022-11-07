@@ -2,22 +2,27 @@ apiVersion: learningcenter.tanzu.vmware.com/v1beta1
 kind: TrainingPortal
 metadata:
   name: scc-workshops
+  annotations:
+    kapp.k14s.io/update-strategy: always-replace
 spec:
   portal:
-    title: Workshops for Custom Supply Chain Choreographer
+    title: Tanzu Application Platform Workshop - Custom Supply Chain with Choreographer
     ingress:
         hostname: scc-workshops
     registration:
         type: anonymous
-    sessions:
-      maximum: 20
-    reserved: 0
     updates:
       workshop: true
+    sessions:
+      maximum: 20
   workshops:
-    - expires: 300m
-      name: scc-workshop
+    - name: scc-workshop
+      expires: 3h
       orphaned: 40m
-    - expires: 300m
-      name: scc-workshop-test
+      capacity: 20
+      reserved: 2
+    - name: scc-workshop-dev
+      expires: 3h
       orphaned: 40m
+      capacity: 5
+      reserved: 0
