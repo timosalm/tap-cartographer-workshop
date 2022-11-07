@@ -6,10 +6,10 @@ text: |2
   kind: Workload
   metadata:
     labels:
-      app.kubernetes.io/part-of: simple-app
+      app.kubernetes.io/part-of: tanzu-java-web-app
       apps.tanzu.vmware.com/workload-type: web
       end2end.link/workshop-session: {{ session_namespace }}
-    name: simple-app
+    name: tanzu-java-web-app
   spec:
     source:
       git:
