@@ -2,7 +2,7 @@
 The details of ClusterImageTemplate specifications can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/template/#clusterimagetemplate
+url: https://cartographer.sh/docs/v0.4.0/reference/template/#clusterimagetemplate
 ```
 A **ClusterImageTemplate** instructs how the supply chain should instantiate an object responsible for supplying container images.
 

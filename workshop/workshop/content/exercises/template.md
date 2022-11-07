@@ -47,5 +47,5 @@ Tekton Pipelines defines the following entities:
 The detailed specifications of the ClusterTemplate can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustertemplate
+url: https://cartographer.sh/docs/v0.4.0/reference/template/#clustertemplate
 ```

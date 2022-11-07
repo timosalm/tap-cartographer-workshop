@@ -31,7 +31,7 @@ Additional parameters can be configured with `.spec.params`. They follow a hiera
 The detailed specification can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
+url: https://cartographer.sh/docs/v0.4.0/reference/workload/#clustersupplychain
 ```
 
 ###### Templates

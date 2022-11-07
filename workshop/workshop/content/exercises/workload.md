@@ -28,5 +28,5 @@ Last but not least via (`.spec.params`), it's possible to override default value
 The detailed specification can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/workload/#workload
+url: https://cartographer.sh/docs/v0.4.0/reference/workload/#workload
 ```

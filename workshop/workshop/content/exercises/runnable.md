@@ -96,7 +96,7 @@ text: |2
 The detailed specifications of the Runnable and ClusterRunTemplate can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/runnable/
+url: https://cartographer.sh/docs/v0.4.0/reference/runnable/
 ```
 
 Let's now apply our resources to the cluster as a group of resources via the kapp CLI and see via the commercial Supply Chain Choreographer UI plugin and the following commands whether everything works as expected.

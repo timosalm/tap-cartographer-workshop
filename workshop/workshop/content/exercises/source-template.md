@@ -3,8 +3,8 @@
 
 Cluster Source Template documentation: 
 ```dashboard:reload-dashboard
-name: cartographer-docs
-url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetemplate
+name: Cartographer Docs
+url: https://cartographer.sh/docs/v0.4.0/reference/template/#clustersourcetemplate
 ```
 `ClusterSourceTemplate` indicates how the supply chain could instantiate an object responsible for providing source code.
 
@@ -142,5 +142,5 @@ With the `spec.resources[*].templateRef.options` field, it's also possible to de
 The detailed specifications of the ClusterSourceTemplate can be found here: 
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/template/#clustersourcetemplate
+url: https://cartographer.sh/docs/v0.4.0/reference/template/#clustersourcetemplate
 ```

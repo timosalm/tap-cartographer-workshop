@@ -65,7 +65,7 @@ In TAP 1.2 we have the ability to detect the **Health Status** of the Supply Cha
 This is possible via the `spec.healthRule`. The documentation is available here:
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/health-rules/
+url: https://cartographer.sh/docs/v0.4.0/health-rules/
 ```
 ```editor:append-lines-to-file
 file: custom-supply-chain/custom-source-provider-template.yaml
@@ -366,7 +366,7 @@ text: |2
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: https://cartographer.sh/docs/v0.5.0/reference/workload/#clustersupplychain
+url: https://cartographer.sh/docs/v0.4.0/reference/workload/#clustersupplychain
 ```
 
 Due to the complexity, here is the **ClusterRunTemplate which you have to reference from a Runnable** that you have to define with its inputs **in the ClusterImageTemplate**. 
