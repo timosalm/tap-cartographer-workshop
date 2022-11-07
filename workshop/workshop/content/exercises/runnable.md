@@ -114,29 +114,33 @@ session: 2
 ```
 Let's see what the build looks like.
 ```terminal:execute
-command: kp build logs simple-app
+command: kp build logs tanzu-java-web-app
 clear: true
 session: 1
 ```
 Now let's see what it looks like in TAP GUI
 ```dashboard:reload-dashboard
 name: Cartographer Docs
-url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/simple-app
+url: http://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/tanzu-java-web-app
 ```
 ```terminal:execute
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
 clear: true
 ```
 ```terminal:execute
-command: kubectl tree workload simple-app
+command: kubectl tree workload tanzu-java-web-app
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe workload simple-app 
+command: kubectl describe workload tanzu-java-web-app
 clear: true
 ```
 ```terminal:execute
-command: tanzu apps workload tail simple-app
+command: tanzu apps workload get tanzu-java-web-app
+clear: true
+```
+```terminal:execute
+command: tanzu apps workload tail tanzu-java-web-app
 clear: true
 session: 2
 ```

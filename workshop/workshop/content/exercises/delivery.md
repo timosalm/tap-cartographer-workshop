@@ -65,7 +65,7 @@ text: |2
     - name: deployer
       templateRef:
         kind: ClusterDeploymentTemplate
-        name: simple-app-deploy-{{ session_namespace }}
+        name: tanzu-java-web-app-deploy-{{ session_namespace }}
       deployment:
         resource: source-provider
 ```
@@ -105,7 +105,7 @@ text: |2
   apiVersion: carto.run/v1alpha1
   kind: ClusterDeploymentTemplate
   metadata:
-    name: simple-app-deploy-{{ session_namespace }}
+    name: tanzu-java-web-app-deploy-{{ session_namespace }}
   spec:
     observedCompletion:
       succeeded:
@@ -169,25 +169,25 @@ command: kubectl describe ClusterDelivery simple-delivery-{{ session_namespace }
 clear: true
 ```
 ```terminal:execute
-command: kubectl tree deliverable simple-app
+command: kubectl tree deliverable tanzu-java-web-app
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe deliverable simple-app
+command: kubectl describe deliverable tanzu-java-web-app
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe app simple-app
+command: kubectl describe app tanzu-java-web-app
 clear: true
 ```
 ```terminal:execute
-command: kubectl describe kservice simple-app
+command: kubectl describe kservice tanzu-java-web-app
 clear: true
 ```
 And now that our **Simple App** is deployed. We can take a look at it here
 ```dashboard:reload-dashboard
 name: Hello World App!
-url: http://simple-app.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
+url: http://tanzu-java-web-app.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
 ```
 
 The following diagram (which is available in the documentation) of a similar ClusterDelivery shows the relationship between all those different resources.
