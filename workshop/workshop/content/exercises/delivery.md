@@ -185,7 +185,7 @@ command: kubectl describe kservice tanzu-java-web-app
 clear: true
 ```
 And now that our **Simple App** is deployed. We can take a look at it here
-```dashboard:reload-dashboard
+```dashboard:create-dashboard
 name: Hello World App!
 url: http://tanzu-java-web-app.{{ session_namespace }}.{{ ENV_TAP_INGRESS }}
 ```
