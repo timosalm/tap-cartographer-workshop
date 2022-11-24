@@ -33,7 +33,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: dev-space
+    namespace: github-source-controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
