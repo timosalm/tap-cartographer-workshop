@@ -4,6 +4,7 @@ metadata:
   name: github-source-controller
 spec:
   builder:
+    kind: ClusterBuilder
     name: default
   build:
     env:
