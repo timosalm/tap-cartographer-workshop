@@ -48,7 +48,9 @@ spec:
   params:
     - name: source-url                       # (!) required
     - name: source-revision                  # (!) required
-    - name: source-sub-path                  # (!) required
+    - default: .
+      name: source-sub-path
+      type: string
   tasks:
     - name: test
       params:
