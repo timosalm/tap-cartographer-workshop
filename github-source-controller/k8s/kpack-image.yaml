@@ -3,6 +3,8 @@ kind: Image
 metadata:
   name: github-source-controller
 spec:
+  builder:
+    name: default
   build:
     env:
     - name: BP_JVM_VERSION
