@@ -51,7 +51,7 @@ public class GitHubSourceReconciler implements Reconciler {
             log.info("Trying to update status for " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " with " + latestGithubEvent.getTarballUrl());
             KubernetesApiResponse<V1GitHubRepository> update = api.updateStatus(resource, V1GitHubRepository::getStatus);
             if (!update.isSuccess()) {
-                log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " Status code " + update.getHttpStatusCode());
+                log.warn("Cannot update GithubRepository " + resource.getMetadata().getNamespace() + "/" + resource.getMetadata().getName() + " Status code " + update.getHttpStatusCode() + " Status: " + update.getStatus().toString());
             }
         }
         return new Result(true, Duration.ofSeconds(30));
