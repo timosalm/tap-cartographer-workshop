@@ -103,7 +103,7 @@ command: |
 clear: true
 ```
 ```dashboard:open-url
-url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/{{ session_namespace }}/simple-app
+url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/simple-app
 ```
 ```terminal:execute
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
