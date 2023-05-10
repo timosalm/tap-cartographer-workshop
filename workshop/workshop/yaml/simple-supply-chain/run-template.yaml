@@ -1,0 +1,46 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterRunTemplate
+metadata:
+  name: simple-run-template
+spec:
+  outputs: {}
+ # template: {}
+
+  template:
+    apiVersion: tekton.dev/v1beta1
+    kind: TaskRun
+    metadata:
+      generateName: $(runnable.metadata.name)$-
+    spec:
+      taskRef:
+        name: git-cli
+      workspaces:
+      - name: basic-auth
+        secret:
+          secretName: tekton-basic-access-auth
+      - name: source
+        emptyDir: {}
+      params:
+        - name: GIT_USER_NAME
+          value: bijoych
+        - name: GIT_USER_EMAIL
+          value: bchoudhury@vmware.com
+        - name: GIT_SCRIPT
+          value: |
+            if git clone --depth 1 -b main "$(runnable.spec.inputs.git_repository)$" ./repo; then
+              cd ./repo
+            else
+              mkdir ./repo && cd ./repo
+              git init 
+              git remote add origin "$(runnable.spec.inputs.git_repository)$"                
+              git checkout -b main
+            fi
+
+            mkdir -p config && rm -rf config/*
+            cd config
+
+            echo "$(runnable.spec.inputs.git_files)$" > delivery.yml
+
+            git add delivery.yml
+            git commit -m "Update deployment configuration"
+            git push origin main

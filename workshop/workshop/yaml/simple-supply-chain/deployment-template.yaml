@@ -1,0 +1,45 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterDeploymentTemplate
+metadata:
+  name: simple-app-deploy
+spec:
+  observedCompletion:
+    succeeded:
+      key: '.status.conditions[?(@.type=="ReconcileSucceeded")].status'
+      value: 'True'
+    failed:
+      key: '.status.conditions[?(@.type=="ReconcileSucceeded")].status'
+      value: 'False'
+
+  template:
+    apiVersion: kappctrl.k14s.io/v1alpha1
+    kind: App
+    metadata:
+      name: $(deliverable.metadata.name)$
+    spec:
+      serviceAccountName: default
+      fetch:
+        - http:
+            url: $(deployment.url)$
+        - inline:
+           paths:
+            config.yml: |
+              ---
+              apiVersion: kapp.k14s.io/v1alpha1
+              kind: Config
+              rebaseRules:
+                - path: [metadata, annotations, serving.knative.dev/creator]
+                  type: copy
+                  sources: [new, existing]
+                  resourceMatchers: &matchers
+                    - apiVersionKindMatcher: {apiVersion: serving.knative.dev/v1, kind: Service}
+                - path: [metadata, annotations, serving.knative.dev/lastModifier]
+                  type: copy
+                  sources: [new, existing]
+                  resourceMatchers: *matchers
+
+      template:
+        - ytt: {}
+      deploy:
+        - kapp: {}
+

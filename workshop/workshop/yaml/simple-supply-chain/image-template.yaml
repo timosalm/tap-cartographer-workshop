@@ -1,0 +1,40 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterImageTemplate
+metadata:
+  name: simple-image-template
+spec:
+  params:
+    - name: registry
+      default: {}
+# imagePath: ""
+# ytt: ""
+
+  imagePath: .status.latestImage
+  ytt: |
+    #@ load("@ytt:data", "data")
+
+    #@ def image():
+    #@   return "/".join([
+    #@    data.values.params.registry.server,
+    #@    data.values.params.registry.repository,
+    #@    "-".join([
+    #@      data.values.workload.metadata.name,
+    #@      data.values.workload.metadata.namespace,
+    #@    ])
+    #@   ])
+    #@ end
+
+    ---
+    apiVersion: kpack.io/v1alpha2
+    kind: Image
+    metadata:
+      name: #@ data.values.workload.metadata.name
+    spec:
+      tag: #@ image()
+      source:
+        blob:
+          url: #@ data.values.source.url
+      builder:
+        kind: ClusterBuilder
+        name: default
+

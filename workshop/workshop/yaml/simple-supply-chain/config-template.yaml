@@ -1,0 +1,33 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterConfigTemplate
+metadata:
+  name: simple-config-template
+spec:
+  configPath: .data.delivery
+  ytt: |
+    #@ load("@ytt:data", "data")
+    #@ load("@ytt:yaml", "yaml")
+
+    #@ def delivery():
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    metadata:
+      name: #@ data.values.workload.metadata.name
+    spec:
+      template: 
+        spec:
+          containers:
+          - image: #@ data.values.image
+            name: workload
+            ports:
+            - containerPort: 8080
+    #@ end
+
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: #@ data.values.workload.metadata.name
+    data:
+      delivery: #@ yaml.encode(delivery())
+

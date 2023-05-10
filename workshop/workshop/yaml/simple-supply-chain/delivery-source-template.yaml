@@ -1,0 +1,20 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterSourceTemplate
+metadata:
+  name: simple-delivery-source-template
+spec:
+  urlPath: .status.artifact.url
+  revisionPath: .status.artifact.revision
+  template:
+    apiVersion: source.toolkit.fluxcd.io/v1beta1
+    kind: GitRepository
+    metadata:
+      name: $(deliverable.metadata.name)$-delivery
+    spec:
+      interval: 1m0s
+      url: $(deliverable.spec.source.git.url)$
+      ref:
+        branch: main
+      secretRef:
+        name: flux-basic-access-auth
+

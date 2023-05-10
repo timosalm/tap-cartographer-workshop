@@ -1,0 +1,22 @@
+
+apiVersion: carto.run/v1alpha1
+kind: ClusterTemplate
+metadata:
+  name: simple-deliverable-template
+spec:
+  template:
+    apiVersion: carto.run/v1alpha1
+    kind: Deliverable
+    metadata:
+      name: $(workload.metadata.name)$
+      labels:
+        supplychain/demo: test01
+    spec:
+      params:
+      - name: gitops_ssh_secret
+        value: git-https
+      source:
+        git:
+          url: $(params.gitops_repository)$
+          ref:
+            branch: main

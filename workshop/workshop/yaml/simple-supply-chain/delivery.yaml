@@ -1,0 +1,19 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterDelivery
+metadata:
+  name: simple-delivery
+spec:
+  selector:
+    supplychain/demo: test01
+
+  resources:
+  - name: source-provider
+    templateRef:
+      kind: ClusterSourceTemplate
+      name: simple-delivery-source-template
+  - name: deployer
+    templateRef:
+      kind: ClusterDeploymentTemplate
+      name: simple-app-deploy
+    deployment:
+      resource: source-provider

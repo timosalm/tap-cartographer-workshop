@@ -1,0 +1,54 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterSupplyChain
+metadata:
+  name: simple-supplychain
+spec:
+  selector:
+    supplychain/demo: test01
+# resources: []
+
+  resources:
+   - name: source-provider
+     templateRef:
+       kind: ClusterSourceTemplate
+       name: simple-source-template
+
+   - name: image-builder
+     templateRef:
+       kind: ClusterImageTemplate
+       name: simple-image-template
+     sources:
+     - name: source
+       resource: source-provider
+     params:
+     - name: registry
+       value:
+         server: harbor.tap.lab
+         repository: library
+
+   - name: app-config
+     templateRef:
+       kind: ClusterConfigTemplate
+       name: simple-config-template
+     images:
+     - resource: image-builder
+       name: image
+
+   - name: config-writer
+     templateRef:
+       kind: ClusterTemplate
+       name: simple-config-writer-template
+     configs:
+     - resource: app-config
+       name: config
+     params:
+     - name: git_repository
+       value: "https://github.com/bijoych/suppy-chain.git"
+
+   - name: deliverable
+     templateRef:
+       kind: ClusterTemplate
+       name: simple-deliverable-template
+     params:
+     - name: gitops_repository
+       value: "https://github.com/bijoych/suppy-chain.git"
