@@ -3,5 +3,5 @@ kind: GitHubRepository
 metadata:
   name: spring-boot-hello-world-workshop-example
 spec:
-  url: https://github.com/tsalm-pivotal/spring-boot-hello-world-workshop-example.git
+  url: https://github.com/tsalm-vmware/spring-boot-hello-world-workshop-example.git
   branch: main

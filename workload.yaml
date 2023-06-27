@@ -12,6 +12,6 @@ spec:
     value: Dockerfile
   source:
     git:
-      url: https://github.com/tsalm-pivotal/python-hello-world-workshop-example.git
+      url: https://github.com/tsalm-vmware/python-hello-world-workshop-example.git
       ref:
         branch: main

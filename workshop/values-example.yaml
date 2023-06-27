@@ -2,7 +2,6 @@
 ---
 tap:
   ingress_domain: tap.example.com
-  cnrs_subdomain: cnr.tap.example.com
 container_registry:
   hostname: harbor.example.com
   username: admin
@@ -11,10 +10,7 @@ container_registry:
 workshop_git:
   username: user
   branch: main
-tanzunet:
-  username: user@example.com
-  password:
 gitops:
-  https_repository_prefix: https://github.com/tsalm-pivotal
+  https_repository_prefix: https://github.com/tsalm-vmware
   basic_auth_username:
   basic_auth_password: 
