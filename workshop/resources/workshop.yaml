@@ -14,7 +14,7 @@ spec:
   duration: 200m
   url: https://github.com/tsalm-pivotal/tap-cartographer-workshop
   content:
-    image: #@ "{}/tap-workshop/cartographer-workshop:latest".format(data.values.container_registry.hostname)
+    image: #@ "{}/tap-workshop/tap-overview-workshop:latest".format(data.values.container_registry.hostname)
     files: #@ "github.com/{}/tap-cartographer-workshop/workshop?ref={}".format(data.values.workshop_git.username,data.values.workshop_git.branch)
   session:
     namespaces:
@@ -25,95 +25,28 @@ spec:
         layout: split
       console:
         enabled: true
-        vendor: octant
       editor:
         enabled: true
     env: 
     - name: TAP_INGRESS
       value: #@ data.values.tap.ingress_domain
-    - name: TAP_CNRS_SUBDOMAIN
-      value: #@ data.values.tap.cnrs_subdomain
     - name: CONTAINER_REGISTRY_HOSTNAME
       value: #@ data.values.container_registry.hostname
-    - name: CONTAINER_REGISTRY_USERNAME
-      value: #@ data.values.container_registry.username
-    - name: CONTAINER_REGISTRY_PASSWORD
-      value: #@ data.values.container_registry.password
     - name: CONTAINER_REGISTRY_REPOSITORY
       value: #@ data.values.container_registry.repository
     - name: GITOPS_REPOSITORY
-      value: #@ "{}/$(session_namespace).git".format(data.values.gitops.https_repository_prefix)
+      value: #@ "{}/$(session_namespace).git".format(data.values.gitea.https_repository_prefix)
     - name: GITOPS_REPOSITORY_USERNAME
-      value: #@ data.values.gitops.basic_auth_username
+      value: #@ data.values.gitea.basic_auth_username
     - name: GITOPS_REPOSITORY_PASSWORD
-      value: #@ data.values.gitops.basic_auth_password
+      value: #@ data.values.gitea.basic_auth_password
     objects:
-      - apiVersion: v1
-        kind: LimitRange
-        metadata:
-          name: resource-limits
-        spec:
-          limits:
-            - type: PersistentVolumeClaim
-              max:
-                storage: 10Gi
       # Permissions for tap-sa (Supply Chain)
-      - apiVersion: v1
-        kind: Secret
-        metadata:
-          name: tanzu-net-credentials
-        type: kubernetes.io/dockerconfigjson
-        data:
-          #@ docker_auth = base64.encode("{}:{}".format(data.values.tanzunet.username, data.values.tanzunet.password))
-          #@ docker_creds = {"username": data.values.tanzunet.username, "password": data.values.tanzunet.password, "auth": docker_auth}
-          .dockerconfigjson: #@ base64.encode(json.encode({"auths": {"registry.tanzu.vmware.com": docker_creds}}))
       - apiVersion: rbac.authorization.k8s.io/v1
         kind: Role
         metadata:
           name: $(session_namespace)-default
         rules:
-        - apiGroups: [source.toolkit.fluxcd.io]
-          resources: [gitrepositories]
-          verbs: ['*']
-        - apiGroups: [source.apps.tanzu.vmware.com]
-          resources: [imagerepositories]
-          verbs: ['*']
-        - apiGroups: [carto.run]
-          resources: [deliverables, runnables]
-          verbs: ['*']
-        - apiGroups: [kpack.io]
-          resources: [images]
-          verbs: ['*']
-        - apiGroups: [conventions.apps.tanzu.vmware.com]
-          resources: [podintents]
-          verbs: ['*']
-        - apiGroups: [""]
-          resources: ['configmaps']
-          verbs: ['*']
-        - apiGroups: [""]
-          resources: ['pods']
-          verbs: ['list']
-        - apiGroups: [tekton.dev]
-          resources: [taskruns, pipelineruns]
-          verbs: ['*']
-        - apiGroups: [tekton.dev]
-          resources: [pipelines]
-          verbs: ['list']
-        - apiGroups: [kappctrl.k14s.io]
-          resources: [apps]
-          verbs: ['*']
-        - apiGroups: [serving.knative.dev]
-          resources: ['services']
-          verbs: ['*']
-        - apiGroups: [servicebinding.io]
-          resources: ['servicebindings']
-          verbs: ['*']
-        - apiGroups: [services.apps.tanzu.vmware.com]
-          resources: ['resourceclaims']
-          verbs: ['*']
-        - apiGroups: [scanning.apps.tanzu.vmware.com]
-          resources: ['imagescans', 'sourcescans']
-          verbs: ['*']
         - apiGroups:
           - timosalm.de
           resources:
@@ -131,36 +64,96 @@ spec:
         subjects:
           - kind: ServiceAccount
             name: default
-            namespace: $(session_namespace)
-      # Permissions for workshop session
+          - kind: ServiceAccount
+            name: $(service_account)
       - apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
         metadata:
-          name: $(session_namespace)-session-crb
+          name: $(session_namespace)-default-permit-deliverable
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: deliverable
+        subjects:
+          - kind: ServiceAccount
+            name: default
+          - kind: ServiceAccount
+            name: $(service_account)
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: $(session_namespace)-default-permit-workload
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: workload
+        subjects:
+          - kind: ServiceAccount
+            name: default
+          - kind: ServiceAccount
+            name: $(service_account)
+      # Permissions for workshop session
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $(session_namespace)-cluster-resources-reader
+        rules:
+        - apiGroups: [conventions.apps.tanzu.vmware.com]
+          resources: ["clusterpodconventions"]
+          verbs: ["get", "watch", "list"]
+        - apiGroups: [apiextensions.k8s.io]
+          resources: [customresourcedefinitions]
+          verbs: ["get", "watch", "list"]
+        - apiGroups: [carto.run]
+          resources: ["clusterconfigtemplates", "clusterdeliveries", "clusterdeploymenttemplates","clusterimagetemplates", "clusterruntemplates", "clustersourcetemplates", "clustersupplychains", "clustertemplates"]
+          verbs: ["*"]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: $(session_namespace)-cluster-resources-reader-rb
           namespace: $(session_namespace)
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: cluster-admin
+          name: $(session_namespace)-cluster-resources-reader
         subjects:
           - kind: ServiceAccount
             namespace: $(workshop_namespace)
             name: $(service_account)
-
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: $(session_namespace)-session
+          namespace: $(session_namespace)
+        rules:
+        - apiGroups: [tekton.dev]
+          resources: [tasks, pipelines]
+          verbs: ['*']
+        - apiGroups: [carto.run]
+          resources: [workloads, deliverables]
+          verbs: ['*']
+        - apiGroups: [source.toolkit.fluxcd.io]
+          resources: [gitrepositories]
+          verbs: ['*']
+        - apiGroups: [kpack.io]
+          resources: [images]
+          verbs: ['*']
+        - apiGroups: ['*']
+          resources: ['*']
+          verbs: ["get", "watch", "list"]
       - apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
         metadata:
-          name: $(session_namespace)-default-crb
+          name: $(session_namespace)-session-rb
           namespace: $(session_namespace)
         roleRef:
           apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: cluster-admin
+          kind: Role
+          name: $(session_namespace)-session
         subjects:
           - kind: ServiceAccount
-            namespace: $(session_namespace)
-            name: default
-
+            namespace: $(workshop_namespace)
+            name: $(service_account)
       # Install grype
       - apiVersion: packaging.carvel.dev/v1alpha1
         kind: PackageInstall
@@ -188,48 +181,101 @@ spec:
             ---
             namespace: $(session_namespace)
             targetImagePullSecret: registry-credentials
-      # Conventions Service
-      - apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRole
+
+      # Scan policy
+      - apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+        kind: ScanPolicy
         metadata:
-          name: $(session_namespace)-cluster-resources-reader
-        rules:
-        - apiGroups: [conventions.apps.tanzu.vmware.com]
-          resources: ["clusterpodconventions"]
-          verbs: ["get", "watch", "list"]
-      - apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRoleBinding
+          name: scan-policy
+        spec:
+          regoFile: |
+            package policies
+
+            default isCompliant = false
+
+            # Accepted Values: "Critical", "High", "Medium", "Low", "Negligible", "UnknownSeverity"
+            violatingSeverities := ["Critical","High","UnknownSeverity"]
+            ignoreCVEs := []
+
+            contains(array, elem) = true {
+              array[_] = elem
+            } else = false { true }
+
+            isSafe(match) {
+              fails := contains(violatingSeverities, match.Ratings.Rating[_].Severity)
+              not fails
+            }
+
+            isSafe(match) {
+              ignore := contains(ignoreCVEs, match.Id)
+              ignore
+            }
+
+            isCompliant = isSafe(input.currentVulnerability)
+      - apiVersion: v1
+        kind: Secret
         metadata:
-          name: $(session_namespace)-cluster-resources
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: $(session_namespace)-cluster-resources-reader
-        subjects:
-        - kind: Group
-          name: system:serviceaccounts:$(workshop_namespace)
-          apiGroup: rbac.authorization.k8s.io
-      # supply chain
-      - apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRole
+          name: registry-credentials
+        type: kubernetes.io/dockerconfigjson
+        data:
+          #@ docker_creds = {"username": data.values.container_registry.username, "password": data.values.container_registry.password}
+          .dockerconfigjson: #@ base64.encode(json.encode({"auths": {data.values.container_registry.hostname: docker_creds}}))
+      - apiVersion: v1
+        kind: Secret
         metadata:
-          name: $(session_namespace)-cluster-supplychain
-        rules:
-        - apiGroups: [carto.run]
-          resources: ["clusterconfigtemplates", "clusterdeliveries", "clusterdeploymenttemplates","clusterimagetemplates", "clusterruntemplates", "clustersourcetemplates", "clustersupplychains", "clustertemplates"]
-          verbs: ["*"]
-        - apiGroups: [apiextensions.k8s.io]
-          resources: ["customresourcedefinitions"]
-          verbs: ["get", "watch", "list"]
-      - apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRoleBinding
+          annotations:
+            tekton.dev/git-0: #@ data.values.gitops.host
+          name: git-https
+        type: kubernetes.io/basic-auth
+        stringData:
+          username: #@ data.values.gitops.username
+          password: #@ data.values.gitops.password
+      - apiVersion: tekton.dev/v1beta1
+        kind: Pipeline
         metadata:
-          name: $(session_namespace)-cluster-supplychain
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: $(session_namespace)-cluster-supplychain
-        subjects:
-          - kind: Group
-            name: system:serviceaccounts:$(workshop_namespace)
-            apiGroup: rbac.authorization.k8s.io
+          name: developer-defined-tekton-pipeline
+          labels:
+            apps.tanzu.vmware.com/pipeline: test     # (!) required
+        spec:
+          params:
+            - name: source-url                       # (!) required
+            - name: source-revision                  # (!) required
+            - name: source-sub-path
+              default: "."
+          tasks:
+            - name: test
+              params:
+                - name: source-url
+                  value: $(params.source-url)
+                - name: source-revision
+                  value: $(params.source-revision)
+                - name: source-sub-path
+                  value: $(params.source-sub-path)
+              taskSpec:
+                params:
+                  - name: source-url
+                  - name: source-revision
+                  - name: source-sub-path
+                steps:
+                  - name: test
+                    image: gradle
+                    script: |-
+                      cd `mktemp -d`
+  
+                      wget -qO- $(params.source-url) | tar xvz -m
+                      cd $(params.source-sub-path)
+                      ./mvnw test
+      - apiVersion: carto.run/v1alpha1
+        kind: Workload
+        metadata:
+          labels:
+            app.kubernetes.io/part-of: ootb-sc-demo
+            apps.tanzu.vmware.com/has-tests: "true"
+            apps.tanzu.vmware.com/workload-type: web
+          name: ootb-sc-demo
+        spec:
+          source:
+            git:
+              ref:
+                branch: main
+              url: https://github.com/timosalm/spring-boot-hello-world.git
