@@ -1,38 +1,33 @@
 VMware Tanzu Application provides a **full integration of all of its components via out-of-the-box Supply Chains** that can be customized for customers' processes and tools.
 
-The following three out-of-the-box supply chains are provided with Tanzu Application Platform:
+TAP provides three out-of-the-box (OOTB) supply chains that can be customized for your processes and tools.
 
-- Out of the Box Supply Chain Basic
-- Out of the Box Supply Chain with Testing
-- Out of the Box Supply Chain with Testing and Scanning
+##### OOTB Supply Chain Basic
+![OOTB Supply Chain Basic](../images/sc-basic.png)
+Capabilities of this supply chain: 
+- Monitors a repository that is identified in the developer’s Workload configuration
+- Creates a new container image out of the source code
+- Generates the Kubernetes resources for the deployment of the application as YAML and applies predefined conventions to them
+- Deploys the application to the cluster
 
-All of them come with support for pre-built container images.
+##### OOTB Supply Chain with Testing
+![OOTB Supply Chain with Testing](../images/sc-testing.png)
+Additional capabilities of this supply chain: 
+- Runs application tests using a Tekton or Jenkins pipeline
 
-As auxiliary components, VMware Tanzu Application Platform also includes:
-- **Out of the Box Templates**, for providing templates used by the supply chains to perform common tasks like fetching source code, running tests, and building container images.
-- **Out of the Box Delivery Basic**, for delivering to a Kubernetes cluster the configuration built throughout a supply chain.
-Both Templates and Delivery Basic are requirements for the Supply Chains.
+##### OOTB Supply Chain with Testing and Scanning
+![OOTB Supply Chain with Testing+Scanning](../images/sc-testing-scanning.png)
+Additional capabilities of this supply chain: 
+- The application source code is scanned for vulnerabilities
+- The container image is scanned for vulnerabilities
 
-Let's now have a closer look at the **Out of the Box Supply Chain with Testing and Scanning**.
+All of the OOTB supply chains also support a prebuilt application container image as an input instead of source code. In this case, only the steps after the container image creation will be executed (e.g. image scanning, Kubernetes resources YAML generation, Deployment).
+
+As the OOTB Supply Chain with Testing and Scanning provides the most capabilities, we'll now have a closer look at the implementation and the different tools that provide all of them.
 
 ```dashboard:open-url
 url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespace }}/ootb-sc-demo
 ```
-
-For workloads that use source code or prebuilt images, it performs the following.
-**Building from source code:**
-1. Watching a Git Repository or local directory for changes
-2. Running tests from a developer-provided Tekton pipeline
-3. Scanning the source code for known vulnerabilities using Grype
-4. Building a container image out of the source code with Buildpacks
-5. Scanning the image for known vulnerabilities
-6. Applying operator-defined conventions to the container definition
-7. Deploying the application to the same cluster
-
-**Using a prebuilt application image**
-1. Scanning the image for known vulnerabilities
-2. Applying operator-defined conventions to the container definition
-3. Creating a deliverable object for deploying the application to a cluster
 
 With the following command, we are able to extract it from the cluster and can have a closer look via VSCode, how they are implemented.
 ```terminal:execute
