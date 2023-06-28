@@ -233,7 +233,7 @@ text: |2
               volumeMounts:
               - name: source-dir
                 mountPath: /source
-            - image: gcr.io/kaniko-project/executor:latest
+            - image: gcr.io/kaniko-project/executor@sha256:0d742f4d266efdaad63036fbec584b965d849e1b89967e88c21d3b34757f397c
               name: build-container-and-push
               args:
               - --dockerfile=$(runnable.spec.inputs.dockerfile)$
