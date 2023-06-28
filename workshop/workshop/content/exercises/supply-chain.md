@@ -30,7 +30,7 @@ Additional parameters can be configured with `.spec.params`. They follow a hiera
 
 The detailed specification can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.3.0/reference/workload/#clustersupplychain
+url: https://cartographer.sh/docs/v0.7.0/reference/workload/#clustersupplychain
 ```
 
 ###### Templates

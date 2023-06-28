@@ -89,5 +89,5 @@ When an image resource has successfully built with its current configuration and
 
 The detailed specifications of the ClusterImageTemplate can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.3.0/reference/template/#clusterimagetemplate
+url: https://cartographer.sh/docs/v0.7.0/reference/template/#clusterimagetemplate
 ```

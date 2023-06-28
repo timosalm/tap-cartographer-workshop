@@ -37,7 +37,7 @@ Both options for templating **provide a data structure** that contains:
 
 More information can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.3.0/templating/
+url: https://cartographer.sh/docs/v0.7.0/templating/
 ```
 
 For our first functionality, we will use a simple template and use the configuration provided by the Workload.
@@ -92,5 +92,5 @@ With the `spec.resources[*].templateRef.options` field, it's also possible to de
 
 The detailed specifications of the ClusterSourceTemplate can be found here: 
 ```dashboard:open-url
-url: https://cartographer.sh/docs/v0.3.0/reference/template/#clustersourcetemplate
+url: https://cartographer.sh/docs/v0.7.0/reference/template/#clustersourcetemplate
 ```
