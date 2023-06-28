@@ -109,10 +109,7 @@ url: https://tap-gui.{{ ENV_TAP_INGRESS }}/supply-chain/host/{{ session_namespac
 command: kubectl describe clustersupplychain simple-supplychain-{{ session_namespace }}
 clear: true
 ```
-```terminal:execute
-command: kubectl tree workload simple-app
-clear: true
-```
+
 ```terminal:execute
 command: kubectl describe workload simple-app 
 clear: true

@@ -192,8 +192,8 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.emea.end2end.link
-          repository: tap-wkld
+          server: {{ ENV_CONTAINER_REGISTRY_HOSTNAME }}
+          repository: {{ ENV_CONTAINER_REGISTRY_REPOSITORY }}
 ```
 This is possible via the `spec.resources[*].templateRef.options`. The documentation is available here:
 ```dashboard:open-url
@@ -297,8 +297,8 @@ text: |2
       params:
       - name: registry
         value:
-          server: harbor.emea.end2end.link
-          repository: tap-wkld
+          server: {{ ENV_CONTAINER_REGISTRY_HOSTNAME }}
+          repository: {{ ENV_CONTAINER_REGISTRY_REPOSITORY }}
       - name: dockerfile
         default: ""
 ```

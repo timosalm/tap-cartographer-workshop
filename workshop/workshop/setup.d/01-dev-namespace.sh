@@ -33,3 +33,20 @@ data:
   username: $(echo $GITOPS_REPOSITORY_USERNAME | base64)
   password: $(echo $GITOPS_REPOSITORY_PASSWORD | base64)
 EOF
+
+
+kubectl() {
+    if [[ $@ == *"secret"* ]]; then
+        command echo "No resources found in $SESSION_NAMESPACE namespace."
+    else
+        command kubectl "$@"
+    fi
+}
+
+k() {
+    if [[ $@ == *"secret"* ]]; then
+        command echo "No resources found in $SESSION_NAMESPACE namespace."
+    else
+        command kubectl "$@"
+    fi
+}
