@@ -126,6 +126,12 @@ spec:
           name: $(session_namespace)-session
           namespace: $(session_namespace)
         rules:
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - 'patch'
         - apiGroups: [tekton.dev]
           resources: [tasks, pipelines]
           verbs: ['*']

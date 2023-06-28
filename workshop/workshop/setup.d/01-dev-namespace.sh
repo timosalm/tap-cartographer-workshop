@@ -2,6 +2,8 @@
 set -x
 set +e
 
+kubectl annotate namespace ${SESSION_NAMESPACE} secretgen.carvel.dev/excluded-from-wildcard-matching-
+
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}], "secrets": [{"name": "registry-credentials"}, {"name": "git-https"}]}'
 
 git clone https://github.com/timosalm/tap-cartographer-workshop.git
