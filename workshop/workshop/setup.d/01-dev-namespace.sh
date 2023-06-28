@@ -2,7 +2,7 @@
 set -x
 set +e
 
-kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}]}'
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}], "secrets": [{"name": "registry-credentials"}, {"name": "git-https"}]}'
 
 git clone https://github.com/tsalm-vmware/tap-cartographer-workshop.git
 
