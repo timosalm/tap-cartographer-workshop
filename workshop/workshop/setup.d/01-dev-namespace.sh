@@ -4,7 +4,7 @@ set +e
 
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "registry-credentials"}], "secrets": [{"name": "registry-credentials"}, {"name": "git-https"}]}'
 
-git clone https://github.com/tsalm-vmware/tap-cartographer-workshop.git
+git clone https://github.com/timosalm/tap-cartographer-workshop.git
 
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.3/git-cli.yaml
 

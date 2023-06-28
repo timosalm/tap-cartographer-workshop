@@ -14,7 +14,7 @@ text: |2
       git:
         ref:
           branch: main
-        url: https://github.com/tsalm-vmware/spring-boot-hello-world.git
+        url: https://github.com/timosalm/spring-boot-hello-world.git
 ```
 For the matching of our Workload and Supply Chain we have to set the **label of our ClusterSupplyChain's label selector**. We also defined `app.kubernetes.io/part-of: simple-app` as a label that is required for the commercial Supply Chain Choreographer UI plugin. 
 The location of an application's source code can be configured via the `spec.source` field. Here, we are using a branch of a Git repository as a source to be able to implement a **continuous path to production** where every git commit to the codebase will trigger another execution of the Supply Chain, and developers only have to apply a Workload only once if they start with a new application or microservice. 

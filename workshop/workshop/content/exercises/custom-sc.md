@@ -440,7 +440,7 @@ text: |2
       git:
         ref:
           branch: main
-        url: https://github.com/tsalm-vmware/python-hello-world-workshop-example.git
+        url: https://github.com/timosalm/python-hello-world-workshop-example.git
 ```
 ... apply it, ...
 ```terminal:execute

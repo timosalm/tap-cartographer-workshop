@@ -11,6 +11,6 @@ workshop_git:
   username: user
   branch: main
 gitops:
-  https_repository_prefix: https://github.com/tsalm-vmware
+  https_repository_prefix: https://github.com/timosalm
   basic_auth_username:
   basic_auth_password: 
